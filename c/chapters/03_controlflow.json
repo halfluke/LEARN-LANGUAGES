@@ -1,71 +1,91 @@
 {
   "id": "controlflow",
   "title": "Control Flow",
-  "description": "if / loop / while / for / match in C",
+  "description": "If statements, loops, and switch cases in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Control flow in C\n\n`if`, `for`, `while`, `switch`, `break`, `continue`.\n",
   "exercises": [
     {
       "id": "controlflow_01",
-      "title": "If expression",
-      "description": "`age = 20`; print `Adult` if `>= 18` else `Minor`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "If Statement",
+      "description": "Declare age := 20. If age >= 18, print Adult. Otherwise print Minor.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int age = 20;\n    // if (age >= 18) puts(\"Adult\"); else puts(\"Minor\");\n    return 0;\n}\n",
       "expected_output": "Adult",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Adult\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use if age >= 18 { printf(\"Adult\") } else { printf(\"Minor\") }"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int age = 20;\n    if (age >= 18) puts(\"Adult\");\n    else puts(\"Minor\");\n    return 0;\n}\n"
     },
     {
       "id": "controlflow_02",
-      "title": "For range",
-      "description": "Print 1 through 5 inclusive, one per line.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "For Loop",
+      "description": "Use a for loop to print numbers 1 through 5.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // for (int i = 1; i <= 5; i++) printf(\"%d\\n\", i);\n    return 0;\n}\n",
       "expected_output": "1\n2\n3\n4\n5",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"1\\n2\\n3\\n4\\n5\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use for i := 1; i <= 5; i++ { printf(i) }"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= 5; i++) printf(\"%d\\n\", i);\n    return 0;\n}\n"
     },
     {
       "id": "controlflow_03",
-      "title": "Match day",
-      "description": "`day = 2`; match to print `Tuesday` for 2 (also arms 1,3, default `Unknown`).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Switch Statement",
+      "description": "Declare day := 2. Use a switch statement to print the day name: 1=Monday, 2=Tuesday, 3=Wednesday, default=Unknown.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int day = 2;\n    // switch (day) ...\n    return 0;\n}\n",
       "expected_output": "Tuesday",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Tuesday\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "switch day { case 1: ... default: ... }",
+        "No break statement needed in Go cases"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int day = 2;\n    switch (day) {\n    case 1: puts(\"Monday\"); break;\n    case 2: puts(\"Tuesday\"); break;\n    case 3: puts(\"Wednesday\"); break;\n    default: puts(\"Unknown\"); break;\n    }\n    return 0;\n}\n"
     },
     {
       "id": "controlflow_04",
-      "title": "For over vec",
-      "description": "Iterate `[\"red\",\"green\",\"blue\"]` and print each color.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "For-Range Loop",
+      "description": "Create a slice colors := []string{\"red\", \"green\", \"blue\"}. Use for-range to print each color on its own line.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *colors[] = {\"red\", \"green\", \"blue\"};\n    // for ...\n    return 0;\n}\n",
       "expected_output": "red\ngreen\nblue",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"red\\ngreen\\nblue\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "for index, color := range colors { }",
+        "Use printf(color)"
+      ],
+      "solution": "#include <stdio.h>\n#include <stddef.h>\n\nint main(void) {\n    const char *colors[] = {\"red\", \"green\", \"blue\"};\n    for (size_t i = 0; i < 3; i++) printf(\"%s\\n\", colors[i]);\n    return 0;\n}\n"
     },
     {
       "id": "controlflow_05",
-      "title": "Grade chain",
-      "description": "`score = 85` print `A`/`B`/… same thresholds as Go exercise.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Else If Chain",
+      "description": "Declare score := 85. Print the grade: 90+ = A, 80+ = B, 70+ = C, 60+ = D, below 60 = F.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int score = 85;\n    // print grade\n    return 0;\n}\n",
       "expected_output": "B",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"B\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use if score >= 90 { A } else if score >= 80 { B } ...",
+        "Check from highest to lowest"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int score = 85;\n    if (score >= 90) puts(\"A\");\n    else if (score >= 80) puts(\"B\");\n    else if (score >= 70) puts(\"C\");\n    else if (score >= 60) puts(\"D\");\n    else puts(\"F\");\n    return 0;\n}\n"
     },
     {
       "id": "controlflow_07",
-      "title": "Loop with break",
-      "description": "Print 1..4 using `loop` and `break` when reaching 5.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "For Loop with Break",
+      "description": "Use a for loop to count from 1 upward. When i reaches 5, break out of the loop. Print each number before the break.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int i = 1;\n    for (;;) { /* break at 5 */ }\n    return 0;\n}\n",
       "expected_output": "1\n2\n3\n4",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"1\\n2\\n3\\n4\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use for { } for an infinite loop",
+        "if i >= 5 { break } exits the loop",
+        "Increment i inside the loop"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int i = 1;\n    for (;;) {\n        if (i >= 5) break;\n        printf(\"%d\\n\", i);\n        i++;\n    }\n    return 0;\n}\n"
     },
     {
       "id": "controlflow_06",
-      "title": "Continue",
-      "description": "Print odd numbers 1..=10 one per line.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Continue Statement",
+      "description": "Use a for loop to print numbers 1 to 10, but skip printing even numbers using continue.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= 10; i++) { /* continue on even */ }\n    return 0;\n}\n",
       "expected_output": "1\n3\n5\n7\n9",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"1\\n3\\n5\\n7\\n9\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "if i % 2 == 0 { continue } skips even numbers",
+        "Check i % 2 != 0 or i % 2 == 1 to print odd numbers"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= 10; i++) {\n        if (i % 2 == 0) continue;\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}\n"
     }
   ],
   "exercise_count": 7

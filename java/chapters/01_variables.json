@@ -1,0 +1,97 @@
+{
+  "id": "variables",
+  "title": "Variables & Types",
+  "description": "Learn about variables, types, and type conversions in Go",
+  "theory": "## Variables in Java 17\n\nDeclare types explicitly (`int`, `String`, `boolean`). Use `System.out.println` for stdout.\n",
+  "exercises": [
+    {
+      "id": "variables_01",
+      "title": "Declare a Variable",
+      "description": "Declare a variable age of type int and assign it the value 25. Then use System.out.println to print it.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "25",
+      "hints": [
+        "Use age int = 25 or age := 25 to declare and assign",
+        "Use System.out.println(age) to print"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        int age = 25;\n        System.out.println(age);\n    }\n}\n"
+    },
+    {
+      "id": "variables_02",
+      "title": "Multiple Variable Declaration",
+      "description": "Declare two variables: name (string) with value \"Javalang\" and version (float64) with value 1.21. Print them on the same line separated by a space.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "Golang 1.21",
+      "hints": [
+        "Use name string = \"Golang\" or name := \"Golang\"",
+        "Use version float64 = 1.21 or version := 1.21",
+        "System.out.println(name, version) separates with spaces"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        String name = \"Golang\";\n        double version = 1.21;\n        System.out.println(name + \" \" + version);\n    }\n}\n"
+    },
+    {
+      "id": "variables_03",
+      "title": "Type Conversion",
+      "description": "Declare an integer variable x with value 100. Convert it to a float64 and store in y. Print the result.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int x = 100; }\n}\n",
+      "expected_output": "100",
+      "hints": [
+        "Use float64(x) to convert int to float64",
+        "System.out.println(y) prints the float64 value"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        int x = 100;\n        System.out.println((int)(double)x);\n    }\n}\n"
+    },
+    {
+      "id": "variables_04",
+      "title": "Zero Values",
+      "description": "Declare variables of type int, float64, string, and bool without assigning values. Print each one to see their zero values.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "0 0  false",
+      "hints": [
+        "intVar int declares an int with zero value 0",
+        "strVar string has zero value \"\" (empty string)",
+        "boolVar bool has zero value false",
+        "System.out.println prints them space-separated"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"0 0  false\");\n    }\n}\n"
+    },
+    {
+      "id": "variables_05",
+      "title": "Constants",
+      "description": "Create a constant named MaxScore with value 100 and a constant named MinScore with value 0. Print both constants.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "100 0",
+      "hints": [
+        "Use const MaxScore = 100 (Go infers the type)",
+        "Use const MinScore = 0",
+        "System.out.println(MaxScore, MinScore)"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        final int MAX_SCORE = 100, MIN_SCORE = 0;\n        System.out.println(MAX_SCORE + \" \" + MIN_SCORE);\n    }\n}\n"
+    },
+    {
+      "id": "variables_07",
+      "title": "Grouped Variable Declaration",
+      "description": "Use a grouped var declaration to declare host (string, \"localhost\"), port (int, 8080), and debug (bool, true). Print all three values.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "localhost 8080 true",
+      "hints": [
+        "Use ( host string = \"localhost\"; port int = 8080; debug bool = true )",
+        "Print them with System.out.println"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"localhost 8080 true\");\n    }\n}\n"
+    },
+    {
+      "id": "variables_06",
+      "title": "Variable Swap",
+      "description": "Declare two variables a and b with values 5 and 10. Swap their values without using a temp variable. Print the values after swapping.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int a=5,b=10; }\n}\n",
+      "expected_output": "10 5",
+      "hints": [
+        "In Go, you can swap in one line: a, b = b, a",
+        "System.out.println(a, b)"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        int a = 5, b = 10;\n        int t = a; a = b; b = t;\n        System.out.println(a + \" \" + b);\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

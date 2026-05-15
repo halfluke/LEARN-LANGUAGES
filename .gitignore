@@ -8,6 +8,8 @@ target/
 # C / C# check workspaces
 **/.check-c-work/
 **/.check-csharp-work/
+**/.check-python-work/
+**/.check-java-work/
 
 # Python (c/, csharp/ TUIs)
 **/.venv/

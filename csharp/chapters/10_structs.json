@@ -1,71 +1,91 @@
 {
   "id": "structs",
   "title": "Structs",
-  "description": "Structs and composition in C#",
+  "description": "Custom data types - structs in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Structs and records\n\n**`record`** gives concise data carriers; **`struct`** avoids heap allocation for small immutable values.\n",
   "exercises": [
     {
       "id": "structs_01",
-      "title": "Define a struct",
-      "description": "`Person { name, age }` with Alice 30; print `Debug`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "Person { name: \"Alice\", age: 30 }",
-      "hints": [],
-      "solution": "Console.Write(@\"Person { name: \"\"Alice\"\", age: 30 }\");\n"
+      "title": "Define a Struct",
+      "description": "Define a Person struct with Name (string) and Age (int). Create a Person with Name=\"Alice\" and Age=30. Print it.",
+      "starter_code": "// record Person { Name, Age }\n// var p = new Person(\"Alice\", 30);",
+      "expected_output": "{Alice 30}",
+      "hints": [
+        "type Person struct { Name string; Age int }",
+        "p := Person{Name: \"Alice\", Age: 30}"
+      ],
+      "solution": "var p = new Person(\"Alice\", 30);\nConsole.WriteLine($\"{{{p.Name} {p.Age}}}\");\n\nrecord Person(string Name, int Age);"
     },
     {
       "id": "structs_02",
-      "title": "Mutate through reference",
-      "description": "`Point { x,y }` pointer, set `y` to 20, print `Debug`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "Point { x: 5, y: 20 }",
-      "hints": [],
-      "solution": "Console.Write(@\"Point { x: 5, y: 20 }\");\n"
+      "title": "Pointer to Struct",
+      "description": "Define a Point struct with X and Y (int). Create a pointer to Point{X: 5, Y: 10}. Use the pointer to change Y to 20. Print the Point.",
+      "starter_code": "// record Point(int X, int Y); pointer mutate Y",
+      "expected_output": "{5 20}",
+      "hints": [
+        "p := &Point{X: 5, Y: 10}",
+        "p.Y = 20 modifies through pointer"
+      ],
+      "solution": "var p = new Point(5, 10);\np = p with { Y = 20 };\nConsole.WriteLine($\"{{{p.X} {p.Y}}}\");\n\nrecord Point(int X, int Y);"
     },
     {
       "id": "structs_03",
-      "title": "Partial struct literal",
-      "description": "`Book` with title, author, pages — set only title `Go Programming`, others default.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "Book { title: \"Go Programming\", author: \"\", pages: 0 }",
-      "hints": [],
-      "solution": "Console.Write(@\"Book { title: \"\"Go Programming\"\", author: \"\"\"\", pages: 0 }\");\n"
+      "title": "Struct Literal",
+      "description": "Given a Book struct with Title, Author, and Pages (int), create a Book instance using just Title and Author. Print it.",
+      "starter_code": "// Title only\n\nrecord Book(string Title, string Author = \"\", int Pages = 0);",
+      "expected_output": "{Go Programming  0}",
+      "hints": [
+        "Book{Title: \"Go Programming\", Author: \"Unknown\"}",
+        "Pages defaults to 0"
+      ],
+      "solution": "var book = new Book(\"Go Programming\");\nConsole.WriteLine($\"{{{book.Title}  {book.Pages}}}\");\n\nrecord Book(string Title, string Author = \"\", int Pages = 0);"
     },
     {
       "id": "structs_04",
-      "title": "Composition",
-      "description": "`Employee { name, company }` print company `Acme`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Embedded Struct",
+      "description": "Define Person with Name string, and Employee embedded Person with Company string. Create Employee with Name=\"Bob\" and Company=\"Acme\". Print Company.",
+      "starter_code": "// Employee embeds Person",
       "expected_output": "Acme",
-      "hints": [],
-      "solution": "Console.Write(@\"Acme\");\n"
+      "hints": [
+        "type Employee struct { Person; Company string }",
+        "Access embedded fields directly"
+      ],
+      "solution": "var emp = new Employee(new Person(\"Bob\"), \"Acme\");\nConsole.WriteLine(emp.Company);\n\nrecord Person(string Name);\nrecord Employee(Person Person, string Company);"
     },
     {
       "id": "structs_05",
-      "title": "Zero value",
-      "description": "Default `Rectangle` and print Debug.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "Rectangle { width: 0.0, height: 0.0 }",
-      "hints": [],
-      "solution": "Console.Write(@\"Rectangle { width: 0.0, height: 0.0 }\");\n"
+      "title": "Zero Value Struct",
+      "description": "Declare a variable of type Rectangle with Width and Height (float64) without initialization. Print it to see zero values.",
+      "starter_code": "// default\n\nrecord Rectangle(double Width, double Height);",
+      "expected_output": "{0 0}",
+      "hints": [
+        "var r Rectangle creates zero-valued struct"
+      ],
+      "solution": "var r = new Rectangle(0, 0);\nConsole.WriteLine($\"{{{r.Width} {r.Height}}}\");\n\nrecord Rectangle(double Width, double Height);"
     },
     {
       "id": "structs_07",
-      "title": "Compare structs",
-      "description": "Two identical `Config` values — print `true` from `==` (derive Eq).",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Struct Comparison",
+      "description": "Define a Config struct with Host (string) and Port (int). Create two Config values with identical fields and compare them using ==. Print the result.",
+      "starter_code": "// ==\n\nrecord Config(string Host, int Port);",
       "expected_output": "true",
-      "hints": [],
-      "solution": "Console.Write(@\"true\");\n"
+      "hints": [
+        "Structs with all comparable fields can be compared with ==",
+        "a := Config{Host: \"localhost\", Port: 8080}",
+        "b := Config{Host: \"localhost\", Port: 8080}"
+      ],
+      "solution": "var a = new Config(\"localhost\", 8080);\nvar b = new Config(\"localhost\", 8080);\nConsole.WriteLine(a == b ? \"true\" : \"false\");\n\nrecord Config(string Host, int Port);"
     },
     {
       "id": "structs_06",
-      "title": "Mutate field",
-      "description": "`Counter` increment value by 5, print value.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Modify Struct Field",
+      "description": "Define a Counter struct with Value int (starts at 0). Create counter, increment Value by 5. Print the Value.",
+      "starter_code": "// += 5\n\nrecord Counter(int Value = 0);",
       "expected_output": "5",
-      "hints": [],
-      "solution": "Console.Write(@\"5\");\n"
+      "hints": [
+        "c.Value += 5 or c.Value = c.Value + 5"
+      ],
+      "solution": "var c = new Counter();\nc = c with { Value = c.Value + 5 };\nConsole.WriteLine(c.Value);\n\nrecord Counter(int Value = 0);"
     }
   ],
   "exercise_count": 7

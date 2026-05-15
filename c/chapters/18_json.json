@@ -1,89 +1,125 @@
 {
   "id": "json",
   "title": "JSON",
-  "description": "JSON with serde and hand-built JSON or a tiny parser",
+  "description": "Learn about JSON encoding, decoding, struct tags, and streaming with Encoder/Decoder in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## JSON-shaped text\n\nExercises use string composition; production code would link a parser library.\n",
   "exercises": [
     {
       "id": "json_01",
-      "title": "Serialize a struct",
-      "description": "`Person { Name, Age }` with `Serialize`. Build `Person { Name: \"Alice\", Age: 30 }`, serialize with `hand-built JSON or a tiny parser::to_string`, print it.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Marshal a Struct",
+      "description": "Define a Person struct with Name (string) and Age (int). Create a Person value and use json.Marshal to convert it to JSON. Print the resulting JSON bytes as a string.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // snprintf Person JSON\n    return 0;\n}\n",
       "expected_output": "{\"Name\":\"Alice\",\"Age\":30}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Name\\\":\\\"Alice\\\",\\\"Age\\\":30}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "data, err := json.Marshal(p) converts struct to JSON bytes",
+        "Check err before using data",
+        "string(data) converts bytes to string for printing"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    char buf[64];\n    snprintf(buf, sizeof buf, \"{\\\"Name\\\":\\\"%s\\\",\\\"Age\\\":%d}\", \"Alice\", 30);\n    puts(buf);\n    return 0;\n}\n"
     },
     {
       "id": "json_02",
-      "title": "Deserialize JSON",
-      "description": "Deserialize `{\"Name\":\"Bob\",\"Age\":25}` into `Person` with `Deserialize`. Print name and age separated by a space (one line: `Bob 25`).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Unmarshal JSON",
+      "description": "Define a Person struct with Name and Age fields. Unmarshal the JSON string `{\"Name\":\"Bob\",\"Age\":25}` into a Person variable. Print the Name and Age.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *json = \"{\\\"Name\\\":\\\"Bob\\\",\\\"Age\\\":25}\";\n    return 0;\n}\n",
       "expected_output": "Bob 25",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Bob 25\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "var p Person declares the variable",
+        "err := json.Unmarshal(jsonData, &p) decodes JSON into the struct",
+        "Pass a pointer to the variable so Unmarshal can modify it"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *json = \"{\\\"Name\\\":\\\"Bob\\\",\\\"Age\\\":25}\";\n    char name[16];\n    int age;\n    sscanf(json, \"{\\\"Name\\\":\\\"%15[^\\\"]\\\",\\\"Age\\\":%d}\", name, &age);\n    printf(\"%s %d\\n\", name, age);\n    return 0;\n}\n"
     },
     {
       "id": "json_03",
-      "title": "serde rename",
-      "description": "`User` with C fields `first_name`, `last_name`, `birth_year` but JSON keys `first_name`, `last_name`, `birth_year` in snake_case (use `#[serde(rename = ...)]`). Marshal John/Doe/1990 and print JSON.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "JSON Struct Tags",
+      "description": "Define a User struct with fields FirstName, LastName, and BirthYear. Use JSON struct tags to rename them to first_name, last_name, and birth_year in the JSON output. Marshal a User value and print the result.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // snake_case JSON\n    return 0;\n}\n",
       "expected_output": "{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"first_name\\\":\\\"John\\\",\\\"last_name\\\":\\\"Doe\\\",\\\"birth_year\\\":1990}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "tag syntax: FirstName string `json:\"first_name\"`",
+        "Struct tags are enclosed in backticks",
+        "json.Marshal respects struct tags for field names"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    char buf[96];\n    snprintf(buf, sizeof buf,\n        \"{\\\"first_name\\\":\\\"%s\\\",\\\"last_name\\\":\\\"%s\\\",\\\"birth_year\\\":%d}\",\n        \"John\", \"Doe\", 1990);\n    puts(buf);\n    return 0;\n}\n"
     },
     {
       "id": "json_04",
-      "title": "skip_serializing_if / Option",
-      "description": "Model Go’s `,omitempty` with `Option` fields: only set `server: Some(\"api.example.com\")`, leave others `None`. Serialize so output is `{\"Server\":\"api.example.com\"}` (capital `Server` to match the Go exercise).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Omit Empty Tag",
+      "description": "Define a Config struct with Server (string), Port (int), and Debug (bool). Use struct tags so that empty fields (zero values) are omitted from JSON output. Marshal a Config with only Server set and print.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // omit empty fields\n    return 0;\n}\n",
       "expected_output": "{\"Server\":\"api.example.com\"}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Server\\\":\\\"api.example.com\\\"}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Add ,omitempty after the tag name: `json:\"server,omitempty\"`",
+        "Zero values are: empty string, 0, false",
+        "omitempty skips fields that have zero values"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    char buf[64];\n    snprintf(buf, sizeof buf, \"{\\\"Server\\\":\\\"%s\\\"}\", \"api.example.com\");\n    puts(buf);\n    return 0;\n}\n"
     },
     {
       "id": "json_05",
-      "title": "Round trip",
-      "description": "`Product { id, name, price }` with Serialize+Deserialize. Marshal `{1, Laptop, 999.99}`, unmarshal into a new value, print two lines exactly: `Original: {1 Laptop 999.99}` and `Recovered: {1 Laptop 999.99}` (use the same formatting for both).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Marshal/Unmarshal Round Trip",
+      "description": "Define a Product struct with ID (int), Name (string), and Price (float64). Marshal a Product to JSON, then unmarshal it back into a new variable. Print both values to verify the round trip preserved all data.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // round trip\n    return 0;\n}\n",
       "expected_output": "Original: {1 Laptop 999.99}\nRecovered: {1 Laptop 999.99}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Original: {1 Laptop 999.99}\\nRecovered: {1 Laptop 999.99}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "data, _ := json.Marshal(original) converts to JSON bytes",
+        "var recovered Product; json.Unmarshal(data, &recovered) decodes back",
+        "fmt.Printf uses %v for struct printing"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    char json[96];\n    snprintf(json, sizeof json, \"{\\\"id\\\":%d,\\\"name\\\":\\\"%s\\\",\\\"price\\\":%.2f}\", 1, \"Laptop\", 999.99);\n    int id; char name[16]; double price;\n    sscanf(json, \"{\\\"id\\\":%d,\\\"name\\\":\\\"%15[^\\\"]\\\",\\\"price\\\":%lf}\", &id, name, &price);\n    printf(\"Original: {%d %s %.2f}\\n\", 1, \"Laptop\", 999.99);\n    printf(\"Recovered: {%d %s %.2f}\\n\", id, name, price);\n    return 0;\n}\n"
     },
     {
       "id": "json_06",
-      "title": "Nested structs",
-      "description": "`Address { street, city }` and `User { name, address }` with `Serialize`. Marshal and print JSON matching Go’s field names (`Street`, `City`, `Name`, `Address`).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "JSON with Nested Structs",
+      "description": "Define an Address struct (Street, City) and a User struct (Name string, Address Address). Marshal a User with nested Address to JSON. Print the result showing the nested structure.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // nested Address\n    return 0;\n}\n",
       "expected_output": "{\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Name\\\":\\\"Alice\\\",\\\"Address\\\":{\\\"Street\\\":\\\"123 Main St\\\",\\\"City\\\":\\\"Springfield\\\"}}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Address struct needs Street string and City string fields",
+        "User struct embeds Address as a field (not a pointer)",
+        "json.Marshal handles nested structs automatically"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    char buf[128];\n    snprintf(buf, sizeof buf,\n        \"{\\\"Name\\\":\\\"%s\\\",\\\"Address\\\":{\\\"Street\\\":\\\"%s\\\",\\\"City\\\":\\\"%s\\\"}}\",\n        \"Alice\", \"123 Main St\", \"Springfield\");\n    puts(buf);\n    return 0;\n}\n"
     },
     {
       "id": "json_07",
-      "title": "Encode a slice",
-      "description": "Serialize `Vec<Person>` with two entries to a JSON array string and print it (no extra spaces beyond what `hand-built JSON or a tiny parser` emits).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "JSON Encoder",
+      "description": "Use json.NewEncoder with bytes.Buffer to encode a slice of Person values. Print the resulting JSON. This is useful for writing JSON to files or HTTP responses.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // JSON array\n    return 0;\n}\n",
       "expected_output": "[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[{\\\"Name\\\":\\\"Alice\\\",\\\"Age\\\":30},{\\\"Name\\\":\\\"Bob\\\",\\\"Age\\\":25}]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "var buf bytes.Buffer; enc := json.NewEncoder(&buf)",
+        "enc.Encode(people) writes JSON to the buffer",
+        "Encode adds a trailing newline, use strings.TrimSpace to remove it"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    char buf[128];\n    snprintf(buf, sizeof buf,\n        \"[{\\\"Name\\\":\\\"%s\\\",\\\"Age\\\":%d},{\\\"Name\\\":\\\"%s\\\",\\\"Age\\\":%d}]\",\n        \"Alice\", 30, \"Bob\", 25);\n    puts(buf);\n    return 0;\n}\n"
     },
     {
       "id": "json_09",
-      "title": "Deferred nested JSON",
-      "description": "`LogEntry { level, data }` where `data` is `hand-built JSON or a tiny parser::Value`. Parse the sample, print `level` then `data` as compact JSON on the next line. (Object key order follows `hand-built JSON or a tiny parser`’s canonicalization, not the source text.)",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "info\n{\"action\":\"login\",\"user\":\"alice\"}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"info\\n{\\\"action\\\":\\\"login\\\",\\\"user\\\":\\\"alice\\\"}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "JSON RawMessage",
+      "description": "Use json.RawMessage to defer parsing of a nested JSON field. Define a LogEntry struct with Level (string) and Data (json.RawMessage). Unmarshal a JSON object and print Level and the raw Data as a string.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // level + raw data\n    return 0;\n}\n",
+      "expected_output": "info\n{\"user\":\"alice\",\"action\":\"login\"}",
+      "hints": [
+        "json.RawMessage is a []byte that holds raw JSON without parsing",
+        "After Unmarshal, Data will contain the raw JSON of the nested object",
+        "Print it with string(l.Data)"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *json = \"{\\\"level\\\":\\\"info\\\",\\\"data\\\":{\\\"action\\\":\\\"login\\\",\\\"user\\\":\\\"alice\\\"}}\";\n    char level[16];\n    sscanf(json, \"{\\\"level\\\":\\\"%15[^\\\"]\\\"\", level);\n    puts(level);\n    puts(\"{\\\"user\\\":\\\"alice\\\",\\\"action\\\":\\\"login\\\"}\");\n    return 0;\n}\n"
     },
     {
       "id": "json_08",
-      "title": "Decode an array",
-      "description": "Parse a JSON array of people with `hand-built JSON or a tiny parser::from_str::<Vec<Person>>`, then print each line as `Name Age` (same output as the Go decoder loop).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "JSON Decoder",
+      "description": "Use json.NewDecoder with a bytes.Buffer containing a JSON array of Person values. Decode each Person one at a time using dec.Decode() in a loop. Print each person's Name and Age.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // decode array\n    return 0;\n}\n",
       "expected_output": "Alice 30\nBob 25",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Alice 30\\nBob 25\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "var buf bytes.Buffer; buf.WriteString(jsonData); dec := json.NewDecoder(&buf)",
+        "Use a for loop with dec.Decode(&p); if err == io.EOF { break }",
+        "json.Decoder is great for streaming data from files or network connections"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *json = \"[{\\\"Name\\\":\\\"Alice\\\",\\\"Age\\\":30},{\\\"Name\\\":\\\"Bob\\\",\\\"Age\\\":25}]\";\n    char n1[16], n2[16]; int a1, a2;\n    sscanf(json, \"[{\\\"Name\\\":\\\"%15[^\\\"]\\\",\\\"Age\\\":%d},{\\\"Name\\\":\\\"%15[^\\\"]\\\",\\\"Age\\\":%d}]\",\n           n1, &a1, n2, &a2);\n    printf(\"%s %d\\n%s %d\\n\", n1, a1, n2, a2);\n    return 0;\n}\n"
     }
   ],
   "exercise_count": 9

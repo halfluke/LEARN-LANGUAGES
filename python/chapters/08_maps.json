@@ -1,0 +1,88 @@
+{
+  "id": "maps",
+  "title": "Maps",
+  "description": "Hash maps (dictionaries) in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Dicts\n\n`dict` literals, `in`, `del`, and iteration with `.items()`.\n",
+  "exercises": [
+    {
+      "id": "maps_01",
+      "title": "Create Map",
+      "description": "Create a map ages with keys \"Alice\" (25), \"Bob\" (30). Print the map.",
+      "starter_code": "ages = {}\n# ages[\"Alice\"] = 25\n# ages[\"Bob\"] = 30\n# print(ages)\n",
+      "expected_output": "{'Alice': 25, 'Bob': 30}",
+      "hints": [
+        "Use ages := map[string]int{\"Alice\": 25, \"Bob\": 30}"
+      ],
+      "solution": "ages = {\"Alice\": 25, \"Bob\": 30}\nprint(ages)\n"
+    },
+    {
+      "id": "maps_02",
+      "title": "Map Lookup",
+      "description": "Create map scores := map[string]int{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
+      "starter_code": "scores = {\"Math\": 95, \"Physics\": 88}\n",
+      "expected_output": "95",
+      "hints": [
+        "Use scores[\"Math\"] to get value",
+        "print(scores[\"Math\"])"
+      ],
+      "solution": "scores = {\"Math\": 95, \"Physics\": 88}\nprint(scores[\"Math\"])\n"
+    },
+    {
+      "id": "maps_03",
+      "title": "Add to Map",
+      "description": "Create empty map names := make(map[string]string). Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
+      "starter_code": "names = {}\n",
+      "expected_output": "{'1': 'One', '2': 'Two'}",
+      "hints": [
+        "names[\"1\"] = \"One\""
+      ],
+      "solution": "names = {}\nnames[\"1\"] = \"One\"\nnames[\"2\"] = \"Two\"\nprint(names)\n"
+    },
+    {
+      "id": "maps_04",
+      "title": "Delete from Map",
+      "description": "Create map data := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
+      "starter_code": "data = {\"a\": 1, \"b\": 2, \"c\": 3}\n",
+      "expected_output": "{'a': 1, 'c': 3}",
+      "hints": [
+        "Use delete(data, \"b\")"
+      ],
+      "solution": "data = {\"a\": 1, \"b\": 2, \"c\": 3}\ndel data[\"b\"]\nprint(data)\n"
+    },
+    {
+      "id": "maps_05",
+      "title": "Check Key Existence",
+      "description": "Create map inventory := map[string]int{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
+      "starter_code": "inventory = {\"apples\": 5, \"oranges\": 3}\n",
+      "expected_output": "not found",
+      "hints": [
+        "Use value, exists := inventory[\"bananas\"]",
+        "Check the exists variable"
+      ],
+      "solution": "inventory = {\"apples\": 5, \"oranges\": 3}\nprint(\"exists\" if \"bananas\" in inventory else \"not found\")\n"
+    },
+    {
+      "id": "maps_07",
+      "title": "Map Length",
+      "description": "Create map counts := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
+      "starter_code": "counts = {\"one\": 1, \"two\": 2, \"three\": 3}\n",
+      "expected_output": "3",
+      "hints": [
+        "Use len(counts) to get the number of key-value pairs"
+      ],
+      "solution": "counts = {\"one\": 1, \"two\": 2, \"three\": 3}\nprint(len(counts))\n"
+    },
+    {
+      "id": "maps_06",
+      "title": "Iterate Map",
+      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "starter_code": "grades = {\"A\": 90, \"B\": 80, \"C\": 70}\n",
+      "expected_output": "A 90\nB 80\nC 70",
+      "hints": [
+        "Use for key, value := range grades"
+      ],
+      "solution": "grades = {\"A\": 90, \"B\": 80, \"C\": 70}\nfor key, value in grades.items():\n    print(key, value)\n"
+    }
+  ],
+  "exercise_count": 7
+}

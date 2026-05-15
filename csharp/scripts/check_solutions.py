@@ -31,9 +31,14 @@ sys.path.insert(0, str(ROOT))
 from learn_cs_tui.executor import execute_code  # noqa: E402
 
 
-def check_one(solution: str, expected: str, work: Path) -> tuple[bool, str]:
+def check_one(solution: str, expected: str, work: Path, chapter_id: str, exercise_id: str) -> tuple[bool, str]:
     exp = (expected or "").strip()
-    res = execute_code(solution.strip(), work_dir=work)
+    ex_work = work / chapter_id / exercise_id
+    if ex_work.exists():
+        import shutil
+
+        shutil.rmtree(ex_work, ignore_errors=True)
+    res = execute_code(solution.strip(), work_dir=ex_work)
     if res.timed_out:
         return False, "timed out"
     if res.exit_code != 0:
@@ -56,6 +61,7 @@ def main() -> int:
 
     work_env = os.environ.get("LEARN_CSHARP_CHECK_WORK", "").strip()
     work = Path(work_env) if work_env else DEFAULT_CHECK_WORK
+    work = work.resolve()
     work.mkdir(parents=True, exist_ok=True)
 
     if not CHAPTERS.is_dir():
@@ -79,7 +85,7 @@ def main() -> int:
                 skipped += 1
                 continue
             checked += 1
-            ok, detail = check_one(sol, ex.get("expected_output") or "", work)
+            ok, detail = check_one(sol, ex.get("expected_output") or "", work, cid, eid)
             if not ok:
                 failures.append((cid, eid, detail))
                 if not args.list_failures_only:

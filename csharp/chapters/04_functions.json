@@ -1,71 +1,87 @@
 {
   "id": "functions",
   "title": "Functions",
-  "description": "Functions, Result, closures, and deterministic cleanup in C#",
+  "description": "Functions, parameters, and return values in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Functions in C#\n\nTop-level programs can call **`static` local functions** declared later in the file. Use tuples or `out` parameters when modeling multi-return patterns.\n",
   "exercises": [
     {
       "id": "functions_01",
-      "title": "Basic function",
-      "description": "Define `fn greet()` printing `Hello` and call it from `main`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Basic Function",
+      "description": "Create a function greet() that prints Hello. Call it in main.",
+      "starter_code": "\n// Greet();\n\nstatic void Greet() { }",
       "expected_output": "Hello",
-      "hints": [],
-      "solution": "Console.Write(@\"Hello\");\n"
+      "hints": [
+        "`static void Greet()` then call it."
+      ],
+      "solution": "\nGreet();\n\nstatic void Greet() { Console.WriteLine(\"Hello\"); }"
     },
     {
       "id": "functions_02",
-      "title": "Parameters",
-      "description": "`greet(name: &str)` prints `Hello, Alice` for `\"Alice\"`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Function with Parameters",
+      "description": "Create function greet(name string) that prints Hello, name. Call with \"Alice\".",
+      "starter_code": "\n// Greet(\"Alice\");\n\nstatic void Greet(string name) { }",
       "expected_output": "Hello, Alice",
-      "hints": [],
-      "solution": "Console.Write(@\"Hello, Alice\");\n"
+      "hints": [
+        "Use fmt.Printf(\"Hello, %s\\n\", name)",
+        "Pass \"Alice\" as argument"
+      ],
+      "solution": "\nGreet(\"Alice\");\n\nstatic void Greet(string name) { Console.WriteLine($\"Hello, {name}\"); }"
     },
     {
       "id": "functions_03",
-      "title": "Return value",
-      "description": "`add(a: i32, b: i32) -> i32` return sum; print `add(3,4)`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Function with Return",
+      "description": "Create function add(a, b int) int that returns a+b. Call with 3 and 4, print result.",
+      "starter_code": "\n// Console.WriteLine(Add(3, 4));\n\nstatic int Add(int a, int b) => 0;",
       "expected_output": "7",
-      "hints": [],
-      "solution": "Console.Write(@\"7\");\n"
+      "hints": [
+        "Use return a + b",
+        "Print the returned value"
+      ],
+      "solution": "\nConsole.WriteLine(Add(3, 4));\n\nstatic int Add(int a, int b) => a + b;"
     },
     {
       "id": "functions_04",
-      "title": "Result return",
-      "description": "`divide(a,b) -> Result<i32,&'static str>` error on zero; print `Debug` of `(divide(10,3))`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "Ok(3)",
-      "hints": [],
-      "solution": "Console.Write(@\"Ok(3)\");\n"
+      "title": "Multiple Return Values",
+      "description": "Create function divide(a, b int) (int, error) that returns quotient and nil error, or 0 and error if b is 0. Call with 10 and 3, print result and error.",
+      "starter_code": "\n// print Divide(10,3) and nil for Divide(10,0)\n\nstatic int? Divide(int a, int b) => null;",
+      "expected_output": "3 <nil>",
+      "hints": [
+        "Match Go's `Console.WriteLine(result, err)` with `<nil>` for null."
+      ],
+      "solution": "\nvar r = Divide(10, 3);\nvar e = Divide(10, 0);\nConsole.WriteLine($\"{r} {(e is null ? \"<nil>\" : e.ToString())}\");\n\nstatic int? Divide(int a, int b) => b == 0 ? null : a / b;"
     },
     {
       "id": "functions_05",
-      "title": "Variadic style",
-      "description": "Implement `sum(nums: &[i32]) -> i32` summing slice; print sum of `[1,2,3,4,5]`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Variadic Function",
+      "description": "Create function sum(numbers ...int) int that sums all numbers. Call with 1, 2, 3, 4, 5 and print the result.",
+      "starter_code": "\n// Console.WriteLine(Sum(1,2,3,4,5));\n\nstatic int Sum(params int[] nums) => 0;",
       "expected_output": "15",
-      "hints": [],
-      "solution": "Console.Write(@\"15\");\n"
+      "hints": [
+        "`params` accepts variable arguments."
+      ],
+      "solution": "using System.Linq;\n\nConsole.WriteLine(Sum(1, 2, 3, 4, 5));\n\nstatic int Sum(params int[] nums) => nums.Sum();"
     },
     {
       "id": "functions_07",
-      "title": "Drop order demo",
-      "description": "Print `start`, then `working`, then `end` using a helper that prints `end` when a guard struct drops.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Defer Statement",
+      "description": "Create a function process() that prints \"start\", defers printing \"end\", and prints \"working\". Call it in main.",
+      "starter_code": "\n// Process();\n\nstatic void Process() { /* start, working, defer end */ }",
       "expected_output": "start\nworking\nend",
-      "hints": [],
-      "solution": "Console.Write(@\"start\nworking\nend\");\n"
+      "hints": [
+        "`try/finally` after `Process()` prints `end` when the try block completes."
+      ],
+      "solution": "\ntry { Process(); }\nfinally { Console.WriteLine(\"end\"); }\n\nstatic void Process()\n{\n    Console.WriteLine(\"start\");\n    Console.WriteLine(\"working\");\n}"
     },
     {
       "id": "functions_06",
-      "title": "Closure state",
-      "description": "Implement `make_adder` returning `impl FnMut(i32) -> i32`; print results of `5` then `10` cumulative.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Closure",
+      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder := makeAdder(), then call adder(5) and adder(10), printing both results.",
+      "starter_code": "Func<int, int> makeAdder = () => 0;\n// Console.WriteLine(makeAdder()(5));",
       "expected_output": "5\n15",
-      "hints": [],
-      "solution": "Console.Write(@\"5\n15\");\n"
+      "hints": [
+        "Capture `sum` in a closure."
+      ],
+      "solution": "int sum = 0;\nFunc<int, int> makeAdder() => x => { sum += x; return sum; };\nvar adder = makeAdder();\nConsole.WriteLine(adder(5));\nConsole.WriteLine(adder(10));"
     }
   ],
   "exercise_count": 7

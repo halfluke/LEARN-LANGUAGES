@@ -8,7 +8,7 @@
       "id": "functions_01",
       "title": "Basic Function",
       "description": "Create a function greet() that prints Hello. Call it in main.",
-      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Call greet function\n}\n\nfunc greet() {\n    // Print Hello\n}",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc greet() {\n    // Print Hello\n}\n\nfunc main() {\n    // Call greet()\n}",
       "expected_output": "Hello",
       "hints": [
         "Define greet() before main()",

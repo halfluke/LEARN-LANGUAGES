@@ -1,71 +1,92 @@
 {
   "id": "methods",
   "title": "Methods",
-  "description": "Methods and traits (`Display`) in C#",
+  "description": "Learn how to define methods on types in Go, including pointer and value receivers",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Methods\n\nInstance methods take an implicit `this`; extension methods add sugar for static calls.\n",
   "exercises": [
     {
       "id": "methods_01",
-      "title": "Method on struct",
-      "description": "`Person { name }` method `greet` returns `Hello, ` + name; print it.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Define a Method",
+      "description": "Define a method on a struct type 'Person' with a 'Name' field that returns a greeting string.",
+      "starter_code": "record Person(string Name) { public string Greet() => \"Hello, \" + Name; }",
       "expected_output": "Hello, Alice",
-      "hints": [],
-      "solution": "Console.Write(@\"Hello, Alice\");\n"
+      "hints": [
+        "Use func (p Person) Greet() string { return ... } to define the method",
+        "Access the field with p.Name"
+      ],
+      "solution": "var p = new Person(\"Alice\");\nConsole.WriteLine(p.Greet());\n\nrecord Person(string Name) { public string Greet() => \"Hello, \" + Name; }"
     },
     {
       "id": "methods_02",
-      "title": "Mutating method",
-      "description": "`SetName` with `&mut self` sets `name`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Pointer Receiver",
+      "description": "Define a method with a pointer receiver that modifies the receiver's state. Create a 'SetName' method on Person.",
+      "starter_code": "class Person { public string Name = \"Bob\"; public void SetName(string n) => Name = n; }",
       "expected_output": "Charlie",
-      "hints": [],
-      "solution": "Console.Write(@\"Charlie\");\n"
+      "hints": [
+        "Use func (p *Person) SetName(name string) to define a pointer receiver method",
+        "Set p.Name = name inside the method"
+      ],
+      "solution": "var p = new Person();\np.SetName(\"Charlie\");\nConsole.WriteLine(p.Name);\n\nclass Person { public string Name = \"Bob\"; public void SetName(string n) => Name = n; }"
     },
     {
       "id": "methods_03",
-      "title": "Value receiver",
-      "description": "`Counter` with `increment(self) -> Self` returning new counter +1.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "Counter { value: 6 }",
-      "hints": [],
-      "solution": "Console.Write(@\"Counter { value: 6 }\");\n"
+      "title": "Value Receiver",
+      "description": "Define a method with a value receiver that returns a new value without modifying the original.",
+      "starter_code": "record Counter(int Value) { public Counter Increment() => this with { Value = Value + 1 }; }",
+      "expected_output": "{6}",
+      "hints": [
+        "Use func (c Counter) Increment() Counter to define a value receiver method",
+        "Return c with Value + 1"
+      ],
+      "solution": "var c = new Counter(5);\nConsole.WriteLine($\"{{{c.Increment().Value}}}\");\n\nrecord Counter(int Value) { public Counter Increment() => this with { Value = Value + 1 }; }"
     },
     {
       "id": "methods_04",
-      "title": "Display trait",
-      "description": "Implement `std::fmt::Display` for `Point` like Go `Stringer`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Interface Satisfaction",
+      "description": "Define a 'Stringer' interface with a String() method, then satisfy it with a type.",
+      "starter_code": "record Point(int X, int Y) { public override string ToString() => $\"Point({X}, {Y})\"; }",
       "expected_output": "Point(10, 20)",
-      "hints": [],
-      "solution": "Console.Write(@\"Point(10, 20)\");\n"
+      "hints": [
+        "Define interface Stringer with func String() string",
+        "Implement func (p Point) String() string { return ... } on Point"
+      ],
+      "solution": "Console.WriteLine(new Point(10, 20));\n\nrecord Point(int X, int Y) { public override string ToString() => $\"Point({X}, {Y})\"; }"
     },
     {
       "id": "methods_05",
-      "title": "Builder chain",
-      "description": "`Builder` with `add` consuming `self` and returning new `Builder`; `build` returns `String`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Method Chaining",
+      "description": "Define a Builder type with Methods Add(str) Builder and Build() string. Add returns the Builder for chaining. Test by chaining Add(\"Hello\").Add(\"World\").Build().",
+      "starter_code": "class Builder { public string Result = \"\"; public Builder Add(string s) { Result += s; return this; } public string Build() => Result; }",
       "expected_output": "HelloWorld",
-      "hints": [],
-      "solution": "Console.Write(@\"HelloWorld\");\n"
+      "hints": [
+        "func (b Builder) Add(s string) Builder { b.result += s; return b }",
+        "func (b Builder) Build() string { return b.result }"
+      ],
+      "solution": "var b = new Builder();\nConsole.WriteLine(b.Add(\"Hello\").Add(\"World\").Build());\n\nclass Builder { public string Result = \"\"; public Builder Add(string s) { Result += s; return this; } public string Build() => Result; }"
     },
     {
       "id": "methods_07",
-      "title": "Circle geometry",
-      "description": "Print area then perimeter for radius `5.0` using `PI`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "78.53981633974483\n31.41592653589793",
-      "hints": [],
-      "solution": "Console.Write(@\"78.53981633974483\n31.41592653589793\");\n"
+      "title": "Multiple Methods on Same Type",
+      "description": "Define a Circle type with Radius float64. Add two methods: Area() float64 and Perimeter() float64. Create a circle with radius 5.0, compute both, and print them.",
+      "starter_code": "record Circle(double Radius) { public double Area() => Math.PI * Radius * Radius; public double Perimeter() => 2 * Math.PI * Radius; }",
+      "expected_output": "78.539816339744831\n31.415926535897931",
+      "hints": [
+        "Use math.Pi for pi",
+        "func (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }",
+        "func (c Circle) Perimeter() float64 { return 2 * math.Pi * c.Radius }"
+      ],
+      "solution": "using System.Globalization;\n\nvar c = new Circle(5.0);\nConsole.WriteLine(c.Area().ToString(\"G17\", CultureInfo.InvariantCulture));\nConsole.WriteLine(c.Perimeter().ToString(\"G17\", CultureInfo.InvariantCulture));\n\nrecord Circle(double Radius) { public double Area() => Math.PI * Radius * Radius; public double Perimeter() => 2 * Math.PI * Radius; }"
     },
     {
       "id": "methods_06",
-      "title": "Newtype method",
-      "description": "`struct MyInt(i32);` method `is_even` -> bool.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Method on Primitive Type",
+      "description": "Create a type MyInt int. Define a method IsEven() bool on MyInt that returns true if the value is even. Test with MyInt(42).",
+      "starter_code": "readonly struct MyInt(int Value) { public bool IsEven() => Value % 2 == 0; }",
       "expected_output": "true",
-      "hints": [],
-      "solution": "Console.Write(@\"true\");\n"
+      "hints": [
+        "func (m MyInt) IsEven() bool { return m%2 == 0 }"
+      ],
+      "solution": "Console.WriteLine(new MyInt(42).IsEven().ToString().ToLowerInvariant());\n\nstruct MyInt\n{\n    public int Value { get; }\n    public MyInt(int value) => Value = value;\n    public bool IsEven() => Value % 2 == 0;\n}"
     }
   ],
   "exercise_count": 7

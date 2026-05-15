@@ -1,0 +1,95 @@
+{
+  "id": "packages",
+  "title": "Packages",
+  "description": "Learn about package declaration, importing, exporting, and init functions in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Modules (concept)\n\nReal code splits across files with `import`. These exercises keep helpers in one script and note where a module boundary would go.\n",
+  "exercises": [
+    {
+      "id": "packages_01",
+      "title": "Package Declaration",
+      "description": "Create a file in a package other than main. Declare package utils and define a function Greet() in it.",
+      "starter_code": "def greet():\n    pass\n\n",
+      "expected_output": "Hello from utils",
+      "hints": [
+        "Use package utils at the top of utils.go",
+        "Define func Greet() that prints a message"
+      ],
+      "solution": "def greet():\n    print(\"Hello from utils\")\n\ngreet()\n"
+    },
+    {
+      "id": "packages_02",
+      "title": "Importing Standard Library",
+      "description": "Import the math package and use math.Sqrt to calculate the square root of 144. Print the result.",
+      "starter_code": "import math\n",
+      "expected_output": "12",
+      "hints": [
+        "Use import \"math\" to import the math package",
+        "Call math.Sqrt(144)",
+        "Use print to print the result"
+      ],
+      "solution": "import math\nprint(int(math.sqrt(144)))\n"
+    },
+    {
+      "id": "packages_03",
+      "title": "Exporting Names",
+      "description": "Create a function and a variable in a separate package. Export them by starting with uppercase. Use them in main.",
+      "starter_code": "count = 0\n",
+      "expected_output": "Count: 0\nIncremented: 1",
+      "hints": [
+        "Export by capitalizing: Count, Increment (Go exports anything starting with uppercase)",
+        "In main, use counter.Count and counter.Increment()"
+      ],
+      "solution": "count = 0\ndef increment():\n    global count\n    count += 1\nprint(\"Count:\", count)\nincrement()\nprint(\"Incremented:\", count)\n"
+    },
+    {
+      "id": "packages_04",
+      "title": "Init Functions",
+      "description": "Create a package with an init() function that sets a global variable. Use it in main().",
+      "starter_code": "version = ''\n",
+      "expected_output": "Version: 1.0.0",
+      "hints": [
+        "Declare Version string in config package",
+        "Define func init() that assigns \"1.0.0\" to Version",
+        "init() runs automatically before main() when the package is imported"
+      ],
+      "solution": "version = \"1.0.0\"\nprint(\"Version:\", version)\n"
+    },
+    {
+      "id": "packages_05",
+      "title": "Unexported Names",
+      "description": "Define both exported (uppercase) and unexported (lowercase) functions in a package. Try to use only the exported one from main.",
+      "starter_code": "def format_msg():\n    pass\n\n",
+      "expected_output": "Formatted",
+      "hints": [
+        "Define func Format() and func format() in formatter package",
+        "Only Format is accessible from main"
+      ],
+      "solution": "def format_msg():\n    print(\"Formatted\")\n\ndef format_internal():\n    print(\"internal\")\n\nformat_msg()\n"
+    },
+    {
+      "id": "packages_07",
+      "title": "Import Alias",
+      "description": "Import the fmt package with the alias io, then use io.Println to print \"Hello\".",
+      "starter_code": "# import fmt as io\n",
+      "expected_output": "Hello",
+      "hints": [
+        "Use import io \"fmt\" to create an alias",
+        "Use io.Println(\"Hello\") instead of print"
+      ],
+      "solution": "print(\"Hello\")\n"
+    },
+    {
+      "id": "packages_06",
+      "title": "Multiple Imports",
+      "description": "Import both fmt and strings packages. Use print with strings.ToUpper to print \"hello\" in uppercase.",
+      "starter_code": "s = \"hello\"\n# print uppercase via strings-style API\n",
+      "expected_output": "HELLO",
+      "hints": [
+        "strings.ToUpper(\"hello\") returns \"HELLO\"",
+        "print(strings.ToUpper(\"hello\"))"
+      ],
+      "solution": "s = \"hello\"\nprint(s.upper())\n"
+    }
+  ],
+  "exercise_count": 7
+}

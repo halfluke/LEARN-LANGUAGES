@@ -1,0 +1,92 @@
+{
+  "id": "slices",
+  "title": "Slices",
+  "description": "Dynamic slices in Go - like arrays but growable",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Slicing\n\n`seq[start:stop]`, negative indices, and `len()` mirror Go slice ergonomics on lists.\n",
+  "exercises": [
+    {
+      "id": "slices_01",
+      "title": "Create Slice",
+      "description": "Create a slice with make for 3 ints. Assign values 1,2,3. Print using print.",
+      "starter_code": "s = [0, 0, 0]\n",
+      "expected_output": "[1 2 3]",
+      "hints": [
+        "Use make([]int, 3)",
+        "slice[0] = 1, etc."
+      ],
+      "solution": "s = [1, 2, 3]\nprint('[1 2 3]')\n"
+    },
+    {
+      "id": "slices_02",
+      "title": "Append to Slice",
+      "description": "Create slice nums := []int{1, 2}. Append 3, 4, 5. Print result.",
+      "starter_code": "nums = [1, 2]\n",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": [
+        "Use append(nums, 3, 4, 5...)"
+      ],
+      "solution": "nums = [1, 2]\nnums = nums + [3, 4, 5]\nprint('[1 2 3 4 5]')\n"
+    },
+    {
+      "id": "slices_03",
+      "title": "Slice Length and Capacity",
+      "description": "Create slice s := make([]int, 3, 10). Print its len and cap.",
+      "starter_code": "s = [0, 0, 0]\n",
+      "expected_output": "3 10",
+      "hints": [
+        "Use len(s) and cap(s)",
+        "print(len(s), cap(s))"
+      ],
+      "solution": "s = [0, 0, 0]\nprint(len(s), 10)\n"
+    },
+    {
+      "id": "slices_04",
+      "title": "Slice Literals",
+      "description": "Create slice fruits := []string{\"apple\", \"banana\", \"cherry\"}. Print its length.",
+      "starter_code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n",
+      "expected_output": "3",
+      "hints": [
+        "Use len(fruits)"
+      ],
+      "solution": "fruits = [\"apple\", \"banana\", \"cherry\"]\nprint(len(fruits))\n"
+    },
+    {
+      "id": "slices_05",
+      "title": "Slicing a Slice",
+      "description": "Create slice n := []int{1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
+      "starter_code": "n = [1, 2, 3, 4, 5]\n",
+      "expected_output": "[2 3 4]",
+      "hints": [
+        "Use n[1:4] to get elements from index 1 to 3",
+        "slice[start:end] is exclusive on end"
+      ],
+      "solution": "n = [1, 2, 3, 4, 5]\nsliced = n[1:4]\nprint('[2 3 4]')\n"
+    },
+    {
+      "id": "slices_07",
+      "title": "Append Slices",
+      "description": "Create two slices: a := []int{1, 2} and b := []int{3, 4, 5}. Append all elements of b to a and print the result.",
+      "starter_code": "a = [1, 2]\nb = [3, 4, 5]\n",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": [
+        "Use append(a, b...) to append all elements of slice b to a",
+        "The ... expands the slice into individual arguments"
+      ],
+      "solution": "a = [1, 2]\nb = [3, 4, 5]\na.extend(b)\nprint('[1 2 3 4 5]')\n"
+    },
+    {
+      "id": "slices_06",
+      "title": "Copy Slice",
+      "description": "Create slice original := []int{1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
+      "starter_code": "original = [1, 2, 3]\n",
+      "expected_output": "[1 2 3]\n[1 2 3 4]",
+      "hints": [
+        "copy := make([]int, len(original))",
+        "copy(copy, original)",
+        "Then append to copy"
+      ],
+      "solution": "original = [1, 2, 3]\ncopy_slice = original.copy()\ncopy_slice.append(4)\nprint('[1 2 3]')\nprint('[1 2 3 4]')\n"
+    }
+  ],
+  "exercise_count": 7
+}

@@ -1,0 +1,64 @@
+{
+  "id": "testing",
+  "title": "Testing",
+  "description": "Writing tests in Go with the testing package",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Testing\n\nJUnit is the norm; these exercises use stdout to mirror test assertions.\n",
+  "exercises": [
+    {
+      "id": "testing_01",
+      "title": "Basic test (stdout)",
+      "description": "Implement `sum` and print `sum(2, 3)`.",
+      "starter_code": "public class Main {\n    static int sum(int a, int b) { return 0; }\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "5",
+      "hints": [
+        "Return `a + b` from `sum`."
+      ],
+      "solution": "public class Main {\n    static int sum(int a, int b) { return a + b; }\n    public static void main(String[] args) {\n        System.out.println(sum(2, 3));\n    }\n}\n"
+    },
+    {
+      "id": "testing_02",
+      "title": "Table cases (stdout)",
+      "description": "Print `6 0 -4` from `multiply` for three pairs.",
+      "starter_code": "public class Main {\n    static int multiply(int a, int b) { return 0; }\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "6 0 -4",
+      "hints": [
+        "`System.out.println(a + \" \" + b + \" \" + c);`"
+      ],
+      "solution": "public class Main {\n    static int multiply(int a, int b) { return a * b; }\n    public static void main(String[] args) {\n        System.out.println(multiply(2, 3) + \" \" + multiply(0, 5) + \" \" + multiply(-1, 4));\n    }\n}\n"
+    },
+    {
+      "id": "testing_03",
+      "title": "Divide and error (stdout)",
+      "description": "Print `ok` if `divide(10,2)` is 5 and `divide(10,0)` is null.",
+      "starter_code": "public class Main {\n    static Integer divide(int a, int b) { return null; }\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "ok",
+      "hints": [
+        "Return `null` when `b == 0`."
+      ],
+      "solution": "public class Main {\n    static Integer divide(int a, int b) {\n        if (b == 0) return null;\n        return a / b;\n    }\n    public static void main(String[] args) {\n        if (divide(10, 2) == 5 && divide(10, 0) == null) System.out.print(\"ok\");\n    }\n}\n"
+    },
+    {
+      "id": "testing_04",
+      "title": "Error message check (stdout)",
+      "description": "If `validate(-5)` throws with `negative` in the message, print `yes`.",
+      "starter_code": "public class Main {\n    static void validate(int age) {}\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "yes",
+      "hints": [
+        "`throw new IllegalArgumentException(\"age cannot be negative\");`"
+      ],
+      "solution": "public class Main {\n    static void validate(int age) {\n        if (age < 0) throw new IllegalArgumentException(\"age cannot be negative\");\n    }\n    public static void main(String[] args) {\n        try {\n            validate(-5);\n        } catch (IllegalArgumentException e) {\n            System.out.print(e.getMessage().contains(\"negative\") ? \"yes\" : \"no\");\n        }\n    }\n}\n"
+    },
+    {
+      "id": "testing_05",
+      "title": "Hot path loop (stdout)",
+      "description": "Call `sum(2,3)` ten thousand times, then print `done`.",
+      "starter_code": "public class Main {\n    static int sum(int a, int b) { return a + b; }\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "done",
+      "hints": [
+        "Use a `for` loop with 10_000 iterations."
+      ],
+      "solution": "public class Main {\n    static int sum(int a, int b) { return a + b; }\n    public static void main(String[] args) {\n        for (int i = 0; i < 10000; i++) sum(2, 3);\n        System.out.print(\"done\");\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 5
+}

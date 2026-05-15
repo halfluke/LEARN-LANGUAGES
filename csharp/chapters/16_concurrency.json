@@ -1,92 +1,91 @@
 {
   "id": "concurrency",
   "title": "Concurrency",
-  "description": "Tasks, channels, and coordination in C#",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md).\n\n## Concurrency in C#\n\nUse **`Task`** and **`Task.Run`** for parallel CPU work, **`async`/`await`** for asynchronous workflows, and **`System.Threading.Channels.Channel`** for producer/consumer queues that feel similar to Go channels or Rust `mpsc`.\n\nPrefer **`CancellationToken`** in real services; these exercises keep output deterministic without wall-clock races.\n",
+  "description": "Goroutines and channels in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Concurrency\n\n**`Task`**, **`async`/`await`**, and **`System.Threading.Channels.Channel`** mirror goroutines/channels at a high level.\n",
   "exercises": [
     {
       "id": "concurrency_01",
-      "title": "Spawn thread",
-      "description": "Run work on a background thread, wait ~100ms on the main thread, then join so `Hello!` always appears before `main done`.",
-      "starter_code": "using System.Threading;\nusing System.Threading.Tasks;\n\n// Task.Run(() => ...)\n// Thread.Sleep(100);\n",
-      "expected_output": "Hello!\nmain done",
+      "title": "Goroutine",
+      "description": "Launch go sayHello(). Print main done. Use time.Sleep to let Task run.",
+      "starter_code": "using System.Threading.Tasks;\n\n// Task.Run + main done\n\nstatic void SayHello() { }",
+      "expected_output": "main done\nHello!",
       "hints": [
-        "`Task.Run` schedules a delegate on the thread pool",
-        "`task.GetAwaiter().GetResult()` blocks like `Join`"
+        "go sayHello()",
+        "time.Sleep(100 * time.Millisecond)"
       ],
-      "solution": "using System.Threading;\nusing System.Threading.Tasks;\n\nvar t = Task.Run(() => Console.WriteLine(\"Hello!\"));\nThread.Sleep(100);\nt.GetAwaiter().GetResult();\nConsole.WriteLine(\"main done\");\n"
+      "solution": "using System.Threading.Tasks;\n\nvar t = Task.Run(async () => { await Task.Delay(100); SayHello(); });\nConsole.WriteLine(\"main done\");\nt.GetAwaiter().GetResult();\n\nstatic void SayHello() => Console.WriteLine(\"Hello!\");"
     },
     {
       "id": "concurrency_02",
       "title": "Channel",
-      "description": "Use an unbounded **`Channel<string>`**: a worker writes `ping`; main reads and prints it (with newline).",
-      "starter_code": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\n// var ch = Channel.CreateUnbounded<string>();\n",
+      "description": "Create ch := make(chan string). Send \"ping\" to ch in Task, receive and print.",
+      "starter_code": "using System.Threading.Channels;\n// ping channel",
       "expected_output": "ping",
       "hints": [
-        "`ch.Writer.WriteAsync` / `ch.Reader.ReadAsync`",
-        "`Console.WriteLine` matches the newline Rust `println!` emits"
+        "go func() { ch <- \"ping\" }()",
+        "msg := <-ch; Console.WriteLine(msg)"
       ],
-      "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<string>();\nvar worker = Task.Run(async () =>\n{\n    await ch.Writer.WriteAsync(\"ping\");\n    ch.Writer.Complete();\n});\nConsole.WriteLine(await ch.Reader.ReadAsync());\nawait worker;\n"
+      "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<string>();\nvar worker = Task.Run(async () => { await ch.Writer.WriteAsync(\"ping\"); ch.Writer.Complete(); });\nConsole.WriteLine(await ch.Reader.ReadAsync());\nawait worker;"
     },
     {
       "id": "concurrency_03",
-      "title": "Bounded channel",
-      "description": "Create a **bounded** channel with capacity `2`, send `10` then `20`, and print both values separated by a space (no trailing newline).",
-      "starter_code": "using System.Threading.Channels;\n\n// Channel.CreateBounded<int>(new BoundedChannelOptions(2) { ... })\n",
+      "title": "Buffered Channel",
+      "description": "Create a buffered channel with capacity 2. Send 10 and 20 without blocking. Then receive and print both.",
+      "starter_code": "using System.Threading.Channels;\n// bounded 10 20",
       "expected_output": "10 20",
       "hints": [
-        "`FullMode = BoundedChannelFullMode.Wait` mirrors blocking sends",
-        "Use `Console.Write` for the space-separated layout without a trailing newline"
+        "ch <- 10; ch <- 20; then <-ch; <-ch"
       ],
-      "solution": "using System.Threading.Channels;\n\nvar ch = Channel.CreateBounded<int>(new BoundedChannelOptions(2)\n{\n    FullMode = BoundedChannelFullMode.Wait,\n});\nch.Writer.TryWrite(10);\nch.Writer.TryWrite(20);\nch.Writer.Complete();\nConsole.Write(ch.Reader.ReadAsync().AsTask().GetAwaiter().GetResult());\nConsole.Write(\" \");\nConsole.Write(ch.Reader.ReadAsync().AsTask().GetAwaiter().GetResult());\n"
+      "solution": "using System.Threading.Channels;\n\nvar ch = Channel.CreateBounded<int>(2);\nch.Writer.TryWrite(10);\nch.Writer.TryWrite(20);\nch.Writer.Complete();\nConsole.Write(ch.Reader.ReadAsync().AsTask().GetAwaiter().GetResult());\nConsole.Write(\" \");\nConsole.Write(ch.Reader.ReadAsync().AsTask().GetAwaiter().GetResult());"
     },
     {
       "id": "concurrency_04",
-      "title": "First ready",
-      "description": "Spawn a thread that sleeps 10ms then sends `from ch1` through a channel; main receives and prints that string.",
-      "starter_code": "using System.Threading;\nusing System.Threading.Channels;\nusing System.Threading.Tasks;\n\n// Task.Delay(10) inside worker\n",
+      "title": "Select Statement",
+      "description": "Create two channels ch1 and ch2. Send to ch1 in Task after 10ms. Use select to receive whichever comes first.",
+      "starter_code": "using System.Threading.Channels;\n// delay 10ms from ch1",
       "expected_output": "from ch1",
       "hints": [
-        "`await Task.Delay(10)` inside the worker",
-        "`Console.Write` avoids an extra newline when the expected line has none"
+        "go func() { time.Sleep(10*time.Millisecond); ch1 <- \"from ch1\" }()",
+        "select { case msg := <-ch1: ... }"
       ],
-      "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<string>();\nvar worker = Task.Run(async () =>\n{\n    await Task.Delay(10);\n    await ch.Writer.WriteAsync(\"from ch1\");\n    ch.Writer.Complete();\n});\nConsole.Write(await ch.Reader.ReadAsync());\nawait worker;\n"
+      "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<string>();\nvar worker = Task.Run(async () => { await Task.Delay(10); await ch.Writer.WriteAsync(\"from ch1\"); ch.Writer.Complete(); });\nConsole.Write(await ch.Reader.ReadAsync());\nawait worker;"
     },
     {
       "id": "concurrency_05",
-      "title": "Close / drain",
-      "description": "Producer sends `1`, `2`, `3` then completes the channel; consumer prints each line until reads fail.",
-      "starter_code": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\n// foreach await or while TryRead\n",
+      "title": "Channel Close",
+      "description": "Create channel, send 1,2,3 then close. Use range to receive until closed.",
+      "starter_code": "using System.Threading.Channels;\n// 1 2 3",
       "expected_output": "1\n2\n3",
       "hints": [
-        "`Writer.Complete()` signals no more items",
-        "`await foreach` on `reader.ReadAllAsync()` is idiomatic"
+        "for n := range ch prints until closed"
       ],
-      "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<int>();\nvar producer = Task.Run(async () =>\n{\n    foreach (var n in new[] { 1, 2, 3 })\n        await ch.Writer.WriteAsync(n);\n    ch.Writer.Complete();\n});\nawait foreach (var n in ch.Reader.ReadAllAsync())\n    Console.WriteLine(n);\nawait producer;\n"
+      "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<int>();\nvar prod = Task.Run(async () => { foreach (var n in new[] {1,2,3}) await ch.Writer.WriteAsync(n); ch.Writer.Complete(); });\nawait foreach (var n in ch.Reader.ReadAllAsync()) Console.WriteLine(n);\nawait prod;"
     },
     {
       "id": "concurrency_07",
-      "title": "Fan-in",
-      "description": "Two workers enqueue `hello` and `world`; collect both strings, sort, and print one per line.",
-      "starter_code": "using System.Collections.Generic;\nusing System.Linq;\nusing System.Threading.Tasks;\n\n// ConcurrentBag<string> or lock + List\n",
+      "title": "Fan-In Pattern",
+      "description": "Create two Tasks that each send a string to a shared channel. Use a third Task to fan-in (read) from the channel and print received values. Close the channel when both senders are done.",
+      "starter_code": "// fan-in hello world sorted",
       "expected_output": "hello\nworld",
       "hints": [
-        "`ConcurrentBag<string>` plus `Order()` is simple",
-        "Join both tasks before sorting for deterministic collection"
+        "Use wg.Add(2) for the two sender goroutines",
+        "defer wg.Done() in each goroutine",
+        "In a third goroutine, defer close(ch) after wg.Wait()",
+        "Range over ch to collect all values"
       ],
-      "solution": "using System.Collections.Generic;\nusing System.Threading.Tasks;\n\nvar list = new List<string>();\nvar gate = new object();\nvar a = Task.Run(() =>\n{\n    lock (gate) { list.Add(\"hello\"); }\n});\nvar b = Task.Run(() =>\n{\n    lock (gate) { list.Add(\"world\"); }\n});\nawait Task.WhenAll(a, b);\nlist.Sort();\nforeach (var s in list)\n    Console.WriteLine(s);\n"
+      "solution": "using System.Threading.Tasks;\nusing System.Collections.Generic;\n\nvar list = new List<string>();\nvar gate = new object();\nTask.Run(() => { lock (gate) list.Add(\"hello\"); }).Wait();\nTask.Run(() => { lock (gate) list.Add(\"world\"); }).Wait();\nlist.Sort();\nforeach (var s in list) Console.WriteLine(s);"
     },
     {
       "id": "concurrency_06",
-      "title": "Join handles",
-      "description": "Print `1`, `2`, `3` on separate lines by running three tasks **sequentially** (each finishes before the next starts), then print `done`.",
-      "starter_code": "using System.Threading.Tasks;\n\n// for (int i = 1; i <= 3; i++) Task.Run(...).Wait();\n",
+      "title": "WaitGroup",
+      "description": "Use sync.WaitGroup to launch 3 Tasks that each print their number, then wait for all to complete before printing \"done\".",
+      "starter_code": "// sequential tasks 1 2 3 done",
       "expected_output": "1\n2\n3\ndone",
       "hints": [
-        "Capture the loop variable (`var j = i`) when closing over `i`",
-        "`.Wait()` mirrors `join()`"
+        "wg.Add(1); defer wg.Done(); wg.Wait()"
       ],
-      "solution": "using System.Threading.Tasks;\n\nfor (var i = 1; i <= 3; i++)\n{\n    var j = i;\n    Task.Run(() => Console.WriteLine(j)).Wait();\n}\nConsole.WriteLine(\"done\");\n"
+      "solution": "using System.Threading.Tasks;\n\nfor (var i = 1; i <= 3; i++) { var j = i; Task.Run(() => Console.WriteLine(j)).Wait(); }\nConsole.WriteLine(\"done\");"
     }
   ],
   "exercise_count": 7

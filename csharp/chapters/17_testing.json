@@ -1,13 +1,13 @@
 {
   "id": "testing",
   "title": "Testing",
-  "description": "Unit-test ideas expressed as small stdout-checked programs (adapted for this platform).",
+  "description": "Writing tests in Go with the testing package",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Testing\n\nReal code uses xUnit/NUnit; stdout exercises here mirror assertions as printable outcomes.\n",
   "exercises": [
     {
       "id": "testing_01",
       "title": "Basic test (stdout)",
-      "description": "Implement `Sum` and print `Sum(2, 3)` (same intent as the C# `#[test]` exercise).",
+      "description": "Implement `Sum` and print `Sum(2, 3)` (same intent as the Rust `#[test]` exercise).",
       "starter_code": "static int Sum(int a, int b) => 0;\nConsole.WriteLine(Sum(2, 3));\n",
       "expected_output": "5",
       "hints": [

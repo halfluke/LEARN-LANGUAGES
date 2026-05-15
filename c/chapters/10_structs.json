@@ -1,71 +1,91 @@
 {
   "id": "structs",
   "title": "Structs",
-  "description": "Structs and composition in C",
+  "description": "Custom data types - structs in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Structs\n\n`struct` layout, padding, and `typedef` aliases.\n",
   "exercises": [
     {
       "id": "structs_01",
-      "title": "Define a struct",
-      "description": "`Person { name, age }` with Alice 30; print `Debug`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "Person { name: \"Alice\", age: 30 }",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Person { name: \\\"Alice\\\", age: 30 }\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Define a Struct",
+      "description": "Define a Person struct with Name (string) and Age (int). Create a Person with Name=\"Alice\" and Age=30. Print it.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // struct Person { const char *name; int age; };\n    return 0;\n}\n",
+      "expected_output": "{Alice 30}",
+      "hints": [
+        "type Person struct { Name string; Age int }",
+        "p := Person{Name: \"Alice\", Age: 30}"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Person { const char *name; int age; };\n    struct Person p = {\"Alice\", 30};\n    printf(\"{%s %d}\\n\", p.name, p.age);\n    return 0;\n}\n"
     },
     {
       "id": "structs_02",
-      "title": "Mutate through reference",
-      "description": "`Point { x,y }` pointer, set `y` to 20, print `Debug`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "Point { x: 5, y: 20 }",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Point { x: 5, y: 20 }\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Pointer to Struct",
+      "description": "Define a Point struct with X and Y (int). Create a pointer to Point{X: 5, Y: 10}. Use the pointer to change Y to 20. Print the Point.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // struct Point; pointer set y=20\n    return 0;\n}\n",
+      "expected_output": "{5 20}",
+      "hints": [
+        "p := &Point{X: 5, Y: 10}",
+        "p.Y = 20 modifies through pointer"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Point { int x, y; };\n    struct Point pt = {5, 10};\n    struct Point *p = &pt;\n    p->y = 20;\n    printf(\"{%d %d}\\n\", p->x, p->y);\n    return 0;\n}\n"
     },
     {
       "id": "structs_03",
-      "title": "Partial struct literal",
-      "description": "`Book` with title, author, pages — set only title `Go Programming`, others default.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "Book { title: \"Go Programming\", author: \"\", pages: 0 }",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Book { title: \\\"Go Programming\\\", author: \\\"\\\", pages: 0 }\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Struct Literal",
+      "description": "Given a Book struct with Title, Author, and Pages (int), create a Book instance using just Title and Author. Print it.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // Book with title only\n    return 0;\n}\n",
+      "expected_output": "{Go Programming  0}",
+      "hints": [
+        "Book{Title: \"Go Programming\", Author: \"Unknown\"}",
+        "Pages defaults to 0"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Book { char title[32]; char author[16]; int pages; };\n    struct Book book = {\"Go Programming\", \"\", 0};\n    printf(\"{%s  %d}\\n\", book.title, book.pages);\n    return 0;\n}\n"
     },
     {
       "id": "structs_04",
-      "title": "Composition",
-      "description": "`Employee { name, company }` print company `Acme`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Embedded Struct",
+      "description": "Define Person with Name string, and Employee embedded Person with Company string. Create Employee with Name=\"Bob\" and Company=\"Acme\". Print Company.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // nested struct, print company\n    return 0;\n}\n",
       "expected_output": "Acme",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Acme\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "type Employee struct { Person; Company string }",
+        "Access embedded fields directly"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Person { const char *name; };\n    struct Employee { struct Person person; const char *company; };\n    struct Employee emp = {{ \"Bob\" }, \"Acme\" };\n    puts(emp.company);\n    return 0;\n}\n"
     },
     {
       "id": "structs_05",
-      "title": "Zero value",
-      "description": "Default `Rectangle` and print Debug.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "Rectangle { width: 0.0, height: 0.0 }",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Rectangle { width: 0.0, height: 0.0 }\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Zero Value Struct",
+      "description": "Declare a variable of type Rectangle with Width and Height (float64) without initialization. Print it to see zero values.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    struct Rectangle { double w, h; };\n    return 0;\n}\n",
+      "expected_output": "{0 0}",
+      "hints": [
+        "var r Rectangle creates zero-valued struct"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Rectangle { double w, h; };\n    struct Rectangle r = {0, 0};\n    printf(\"{%g %g}\\n\", r.w, r.h);\n    return 0;\n}\n"
     },
     {
       "id": "structs_07",
-      "title": "Compare structs",
-      "description": "Two identical `Config` values — print `true` from `==` (derive Eq).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Struct Comparison",
+      "description": "Define a Config struct with Host (string) and Port (int). Create two Config values with identical fields and compare them using ==. Print the result.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // compare host/port\n    return 0;\n}\n",
       "expected_output": "true",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"true\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Structs with all comparable fields can be compared with ==",
+        "a := Config{Host: \"localhost\", Port: 8080}",
+        "b := Config{Host: \"localhost\", Port: 8080}"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *host = \"localhost\";\n    int port = 8080;\n    puts(strcmp(host, \"localhost\") == 0 && port == 8080 ? \"true\" : \"false\");\n    return 0;\n}\n"
     },
     {
       "id": "structs_06",
-      "title": "Mutate field",
-      "description": "`Counter` increment value by 5, print value.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Modify Struct Field",
+      "description": "Define a Counter struct with Value int (starts at 0). Create counter, increment Value by 5. Print the Value.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    struct Counter { int value; };\n    return 0;\n}\n",
       "expected_output": "5",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"5\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "c.Value += 5 or c.Value = c.Value + 5"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Counter { int value; };\n    struct Counter c = {0};\n    c.value += 5;\n    printf(\"%d\\n\", c.value);\n    return 0;\n}\n"
     }
   ],
   "exercise_count": 7

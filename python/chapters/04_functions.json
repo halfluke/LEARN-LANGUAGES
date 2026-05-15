@@ -1,0 +1,96 @@
+{
+  "id": "functions",
+  "title": "Functions",
+  "description": "Functions, parameters, and return values in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Functions\n\n`def`, parameters, `return`, and closures that capture outer names.\n",
+  "exercises": [
+    {
+      "id": "functions_01",
+      "title": "Basic Function",
+      "description": "Create a function greet() that prints Hello. Call it in main.",
+      "starter_code": "def greet():\n    pass\n\n",
+      "expected_output": "Hello",
+      "hints": [
+        "Define greet() before main()",
+        "Use print(\"Hello\") inside greet"
+      ],
+      "solution": "def greet():\n    print(\"Hello\")\n\ngreet()\n"
+    },
+    {
+      "id": "functions_02",
+      "title": "Function with Parameters",
+      "description": "Create function greet(name string) that prints Hello, name. Call with \"Alice\".",
+      "starter_code": "def greet(name):\n    pass\n\n",
+      "expected_output": "Hello, Alice",
+      "hints": [
+        "Use fmt.Printf(\"Hello, %s\\n\", name)",
+        "Pass \"Alice\" as argument"
+      ],
+      "solution": "def greet(name):\n    print(f\"Hello, {name}\")\n\ngreet(\"Alice\")\n"
+    },
+    {
+      "id": "functions_03",
+      "title": "Function with Return",
+      "description": "Create function add(a, b int) int that returns a+b. Call with 3 and 4, print result.",
+      "starter_code": "def add(a, b):\n    return 0\n\n",
+      "expected_output": "7",
+      "hints": [
+        "Use return a + b",
+        "Print the returned value"
+      ],
+      "solution": "def add(a, b):\n    return a + b\n\nprint(add(3, 4))\n"
+    },
+    {
+      "id": "functions_04",
+      "title": "Multiple Return Values",
+      "description": "Create function divide(a, b int) (int, error) that returns quotient and nil error, or 0 and error if b is 0. Call with 10 and 3, print result and error.",
+      "starter_code": "def divide(a, b):\n    return None if b == 0 else a // b\n",
+      "expected_output": "3 None",
+      "hints": [
+        "func divide(a, b int) (int, error)",
+        "Check if b == 0 and return errors.New(\"division by zero\")",
+        "Print result, err"
+      ],
+      "solution": "def divide(a, b):\n    return None if b == 0 else a // b\nprint(divide(10, 3), divide(10, 0))\n"
+    },
+    {
+      "id": "functions_05",
+      "title": "Variadic Function",
+      "description": "Create function sum(numbers ...int) int that sums all numbers. Call with 1, 2, 3, 4, 5 and print the result.",
+      "starter_code": "def sum_all(*nums):\n    return 0\n\n",
+      "expected_output": "15",
+      "hints": [
+        "Use ...int to accept variable arguments",
+        "Loop through numbers with range or use a for loop"
+      ],
+      "solution": "def sum_all(*nums):\n    return sum(nums)\n\nprint(sum_all(1, 2, 3, 4, 5))\n"
+    },
+    {
+      "id": "functions_07",
+      "title": "Defer Statement",
+      "description": "Create a function process() that prints \"start\", defers printing \"end\", and prints \"working\". Call it in main.",
+      "starter_code": "def process():\n    pass\n\n",
+      "expected_output": "start\nworking\nend",
+      "hints": [
+        "Use print(\"start\") to print first",
+        "Use defer print(\"end\") to defer the last print",
+        "defer runs when the surrounding function returns"
+      ],
+      "solution": "def process():\n    print('start')\n    try:\n        print('working')\n    finally:\n        print('end')\n\nprocess()\n"
+    },
+    {
+      "id": "functions_06",
+      "title": "Closure",
+      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder := makeAdder(), then call adder(5) and adder(10), printing both results.",
+      "starter_code": "def make_adder():\n    pass\n\n",
+      "expected_output": "5\n15",
+      "hints": [
+        "Create sum := 0 inside makeAdder",
+        "return func(x int) int { sum += x; return sum }",
+        "sum is captured in the closure"
+      ],
+      "solution": "def make_adder():\n    total = 0\n    def adder(x):\n        nonlocal total\n        total += x\n        return total\n    return adder\n\nadder = make_adder()\nprint(adder(5))\nprint(adder(10))\n"
+    }
+  ],
+  "exercise_count": 7
+}

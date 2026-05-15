@@ -1,26 +1,30 @@
 # LEARN-C
 
-Interactive **C** course in the terminal: JSON chapters (same schema as other LEARN-* courses / `LEARN-LANGUAGES/TUTORIAL_PLATFORM.md`), **compile and run** with **`cc`** or **`gcc`**, and **trimmed stdout** checks.
+Interactive **C** course in the terminal: **`chapters/*.json`** (**[TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**), **compile & run** with **`cc`** or **`gcc`**, **trimmed stdout** checks.
 
-This repo uses a **Python** [Textual](https://textual.textualize.io/) TUI.
+The UI is **[Textual](https://textual.textualize.io/)** over **Python 3**.
+
+**Location:** **`c/`** in the LEARN-LANGUAGES monorepo.
 
 ## Requirements
 
-- **Python 3.10+**
-- A **POSIX C compiler** on your **`PATH`**: **`cc`** (preferred) or **`gcc`**. Native **MSVC** is **not** supported in v1; use **WSL2**, **Linux**, **macOS**, or another environment where `cc`/`gcc` works.
+- **Python 3.10+** (runs the host TUI).
+- **`cc`** (preferred) or **`gcc`** on **`PATH`** (POSIX; **native MSVC not supported** in v1 — use Linux, macOS, or **WSL2**).
 
-**Startup check:** Before the Textual UI starts, the entrypoint runs **`cc --version`** or **`gcc --version`** (whichever is resolved first). If no compiler is found or the command fails, it prints an explanation to **stderr** and exits with code **1** (the TUI never starts).
+Optional: **`EDITOR`** (`vim`, `nano`, `code --wait`, …).
 
-**How exercises are checked:** The TUI does **not** only inspect your source. It writes **`solution.c`**, runs **`cc -std=c11 -Wall -Wextra -o …`** (and **`-lm`** when the snippet likely needs **libm**), then runs the binary with a **timeout**, and compares **trimmed stdout** to **`expected_output`**.
+**Startup:** probe **`cc --version`** or **`gcc --version`**; failures print to **stderr** and exit **`1`** (no UI).
 
-Optional: set **`EDITOR`** (otherwise the TUI tries `vim`, `nano`, etc. on `PATH`).
+**Grading:** write **`solution.c`**, **`cc -std=c11 -Wall -Wextra`** (plus **`-lm`** when needed), run under a timeout, compare trimmed stdout to **`expected_output`**.
 
-## Install (editable, from repo root)
+## Install (editable)
+
+From the **`c/`** directory:
 
 ```bash
-cd /path/to/LEARN-C
+cd path/to/LEARN-LANGUAGES/c
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
@@ -28,13 +32,13 @@ pip install -e ".[dev]"
 
 ```bash
 python -m learn_c_tui
-# or
+# or after install:
 learn-c-tui
 ```
 
-Progress is stored under **`~/.learn-c-tui/progress.json`**.
+**Progress:** `~/.learn-c-tui/progress.json`
 
-If chapter JSON is not next to the package, set:
+Alternate chapter path:
 
 ```bash
 export LEARN_C_CHAPTERS=/absolute/path/to/chapters
@@ -44,26 +48,30 @@ export LEARN_C_CHAPTERS=/absolute/path/to/chapters
 
 | Context | Keys |
 |--------|------|
-| Chapter list | `j` / `k`, `Enter`, `/` jump, `?` help, `s` stats, `q` quit |
-| Theory | `j` / `k` scroll, `Enter` exercises, `b` back |
-| Exercises | `j` / `k`, `Enter` open, `b` back |
-| Code | `r` compile/run, `e` external editor, `b` back |
-| Result | `h` hint (on failure), `r` re-run, `b` back to list |
+| Chapter list | **`j`** / **`k`**, **`Enter`**, **`/`** jump, **`?`** help, **`s`** stats, **`q`** quit |
+| Theory | **`j`** / **`k`** scroll, **`Enter`** exercises, **`b`** back |
+| Exercises | **`j`** / **`k`**, **`Enter`** open, **`b`** back |
+| Code | **`r`** compile/run, **`e`** external editor, **`b`** back |
+| Result | **`h`** hint on failure, **`r`** re-run, **`b`** back to list |
 
-## Verify solutions (CI / maintainers)
+## Verify solutions
 
 ```bash
 python3 scripts/check_solutions.py
 ```
 
-By default the script reuses **`./.check-c-work`**. Override with **`LEARN_C_CHECK_WORK`**.
+Default **`./.check-c-work`**. Override: **`LEARN_C_CHECK_WORK`**.
+
+## Curriculum
+
+Order and pedagogical parity: **[../CURRICULUM.md](../CURRICULUM.md)**
 
 ## Security
 
-The TUI writes your code to disk, **compiles** it to a native binary, and **runs** it locally with **timeouts**. Use only with chapter content you trust. There is no extra sandbox beyond your normal user account.
+Writes source, compiles natives, executes under timeouts — only use trusted chapter content.
 
 ## Tests
 
 ```bash
-pytest -q
+python3 -m pytest tests/ -q
 ```

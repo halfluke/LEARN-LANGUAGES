@@ -1,0 +1,92 @@
+{
+  "id": "controlflow",
+  "title": "Control Flow",
+  "description": "If statements, loops, and switch cases in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Control flow\n\n`if`/`elif`/`else`, `for` and `while`, `break`, `continue`, and `match` (3.10+) where useful.\n",
+  "exercises": [
+    {
+      "id": "controlflow_01",
+      "title": "If Statement",
+      "description": "Declare age := 20. If age >= 18, print Adult. Otherwise print Minor.",
+      "starter_code": "age = 20\n",
+      "expected_output": "Adult",
+      "hints": [
+        "Use if age >= 18 { print(\"Adult\") } else { print(\"Minor\") }"
+      ],
+      "solution": "age = 20\nif age >= 18:\n    print(\"Adult\")\nelse:\n    print(\"Minor\")\n"
+    },
+    {
+      "id": "controlflow_02",
+      "title": "For Loop",
+      "description": "Use a for loop to print numbers 1 through 5.",
+      "starter_code": "for i in range(1, 6):\n",
+      "expected_output": "1\n2\n3\n4\n5",
+      "hints": [
+        "Use for i := 1; i <= 5; i++ { print(i) }"
+      ],
+      "solution": "for i in range(1, 6):\n    print(i)\n"
+    },
+    {
+      "id": "controlflow_03",
+      "title": "Switch Statement",
+      "description": "Declare day := 2. Use a switch statement to print the day name: 1=Monday, 2=Tuesday, 3=Wednesday, default=Unknown.",
+      "starter_code": "day = 2\n",
+      "expected_output": "Tuesday",
+      "hints": [
+        "switch day { case 1: ... default: ... }",
+        "No break statement needed in Go cases"
+      ],
+      "solution": "day = 2\n_sw = day\nif day == 1:\n    print(\"Monday\")\nelif day == 2:\n    print(\"Tuesday\")\nelif day == 3:\n    print(\"Wednesday\")\nelse:\n    print(\"Unknown\")\n"
+    },
+    {
+      "id": "controlflow_04",
+      "title": "For-Range Loop",
+      "description": "Create a slice colors := []string{\"red\", \"green\", \"blue\"}. Use for-range to print each color on its own line.",
+      "starter_code": "colors = [ \"red\", \"green\", \"blue\" ]\n",
+      "expected_output": "red\ngreen\nblue",
+      "hints": [
+        "for index, color := range colors { }",
+        "Use print(color)"
+      ],
+      "solution": "colors = [\"red\", \"green\", \"blue\"]\nfor color in colors:\n    print(color)\n"
+    },
+    {
+      "id": "controlflow_05",
+      "title": "Else If Chain",
+      "description": "Declare score := 85. Print the grade: 90+ = A, 80+ = B, 70+ = C, 60+ = D, below 60 = F.",
+      "starter_code": "score = 85\n",
+      "expected_output": "B",
+      "hints": [
+        "Use if score >= 90 { A } else if score >= 80 { B } ...",
+        "Check from highest to lowest"
+      ],
+      "solution": "score = 85\nif score >= 90:\n    print(\"A\")\nelif score >= 80:\n    print(\"B\")\nelif score >= 70:\n    print(\"C\")\nelif score >= 60:\n    print(\"D\")\nelse:\n    print(\"F\")\n"
+    },
+    {
+      "id": "controlflow_07",
+      "title": "For Loop with Break",
+      "description": "Use a for loop to count from 1 upward. When i reaches 5, break out of the loop. Print each number before the break.",
+      "starter_code": "i = 1\n",
+      "expected_output": "1\n2\n3\n4",
+      "hints": [
+        "Use for { } for an infinite loop",
+        "if i >= 5 { break } exits the loop",
+        "Increment i inside the loop"
+      ],
+      "solution": "i = 1\nwhile True:\n    if i >= 5:\n        break\n    print(i)\n    i += 1\n"
+    },
+    {
+      "id": "controlflow_06",
+      "title": "Continue Statement",
+      "description": "Use a for loop to print numbers 1 to 10, but skip printing even numbers using continue.",
+      "starter_code": "for i in range(1, 11):\n",
+      "expected_output": "1\n3\n5\n7\n9",
+      "hints": [
+        "if i % 2 == 0 { continue } skips even numbers",
+        "Check i % 2 != 0 or i % 2 == 1 to print odd numbers"
+      ],
+      "solution": "for i in range(1, 11):\n    if i%2 == 0:\n        continue\n    print(i)\n"
+    }
+  ],
+  "exercise_count": 7
+}

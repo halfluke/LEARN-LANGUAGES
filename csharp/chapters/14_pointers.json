@@ -1,71 +1,91 @@
 {
   "id": "pointers",
   "title": "Pointers",
-  "description": "References, mutability, and Box in C#",
+  "description": "Learn about pointers, memory addresses, and how to work with reference types in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Unsafe and pointers\n\nMost code stays managed; **`unsafe`**, **`fixed`**, and **`nint`** exist for interop and performance.\n",
   "exercises": [
     {
       "id": "pointers_01",
-      "title": "Borrow and read",
-      "description": "`x = 42`, `r = &x`, print `*r` (dereference).",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Declare a Pointer",
+      "description": "Declare a pointer to an int named 'ptr' that points to a variable 'x' with value 42. Print the pointer value using Console.WriteLine(ptr).",
+      "starter_code": "using System;\n\nunsafe { int x = 42; int* ptr = &x; /* Console.WriteLine(*ptr); */ }",
       "expected_output": "42",
-      "hints": [],
-      "solution": "Console.Write(@\"42\");\n"
+      "hints": [
+        "`unsafe` block required for pointers in C#."
+      ],
+      "solution": "using System;\n\nunsafe\n{\n    int x = 42;\n    int* ptr = &x;\n    Console.WriteLine(*ptr);\n}"
     },
     {
       "id": "pointers_02",
-      "title": "Dereference",
-      "description": "Same as Go: print value through reference.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Dereference a Pointer",
+      "description": "Create a pointer to an int and use the * operator to access and print the value it points to.",
+      "starter_code": "using System;\n\nunsafe { int value = 100; /* dereference */ }",
       "expected_output": "100",
-      "hints": [],
-      "solution": "Console.Write(@\"100\");\n"
+      "hints": [
+        "Use ptr := &value to create a pointer",
+        "Use *ptr to dereference and get the value"
+      ],
+      "solution": "using System;\n\nunsafe\n{\n    int value = 100;\n    int* ptr = &value;\n    Console.WriteLine(*ptr);\n}"
     },
     {
       "id": "pointers_03",
-      "title": "Mutate through mut ref",
-      "description": "`modify(p: &mut i32)` doubles value; print after.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Pass Pointer to Function",
+      "description": "Write a function 'modify' that takes a pointer to int and doubles its value. Call it with a variable and print the result.",
+      "starter_code": "// Modify(ref num);\n\nstatic void Modify(ref int p) { }",
       "expected_output": "10",
-      "hints": [],
-      "solution": "Console.Write(@\"10\");\n"
+      "hints": [
+        "Inside modify, use *p = *p * 2 to double the value",
+        "Call modify(&num) to pass the address"
+      ],
+      "solution": "int num = 5;\nModify(ref num);\nConsole.WriteLine(num);\n\nstatic void Modify(ref int p) => p *= 2;"
     },
     {
       "id": "pointers_04",
-      "title": "Box allocation",
-      "description": "`Box::new` an `i32`, set to 99, print dereferenced.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Use the new Keyword",
+      "description": "Use the 'new' keyword to allocate a new int pointer, assign a value to it, and print the dereferenced value.",
+      "starter_code": "using System;\n\nunsafe { /* int* ptr = new int; */ }",
       "expected_output": "99",
-      "hints": [],
-      "solution": "Console.Write(@\"99\");\n"
+      "hints": [
+        "Use new(int) to allocate a new pointer",
+        "Use *ptr = 99 to assign a value"
+      ],
+      "solution": "using System;\n\nunsafe\n{\n    int* ptr = (int*)System.Runtime.InteropServices.Marshal.AllocHGlobal(sizeof(int));\n    *ptr = 99;\n    Console.WriteLine(*ptr);\n    System.Runtime.InteropServices.Marshal.FreeHGlobal((IntPtr)ptr);\n}"
     },
     {
       "id": "pointers_05",
-      "title": "Struct through reference",
-      "description": "`Person { name }` via `&mut` set to Bob, print name.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Pointer to Struct",
+      "description": "Define a Person struct with Name (string). Create a pointer to Person using & and set Name to \"Bob\". Print Name through the pointer.",
+      "starter_code": "// ref Person\n\nclass Person { public string Name = \"\"; }",
       "expected_output": "Bob",
-      "hints": [],
-      "solution": "Console.Write(@\"Bob\");\n"
+      "hints": [
+        "p := &Person{Name: \"Bob\"}",
+        "Use p.Name to access field through pointer"
+      ],
+      "solution": "var p = new Person { Name = \"Bob\" };\nConsole.WriteLine(p.Name);\n\nclass Person { public string Name = \"\"; }"
     },
     {
       "id": "pointers_07",
-      "title": "Option None",
-      "description": "Print `nil` equivalent: C# uses `Option` — print `none` when `None`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Nil Pointer Check",
+      "description": "Declare a pointer to int named ptr without initializing it. Check if it is nil and print \"nil\" or the dereferenced value.",
+      "starter_code": "using System;\n\nunsafe { int* ptr = null; /* check */ }",
       "expected_output": "nil",
-      "hints": [],
-      "solution": "Console.Write(@\"nil\");\n"
+      "hints": [
+        "Use var ptr *int to declare a nil pointer",
+        "Use if ptr == nil to check"
+      ],
+      "solution": "using System;\n\nunsafe\n{\n    int* ptr = null;\n    Console.WriteLine(ptr == null ? \"nil\" : ptr->ToString());\n}"
     },
     {
       "id": "pointers_06",
-      "title": "Swap via references",
-      "description": "`swap(a: &mut i32, b: &mut i32)` then print `x y`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Swap with Pointers",
+      "description": "Write a function swap(a, b *int) that swaps the values at the two pointers. Call with x:=5, y:=10 and print after swapping.",
+      "starter_code": "// Swap(ref x, ref y);\n\nstatic void Swap(ref int a, ref int b) { }",
       "expected_output": "10 5",
-      "hints": [],
-      "solution": "Console.Write(@\"10 5\");\n"
+      "hints": [
+        "temp := *a; *a = *b; *b = temp",
+        "Call swap(&x, &y)"
+      ],
+      "solution": "int x = 5, y = 10;\nSwap(ref x, ref y);\nConsole.WriteLine($\"{x} {y}\");\n\nstatic void Swap(ref int a, ref int b) { (a, b) = (b, a); }"
     }
   ],
   "exercise_count": 7

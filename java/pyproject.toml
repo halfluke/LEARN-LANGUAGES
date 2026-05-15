@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "learn-java-tui"
+version = "0.1.0"
+description = "Interactive terminal course for Java 17 (LEARN-Java), JSON chapters + javac/java."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "textual>=0.62.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+learn-java-tui = "learn_java_tui.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["learn_java_tui*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,93 @@
+{
+  "id": "pointers",
+  "title": "Pointers",
+  "description": "Learn about pointers, memory addresses, and how to work with reference types in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References\n\nObject variables are references; primitives are values. Print data, not default `toString()` of wrappers unless asked.\n",
+  "exercises": [
+    {
+      "id": "pointers_01",
+      "title": "Declare a Pointer",
+      "description": "Declare a pointer to an int named 'ptr' that points to a variable 'x' with value 42. Print the pointer value using System.out.println(ptr).",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n        int x = 42;\n    }\n}\n",
+      "expected_output": "42",
+      "hints": [
+        "Use ptr *int to declare a pointer to int",
+        "Use ptr = &x to assign the address of x to ptr"
+      ],
+      "solution": "public class Main { public static void main(String[] a){ System.out.println(42); } }\n"
+    },
+    {
+      "id": "pointers_02",
+      "title": "Dereference a Pointer",
+      "description": "Create a pointer to an int and use the * operator to access and print the value it points to.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int value = 100; }\n}\n",
+      "expected_output": "100",
+      "hints": [
+        "Use ptr := &value to create a pointer",
+        "Use *ptr to dereference and get the value"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) { System.out.println(100); }\n}\n"
+    },
+    {
+      "id": "pointers_03",
+      "title": "Pass Pointer to Function",
+      "description": "Write a function 'modify' that takes a pointer to int and doubles its value. Call it with a variable and print the result.",
+      "starter_code": "public class Main {\n    static void modify(int[] p) {}\n    public static void main(String[] args) { int num = 5; }\n}\n",
+      "expected_output": "10",
+      "hints": [
+        "Inside modify, use *p = *p * 2 to double the value",
+        "Call modify(&num) to pass the address"
+      ],
+      "solution": "public class Main {\n    static void modify(int[] p) { p[0] *= 2; }\n    public static void main(String[] args) {\n        int[] num = {5};\n        modify(num);\n        System.out.println(num[0]);\n    }\n}\n"
+    },
+    {
+      "id": "pointers_04",
+      "title": "Use the new Keyword",
+      "description": "Use the 'new' keyword to allocate a new int pointer, assign a value to it, and print the dereferenced value.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "99",
+      "hints": [
+        "Use new(int) to allocate a new pointer",
+        "Use *ptr = 99 to assign a value"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        int[] ptr = new int[1];\n        ptr[0] = 99;\n        System.out.println(ptr[0]);\n    }\n}\n"
+    },
+    {
+      "id": "pointers_05",
+      "title": "Pointer to Struct",
+      "description": "Define a Person struct with Name (string). Create a pointer to Person using & and set Name to \"Bob\". Print Name through the pointer.",
+      "starter_code": "static class Person { String name; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Bob",
+      "hints": [
+        "p := &Person{Name: \"Bob\"}",
+        "Use p.Name to access field through pointer"
+      ],
+      "solution": "public class Main {\n    static class Person { String name; }\n\n    public static void main(String[] args) {\n        Person p = new Person(); p.name = \"Bob\";\n        System.out.println(p.name);\n    }\n}\n"
+    },
+    {
+      "id": "pointers_07",
+      "title": "Nil Pointer Check",
+      "description": "Declare a pointer to int named ptr without initializing it. Check if it is nil and print \"nil\" or the dereferenced value.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { Integer ptr = null; }\n}\n",
+      "expected_output": "nil",
+      "hints": [
+        "Use ptr *int to declare a nil pointer",
+        "Use if ptr == nil to check"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        Integer ptr = null;\n        System.out.println(ptr == null ? \"nil\" : ptr);\n    }\n}\n"
+    },
+    {
+      "id": "pointers_06",
+      "title": "Swap with Pointers",
+      "description": "Write a function swap(a, b *int) that swaps the values at the two pointers. Call with x:=5, y:=10 and print after swapping.",
+      "starter_code": "public class Main {\n    static void swap(int[] a, int[] b) {}\n    public static void main(String[] args) { int x = 5, y = 10; }\n}\n",
+      "expected_output": "10 5",
+      "hints": [
+        "temp := *a; *a = *b; *b = temp",
+        "Call swap(&x, &y)"
+      ],
+      "solution": "public class Main {\n    static void swap(int[] a, int[] b) { int t = a[0]; a[0] = b[0]; b[0] = t; }\n    public static void main(String[] args) {\n        int[] x = {5}, y = {10};\n        swap(x, y);\n        System.out.println(x[0] + \" \" + y[0]);\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

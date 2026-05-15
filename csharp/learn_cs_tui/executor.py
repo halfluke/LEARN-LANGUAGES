@@ -75,17 +75,35 @@ def execute_code(code: str, *, work_dir: Path | None = None) -> ExecutionResult:
                     exit_code=init.returncode,
                     timed_out=False,
                 )
+        csproj = next(project_dir.glob("*.csproj"), None)
+        if csproj is not None:
+            text = csproj.read_text(encoding="utf-8")
+            if "AllowUnsafeBlocks" not in text:
+                text = text.replace(
+                    "</PropertyGroup>",
+                    "    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>\n  </PropertyGroup>",
+                    1,
+                )
+                csproj.write_text(text, encoding="utf-8")
 
         _write_program_cs(project_dir, code)
 
         start = time.monotonic()
+        proj = project_dir.resolve()
         try:
             run = subprocess.run(
-                ["dotnet", "run", "--project", str(project_dir), "--verbosity", "quiet"],
+                [
+                    "dotnet",
+                    "run",
+                    "--project",
+                    str(proj),
+                    "--verbosity",
+                    "quiet",
+                ],
                 capture_output=True,
                 text=True,
                 timeout=BUILD_RUN_TIMEOUT,
-                cwd=str(project_dir),
+                cwd=str(proj),
                 env=env,
             )
         except subprocess.TimeoutExpired:

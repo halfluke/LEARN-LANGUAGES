@@ -34,7 +34,7 @@ objdump -d -M intel ./your_binary
 
 ## Running the TUI
 
-From the repository root:
+From **`asmx64/`** (inside the LEARN-LANGUAGES monorepo—the directory that contains this **`README.md`** and **`Cargo.toml`**):
 
 ```bash
 cargo run --release

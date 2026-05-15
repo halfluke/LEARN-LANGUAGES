@@ -1,0 +1,96 @@
+{
+  "id": "functions",
+  "title": "Functions",
+  "description": "Functions, parameters, and return values in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Methods\n\n`static` helpers in `Main` model file-scope functions; overloads and `varargs` where needed.\n",
+  "exercises": [
+    {
+      "id": "functions_01",
+      "title": "Basic Function",
+      "description": "Create a function greet() that prints Hello. Call it in main.",
+      "starter_code": "public class Main {\n    static void greet() {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Hello",
+      "hints": [
+        "Define greet() before main()",
+        "Use System.out.println(\"Hello\") inside greet"
+      ],
+      "solution": "public class Main {\n    static void greet() { System.out.println(\"Hello\"); }\n    public static void main(String[] args) { greet(); }\n}\n"
+    },
+    {
+      "id": "functions_02",
+      "title": "Function with Parameters",
+      "description": "Create function greet(name string) that prints Hello, name. Call with \"Alice\".",
+      "starter_code": "public class Main {\n    static void greet(String name) {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Hello, Alice",
+      "hints": [
+        "Use fmt.Printf(\"Hello, %s\\n\", name)",
+        "Pass \"Alice\" as argument"
+      ],
+      "solution": "public class Main {\n    static void greet(String name) { System.out.println(\"Hello, \" + name); }\n    public static void main(String[] args) { greet(\"Alice\"); }\n}\n"
+    },
+    {
+      "id": "functions_03",
+      "title": "Function with Return",
+      "description": "Create function add(a, b int) int that returns a+b. Call with 3 and 4, print result.",
+      "starter_code": "public class Main {\n    static int add(int a, int b) { return 0; }\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "7",
+      "hints": [
+        "Use return a + b",
+        "Print the returned value"
+      ],
+      "solution": "public class Main {\n    static int add(int a, int b) { return a + b; }\n    public static void main(String[] args) { System.out.println(add(3, 4)); }\n}\n"
+    },
+    {
+      "id": "functions_04",
+      "title": "Multiple Return Values",
+      "description": "Create function divide(a, b int) (int, error) that returns quotient and nil error, or 0 and error if b is 0. Call with 10 and 3, print result and error.",
+      "starter_code": "public class Main { static Integer divide(int a,int b){return null;} public static void main(String[] a){} }\n",
+      "expected_output": "3 null",
+      "hints": [
+        "func divide(a, b int) (int, error)",
+        "Check if b == 0 and return errors.New(\"division by zero\")",
+        "Print result, err"
+      ],
+      "solution": "public class Main {\n  static Integer divide(int a,int b){if(b==0)return null;return a/b;}\n  public static void main(String[] a){System.out.println(divide(10,3)+\" \"+divide(10,0));}\n}\n"
+    },
+    {
+      "id": "functions_05",
+      "title": "Variadic Function",
+      "description": "Create function sum(numbers ...int) int that sums all numbers. Call with 1, 2, 3, 4, 5 and print the result.",
+      "starter_code": "public class Main {\n    static int sumAll(int... nums) { return 0; }\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "15",
+      "hints": [
+        "Use ...int to accept variable arguments",
+        "Loop through numbers with range or use a for loop"
+      ],
+      "solution": "public class Main {\n    static int sumAll(int... nums) {\n        int t = 0;\n        for (int n : nums) t += n;\n        return t;\n    }\n    public static void main(String[] args) { System.out.println(sumAll(1,2,3,4,5)); }\n}\n"
+    },
+    {
+      "id": "functions_07",
+      "title": "Defer Statement",
+      "description": "Create a function process() that prints \"start\", defers printing \"end\", and prints \"working\". Call it in main.",
+      "starter_code": "public class Main {\n    static void process() {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "start\nworking\nend",
+      "hints": [
+        "Use System.out.println(\"start\") to print first",
+        "Use defer System.out.println(\"end\") to defer the last print",
+        "defer runs when the surrounding function returns"
+      ],
+      "solution": "public class Main {\n    static void process() {\n        System.out.println(\"start\");\n        try {\n            System.out.println(\"working\");\n        } finally {\n            System.out.println(\"end\");\n        }\n    }\n    public static void main(String[] args) { process(); }\n}\n"
+    },
+    {
+      "id": "functions_06",
+      "title": "Closure",
+      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder := makeAdder(), then call adder(5) and adder(10), printing both results.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "5\n15",
+      "hints": [
+        "Create sum := 0 inside makeAdder",
+        "return func(x int) int { sum += x; return sum }",
+        "sum is captured in the closure"
+      ],
+      "solution": "public class Main {\n    static java.util.function.IntUnaryOperator makeAdder() {\n        final int[] total = {0};\n        return x -> { total[0] += x; return total[0]; };\n    }\n    public static void main(String[] args) {\n        var adder = makeAdder();\n        System.out.println(adder.applyAsInt(5));\n        System.out.println(adder.applyAsInt(10));\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

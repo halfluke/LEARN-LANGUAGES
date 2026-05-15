@@ -1,0 +1,95 @@
+{
+  "id": "packages",
+  "title": "Packages",
+  "description": "Learn about package declaration, importing, exporting, and init functions in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Packages (concept)\n\nReal projects use packages and imports; exercises use `static` methods in `Main` as stand-ins.\n",
+  "exercises": [
+    {
+      "id": "packages_01",
+      "title": "Package Declaration",
+      "description": "Create a file in a package other than main. Declare package utils and define a function Greet() in it.",
+      "starter_code": "public class Main {\n    static void greet() {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Hello from utils",
+      "hints": [
+        "Use package utils at the top of utils.go",
+        "Define func Greet() that prints a message"
+      ],
+      "solution": "public class Main {\n    static void greet() { System.out.println(\"Hello from utils\"); }\n    public static void main(String[] args) { greet(); }\n}\n"
+    },
+    {
+      "id": "packages_02",
+      "title": "Importing Standard Library",
+      "description": "Import the math package and use math.Sqrt to calculate the square root of 144. Print the result.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "12",
+      "hints": [
+        "Use import \"math\" to import the math package",
+        "Call math.Sqrt(144)",
+        "Use System.out.println to print the result"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println((int) Math.sqrt(144));\n    }\n}\n"
+    },
+    {
+      "id": "packages_03",
+      "title": "Exporting Names",
+      "description": "Create a function and a variable in a separate package. Export them by starting with uppercase. Use them in main.",
+      "starter_code": "public class Main {\n    static int count;\n    static void increment() {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Count: 0\nIncremented: 1",
+      "hints": [
+        "Export by capitalizing: Count, Increment (Go exports anything starting with uppercase)",
+        "In main, use counter.Count and counter.Increment()"
+      ],
+      "solution": "public class Main {\n    static int count;\n    static void increment() { count++; }\n    public static void main(String[] args) {\n        System.out.println(\"Count: \" + count);\n        increment();\n        System.out.println(\"Incremented: \" + count);\n    }\n}\n"
+    },
+    {
+      "id": "packages_04",
+      "title": "Init Functions",
+      "description": "Create a package with an init() function that sets a global variable. Use it in main().",
+      "starter_code": "public class Main {\n    static String version;\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Version: 1.0.0",
+      "hints": [
+        "Declare Version string in config package",
+        "Define func init() that assigns \"1.0.0\" to Version",
+        "init() runs automatically before main() when the package is imported"
+      ],
+      "solution": "public class Main {\n    static String version = \"1.0.0\";\n    public static void main(String[] args) {\n        System.out.println(\"Version: \" + version);\n    }\n}\n"
+    },
+    {
+      "id": "packages_05",
+      "title": "Unexported Names",
+      "description": "Define both exported (uppercase) and unexported (lowercase) functions in a package. Try to use only the exported one from main.",
+      "starter_code": "public class Main {\n    static void format() {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Formatted",
+      "hints": [
+        "Define func Format() and func format() in formatter package",
+        "Only Format is accessible from main"
+      ],
+      "solution": "public class Main {\n    static void format() { System.out.println(\"Formatted\"); }\n    static void formatInternal() { System.out.println(\"internal\"); }\n    public static void main(String[] args) { format(); }\n}\n"
+    },
+    {
+      "id": "packages_07",
+      "title": "Import Alias",
+      "description": "Import the fmt package with the alias io, then use io.Println to print \"Hello\".",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Hello",
+      "hints": [
+        "Use import io \"fmt\" to create an alias",
+        "Use io.Println(\"Hello\") instead of System.out.println"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello\");\n    }\n}\n"
+    },
+    {
+      "id": "packages_06",
+      "title": "Multiple Imports",
+      "description": "Import both fmt and strings packages. Use System.out.println with strings.ToUpper to print \"hello\" in uppercase.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "HELLO",
+      "hints": [
+        "strings.ToUpper(\"hello\") returns \"HELLO\"",
+        "System.out.println(strings.ToUpper(\"hello\"))"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"hello\".toUpperCase());\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

@@ -1,71 +1,92 @@
 {
   "id": "methods",
   "title": "Methods",
-  "description": "Methods and traits (`Display`) in C",
+  "description": "Learn how to define methods on types in Go, including pointer and value receivers",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Methods as conventions\n\n`typedef struct` + functions taking `T *self`.\n",
   "exercises": [
     {
       "id": "methods_01",
-      "title": "Method on struct",
-      "description": "`Person { name }` method `greet` returns `Hello, ` + name; print it.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Define a Method",
+      "description": "Define a method on a struct type 'Person' with a 'Name' field that returns a greeting string.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // greet(\"Alice\");\n    return 0;\n}\n",
       "expected_output": "Hello, Alice",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Hello, Alice\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use func (p Person) Greet() string { return ... } to define the method",
+        "Access the field with p.Name"
+      ],
+      "solution": "#include <stdio.h>\n\nstatic void greet(const char *name) { printf(\"Hello, %s\\n\", name); }\n\nint main(void) {\n    greet(\"Alice\");\n    return 0;\n}\n"
     },
     {
       "id": "methods_02",
-      "title": "Mutating method",
-      "description": "`SetName` with `&mut self` sets `name`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Pointer Receiver",
+      "description": "Define a method with a pointer receiver that modifies the receiver's state. Create a 'SetName' method on Person.",
+      "starter_code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    struct Person { char name[16]; };\n    return 0;\n}\n",
       "expected_output": "Charlie",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Charlie\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use func (p *Person) SetName(name string) to define a pointer receiver method",
+        "Set p.Name = name inside the method"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nstruct Person { char name[16]; };\nstatic void set_name(struct Person *p, const char *n) {\n    snprintf(p->name, sizeof p->name, \"%s\", n);\n}\n\nint main(void) {\n    struct Person p;\n    set_name(&p, \"Charlie\");\n    puts(p.name);\n    return 0;\n}\n"
     },
     {
       "id": "methods_03",
-      "title": "Value receiver",
-      "description": "`Counter` with `increment(self) -> Self` returning new counter +1.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "Counter { value: 6 }",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Counter { value: 6 }\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Value Receiver",
+      "description": "Define a method with a value receiver that returns a new value without modifying the original.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    struct Counter { int value; };\n    return 0;\n}\n",
+      "expected_output": "{6}",
+      "hints": [
+        "Use func (c Counter) Increment() Counter to define a value receiver method",
+        "Return c with Value + 1"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Counter { int value; };\n    struct Counter increment(struct Counter c) { c.value++; return c; }\n    struct Counter c = {5};\n    printf(\"{%d}\\n\", increment(c).value);\n    return 0;\n}\n"
     },
     {
       "id": "methods_04",
-      "title": "Display trait",
-      "description": "Implement `std::fmt::Display` for `Point` like Go `Stringer`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Interface Satisfaction",
+      "description": "Define a 'Stringer' interface with a String() method, then satisfy it with a type.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // print Point(10, 20)\n    return 0;\n}\n",
       "expected_output": "Point(10, 20)",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Point(10, 20)\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Define interface Stringer with func String() string",
+        "Implement func (p Point) String() string { return ... } on Point"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    printf(\"Point(%d, %d)\\n\", 10, 20);\n    return 0;\n}\n"
     },
     {
       "id": "methods_05",
-      "title": "Builder chain",
-      "description": "`Builder` with `add` consuming `self` and returning new `Builder`; `build` returns `String`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Method Chaining",
+      "description": "Define a Builder type with Methods Add(str) Builder and Build() string. Add returns the Builder for chaining. Test by chaining Add(\"Hello\").Add(\"World\").Build().",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // strcat HelloWorld\n    return 0;\n}\n",
       "expected_output": "HelloWorld",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"HelloWorld\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "func (b Builder) Add(s string) Builder { b.result += s; return b }",
+        "func (b Builder) Build() string { return b.result }"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char result[32] = \"\";\n    strcat(result, \"Hello\");\n    strcat(result, \"World\");\n    puts(result);\n    return 0;\n}\n"
     },
     {
       "id": "methods_07",
-      "title": "Circle geometry",
-      "description": "Print area then perimeter for radius `5.0` using `PI`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "78.53981633974483\n31.41592653589793",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"78.53981633974483\\n31.41592653589793\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Multiple Methods on Same Type",
+      "description": "Define a Circle type with Radius float64. Add two methods: Area() float64 and Perimeter() float64. Create a circle with radius 5.0, compute both, and print them.",
+      "starter_code": "#include <stdio.h>\n#include <math.h>\n\nint main(void) {\n    // area and perimeter r=5\n    return 0;\n}\n",
+      "expected_output": "78.539816339745\n31.415926535898",
+      "hints": [
+        "Use math.Pi for pi",
+        "func (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }",
+        "func (c Circle) Perimeter() float64 { return 2 * math.Pi * c.Radius }"
+      ],
+      "solution": "#include <stdio.h>\n#include <math.h>\n\nint main(void) {\n    double pi = 3.14159265358979323846;\n    double r = 5.0;\n    printf(\"%.14g\\n%.14g\\n\", pi * r * r, 2 * pi * r);\n    return 0;\n}\n"
     },
     {
       "id": "methods_06",
-      "title": "Newtype method",
-      "description": "`struct MyInt(i32);` method `is_even` -> bool.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Method on Primitive Type",
+      "description": "Create a type MyInt int. Define a method IsEven() bool on MyInt that returns true if the value is even. Test with MyInt(42).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // 42 even?\n    return 0;\n}\n",
       "expected_output": "true",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"true\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "func (m MyInt) IsEven() bool { return m%2 == 0 }"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int n = 42;\n    printf(\"%s\\n\", n % 2 == 0 ? \"true\" : \"false\");\n    return 0;\n}\n"
     }
   ],
   "exercise_count": 7

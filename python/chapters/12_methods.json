@@ -1,0 +1,93 @@
+{
+  "id": "methods",
+  "title": "Methods",
+  "description": "Learn how to define methods on types in Go, including pointer and value receivers",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Methods\n\nInstance methods take `self`; `@staticmethod` / `@classmethod` when appropriate.\n",
+  "exercises": [
+    {
+      "id": "methods_01",
+      "title": "Define a Method",
+      "description": "Define a method on a struct type 'Person' with a 'Name' field that returns a greeting string.",
+      "starter_code": "class Person:\n    def __init__(self, name): self.name = name\n\n",
+      "expected_output": "Hello, Alice",
+      "hints": [
+        "Use func (p Person) Greet() string { return ... } to define the method",
+        "Access the field with p.Name"
+      ],
+      "solution": "class Person:\n    def __init__(self, name): self.name = name\n    def greet(self): return \"Hello, \" + self.name\n\nprint(Person(\"Alice\").greet())\n"
+    },
+    {
+      "id": "methods_02",
+      "title": "Pointer Receiver",
+      "description": "Define a method with a pointer receiver that modifies the receiver's state. Create a 'SetName' method on Person.",
+      "starter_code": "class Person:\n    def __init__(self, name): self.name = name\n\n",
+      "expected_output": "Charlie",
+      "hints": [
+        "Use func (p *Person) SetName(name string) to define a pointer receiver method",
+        "Set p.Name = name inside the method"
+      ],
+      "solution": "class Person:\n    def __init__(self, name): self.name = name\n    def set_name(self, name): self.name = name\n\np = Person('Bob')\np.set_name('Charlie')\nprint(p.name)\n"
+    },
+    {
+      "id": "methods_03",
+      "title": "Value Receiver",
+      "description": "Define a method with a value receiver that returns a new value without modifying the original.",
+      "starter_code": "class Counter:\n    def __init__(self, value=0): self.value = value\n\n",
+      "expected_output": "{6}",
+      "hints": [
+        "Use func (c Counter) Increment() Counter to define a value receiver method",
+        "Return c with Value + 1"
+      ],
+      "solution": "class Counter:\n    def __init__(self, value=0): self.value = value\n    def increment(self):\n        return Counter(self.value + 1)\n    def __repr__(self):\n        return '{' + str(self.value) + '}'\n\nprint(Counter(5).increment())\n"
+    },
+    {
+      "id": "methods_04",
+      "title": "Interface Satisfaction",
+      "description": "Define a 'Stringer' interface with a String() method, then satisfy it with a type.",
+      "starter_code": "class Point:\n    def __init__(self, x, y): self.x, self.y = x, y\n\n",
+      "expected_output": "Point(10, 20)",
+      "hints": [
+        "Define interface Stringer with func String() string",
+        "Implement func (p Point) String() string { return ... } on Point"
+      ],
+      "solution": "class Point:\n    def __init__(self, x, y): self.x, self.y = x, y\n    def __str__(self): return f'Point({self.x}, {self.y})'\n\nprint(Point(10, 20))\n"
+    },
+    {
+      "id": "methods_05",
+      "title": "Method Chaining",
+      "description": "Define a Builder type with Methods Add(str) Builder and Build() string. Add returns the Builder for chaining. Test by chaining Add(\"Hello\").Add(\"World\").Build().",
+      "starter_code": "class Builder:\n    def __init__(self): self.result = ''\n\n",
+      "expected_output": "HelloWorld",
+      "hints": [
+        "func (b Builder) Add(s string) Builder { b.result += s; return b }",
+        "func (b Builder) Build() string { return b.result }"
+      ],
+      "solution": "class Builder:\n    def __init__(self): self.result = \"\"\n    def add(self, s):\n        self.result += s\n        return self\n    def build(self): return self.result\n\nprint(Builder().add(\"Hello\").add(\"World\").build())\n"
+    },
+    {
+      "id": "methods_07",
+      "title": "Multiple Methods on Same Type",
+      "description": "Define a Circle type with Radius float64. Add two methods: Area() float64 and Perimeter() float64. Create a circle with radius 5.0, compute both, and print them.",
+      "starter_code": "import math\nclass Circle:\n    def __init__(self, radius): self.radius = radius\n\n",
+      "expected_output": "78.53981633974483\n31.41592653589793",
+      "hints": [
+        "Use math.Pi for pi",
+        "func (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }",
+        "func (c Circle) Perimeter() float64 { return 2 * math.Pi * c.Radius }"
+      ],
+      "solution": "import math\nclass Circle:\n    def __init__(self, radius): self.radius = radius\n    def area(self): return math.pi * self.radius ** 2\n    def perimeter(self): return 2 * math.pi * self.radius\n\nc = Circle(5.0)\nprint(c.area())\nprint(c.perimeter())\n"
+    },
+    {
+      "id": "methods_06",
+      "title": "Method on Primitive Type",
+      "description": "Create a type MyInt int. Define a method IsEven() bool on MyInt that returns true if the value is even. Test with MyInt(42).",
+      "starter_code": "class MyInt(int):\n    pass\n\n",
+      "expected_output": "true",
+      "hints": [
+        "func (m MyInt) IsEven() bool { return m%2 == 0 }"
+      ],
+      "solution": "class MyInt(int):\n    def is_even(self): return self % 2 == 0\n\nprint(str(MyInt(42).is_even()).lower())\n"
+    }
+  ],
+  "exercise_count": 7
+}

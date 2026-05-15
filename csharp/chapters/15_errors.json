@@ -1,71 +1,88 @@
 {
   "id": "errors",
   "title": "Error Handling",
-  "description": "Result-based error handling in C#",
+  "description": "Go's error handling patterns",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Errors\n\nUse exceptions for exceptional paths; **`try`/`catch`**, custom exception types, and `when` filters.\n",
   "exercises": [
     {
       "id": "errors_01",
-      "title": "Return Result",
-      "description": "`divide` returning `Err` on zero; handle and print `Error: division by zero`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Return Error",
+      "description": "Define divide(a, b float64) (float64, error). Return error if b==0. Call with divide(10, 0) and handle error.",
+      "starter_code": "static double? Divide(double a, double b) => b == 0 ? null : a / b;",
       "expected_output": "Error: division by zero",
-      "hints": [],
-      "solution": "Console.Write(@\"Error: division by zero\");\n"
+      "hints": [
+        "if b == 0 { return 0, errors.New(\"division by zero\") }"
+      ],
+      "solution": "var err = Divide(10, 0);\nif (err is null) Console.WriteLine(\"Error: division by zero\");\n\nstatic double? Divide(double a, double b) => b == 0 ? null : a / b;"
     },
     {
       "id": "errors_02",
-      "title": "Not-found Result",
-      "description": "`find_user` returns `Err` unless name is `alice`; on `bob` print `User not found`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Error Types",
+      "description": "Define custom error type NotFoundError with Unwrap(). Check errors.Is() to handle.",
+      "starter_code": "class NotFoundError : Exception { public NotFoundError(string k) : base(\"not found: \" + k) { } }",
       "expected_output": "User not found",
-      "hints": [],
-      "solution": "Console.Write(@\"User not found\");\n"
+      "hints": [
+        "Need to implement Unwrap() for errors.Is to work"
+      ],
+      "solution": "try { FindUser(\"bob\"); } catch (NotFoundError) { Console.WriteLine(\"User not found\"); }\n\nvoid FindUser(string name) { if (name != \"alice\") throw new NotFoundError(name); }\n\nclass NotFoundError : Exception { public NotFoundError(string k) : base(\"not found: \" + k) { } }"
     },
     {
       "id": "errors_03",
-      "title": "Map error",
-      "description": "Wrap a base error string with prefix using `map_err`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "fmt.Errorf Wrapping",
+      "description": "Create a function wrapError() that uses fmt.Errorf to wrap an error with context.",
+      "starter_code": "// wrap base error",
       "expected_output": "wrapped: base error",
-      "hints": [],
-      "solution": "Console.Write(@\"wrapped: base error\");\n"
+      "hints": [
+        "Use %w to wrap the error"
+      ],
+      "solution": "var baseErr = new Exception(\"base error\");\nvar err = new Exception(\"wrapped: \" + baseErr.Message, baseErr);\nConsole.WriteLine(err.Message);"
     },
     {
       "id": "errors_04",
-      "title": "Downcast-style field",
-      "description": "Return `ValidationError { field: email }` as `Box<dyn std::error::Error>`; print field.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "errors.As Type Assertion",
+      "description": "Create a custom error type ValidationError with a Field string. Use errors.As to extract it.",
+      "starter_code": "class ValidationError : Exception { public string Field; public ValidationError(string f) : base(\"invalid email\") => Field = f; }",
       "expected_output": "email",
-      "hints": [],
-      "solution": "Console.Write(@\"email\");\n"
+      "hints": [
+        "errors.As(err, &ve) extracts the error into ve"
+      ],
+      "solution": "try { throw new ValidationError(\"email\"); }\ncatch (ValidationError ve) { Console.WriteLine(ve.Field); }\n\nclass ValidationError : Exception { public string Field; public ValidationError(string f) : base(\"invalid email\") => Field = f; }"
     },
     {
       "id": "errors_05",
-      "title": "Ok branch",
-      "description": "On success print quotient only.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Nil Error",
+      "description": "Create a function that returns nil error on success, then check for nil in main.",
+      "starter_code": "static int SafeDivide(int a, int b) => a / b;",
       "expected_output": "5",
-      "hints": [],
-      "solution": "Console.Write(@\"5\");\n"
+      "hints": [
+        "return a / b, nil"
+      ],
+      "solution": "Console.WriteLine(SafeDivide(10, 2));\n\nstatic int SafeDivide(int a, int b) => a / b;"
     },
     {
       "id": "errors_07",
-      "title": "Inspect chain",
-      "description": "Print formatted error then `Disk is full` if message contains `disk full`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Multi-Level Error Wrapping",
+      "description": "Create a function readFile that wraps an errors.New(\"disk full\") with context. Then in main, unwrap and check if it wraps the original error using errors.Is.",
+      "starter_code": "var err = new Exception(\"reading data.txt: disk full\", new Exception(\"disk full\"));",
       "expected_output": "reading data.txt: disk full\nDisk is full",
-      "hints": [],
-      "solution": "Console.Write(@\"reading data.txt: disk full\nDisk is full\");\n"
+      "hints": [
+        "Use %w verb in fmt.Errorf to wrap the underlying error",
+        "errors.Is(err, target) checks if err wraps or equals target"
+      ],
+      "solution": "var err = new Exception(\"reading data.txt: disk full\", new Exception(\"disk full\"));\nConsole.WriteLine(err.Message);\nif (err.InnerException?.Message == \"disk full\") Console.WriteLine(\"Disk is full\");"
     },
     {
       "id": "errors_06",
-      "title": "Sentinel constant",
-      "description": "Compare `Err` to `ERR_NOT_FOUND` constant using `==` on `&str`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Sentinel Errors",
+      "description": "Define a sentinel error variable ErrNotFound = errors.New(\"not found\"). Return it from a function and check with errors.Is.",
+      "starter_code": "const string ErrNotFound = \"not found\";\n// compare",
       "expected_output": "not found",
-      "hints": [],
-      "solution": "Console.Write(@\"not found\");\n"
+      "hints": [
+        "var ErrNotFound = errors.New(\"not found\")",
+        "return \"\", ErrNotFound",
+        "if errors.Is(err, ErrNotFound)"
+      ],
+      "solution": "const string ErrNotFound = \"not found\";\nstring GetItem(int id) => id < 0 ? throw new InvalidOperationException(ErrNotFound) : \"item\";\ntry { GetItem(-1); } catch (InvalidOperationException e) when (e.Message == ErrNotFound) { Console.WriteLine(ErrNotFound); }"
     }
   ],
   "exercise_count": 7

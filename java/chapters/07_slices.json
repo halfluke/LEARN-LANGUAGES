@@ -1,0 +1,92 @@
+{
+  "id": "slices",
+  "title": "Slices",
+  "description": "Dynamic slices in Go - like arrays but growable",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Array views\n\nUse indices and `Arrays.copyOfRange` instead of Go slices.\n",
+  "exercises": [
+    {
+      "id": "slices_01",
+      "title": "Create Slice",
+      "description": "Create a slice with make for 3 ints. Assign values 1,2,3. Print using System.out.println.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int[] s = new int[3]; }\n}\n",
+      "expected_output": "[1 2 3]",
+      "hints": [
+        "Use make([]int, 3)",
+        "slice[0] = 1, etc."
+      ],
+      "solution": "public class Main {\nstatic String fmt(int[] a) {\n        StringBuilder sb = new StringBuilder(\"[\");\n        for (int i = 0; i < a.length; i++) {\n            if (i > 0) sb.append(' ');\n            sb.append(a[i]);\n        }\n        return sb.append(']').toString();\n    }\n    public static void main(String[] args) {\n        int[] s = {1, 2, 3};\n        System.out.println(fmt(s));\n    }\n}\n"
+    },
+    {
+      "id": "slices_02",
+      "title": "Append to Slice",
+      "description": "Create slice nums := []int{1, 2}. Append 3, 4, 5. Print result.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int[] nums = {1, 2}; }\n}\n",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": [
+        "Use append(nums, 3, 4, 5...)"
+      ],
+      "solution": "public class Main {\nstatic String fmt(int[] a) {\n        StringBuilder sb = new StringBuilder(\"[\");\n        for (int i = 0; i < a.length; i++) {\n            if (i > 0) sb.append(' ');\n            sb.append(a[i]);\n        }\n        return sb.append(']').toString();\n    }\n    public static void main(String[] args) {\n        int[] nums = {1, 2, 3, 4, 5};\n        System.out.println(fmt(nums));\n    }\n}\n"
+    },
+    {
+      "id": "slices_03",
+      "title": "Slice Length and Capacity",
+      "description": "Create slice s := make([]int, 3, 10). Print its len and cap.",
+      "starter_code": "import java.util.ArrayList;\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<Integer> s = new ArrayList<>(10);\n    }\n}\n",
+      "expected_output": "3 10",
+      "hints": [
+        "Use len(s) and cap(s)",
+        "System.out.println(len(s), cap(s))"
+      ],
+      "solution": "import java.util.ArrayList;\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<Integer> s = new ArrayList<>(10);\n        s.add(0); s.add(0); s.add(0);\n        System.out.println(s.size() + \" \" + 10);\n    }\n}\n"
+    },
+    {
+      "id": "slices_04",
+      "title": "Slice Literals",
+      "description": "Create slice fruits := []string{\"apple\", \"banana\", \"cherry\"}. Print its length.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n        String[] fruits = {\"apple\", \"banana\", \"cherry\"};\n    }\n}\n",
+      "expected_output": "3",
+      "hints": [
+        "Use len(fruits)"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        String[] fruits = {\"apple\", \"banana\", \"cherry\"};\n        System.out.println(fruits.length);\n    }\n}\n"
+    },
+    {
+      "id": "slices_05",
+      "title": "Slicing a Slice",
+      "description": "Create slice n := []int{1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int[] n = {1, 2, 3, 4, 5}; }\n}\n",
+      "expected_output": "[2 3 4]",
+      "hints": [
+        "Use n[1:4] to get elements from index 1 to 3",
+        "slice[start:end] is exclusive on end"
+      ],
+      "solution": "public class Main {\nstatic String fmt(int[] a) {\n        StringBuilder sb = new StringBuilder(\"[\");\n        for (int i = 0; i < a.length; i++) {\n            if (i > 0) sb.append(' ');\n            sb.append(a[i]);\n        }\n        return sb.append(']').toString();\n    }\n    public static void main(String[] args) {\n        int[] sliced = {2, 3, 4};\n        System.out.println(fmt(sliced));\n    }\n}\n"
+    },
+    {
+      "id": "slices_07",
+      "title": "Append Slices",
+      "description": "Create two slices: a := []int{1, 2} and b := []int{3, 4, 5}. Append all elements of b to a and print the result.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int[] a = {1, 2}; int[] b = {3, 4, 5}; }\n}\n",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": [
+        "Use append(a, b...) to append all elements of slice b to a",
+        "The ... expands the slice into individual arguments"
+      ],
+      "solution": "public class Main {\nstatic String fmt(int[] a) {\n        StringBuilder sb = new StringBuilder(\"[\");\n        for (int i = 0; i < a.length; i++) {\n            if (i > 0) sb.append(' ');\n            sb.append(a[i]);\n        }\n        return sb.append(']').toString();\n    }\n    public static void main(String[] args) {\n        int[] a = {1, 2, 3, 4, 5};\n        System.out.println(fmt(a));\n    }\n}\n"
+    },
+    {
+      "id": "slices_06",
+      "title": "Copy Slice",
+      "description": "Create slice original := []int{1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) { int[] original = {1, 2, 3}; }\n}\n",
+      "expected_output": "[1 2 3]\n[1 2 3 4]",
+      "hints": [
+        "copy := make([]int, len(original))",
+        "copy(copy, original)",
+        "Then append to copy"
+      ],
+      "solution": "public class Main {\nstatic String fmt(int[] a) {\n        StringBuilder sb = new StringBuilder(\"[\");\n        for (int i = 0; i < a.length; i++) {\n            if (i > 0) sb.append(' ');\n            sb.append(a[i]);\n        }\n        return sb.append(']').toString();\n    }\n    public static void main(String[] args) {\n        int[] original = {1, 2, 3};\n        int[] copy = {1, 2, 3, 4};\n        System.out.println(fmt(original));\n        System.out.println(fmt(copy));\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

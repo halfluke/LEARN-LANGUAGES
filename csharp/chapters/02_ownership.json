@@ -1,35 +1,41 @@
 {
   "id": "ownership",
-  "title": "Ownership, moves, and copies",
-  "description": "C#’s ownership model: moves, clones, and when data is copied vs transferred.",
+  "title": "Values, copies, and references (Go)",
+  "description": "Go has garbage collection and no Rust-style ownership, but values vs pointers still shape how data is shared.",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References vs values in C#\n\nC# is GC-backed like Go. **`string`** is a reference type but behaves like a value for equality on content; small **`struct`** types copy by value. Use this chapter to connect Rust’s move/clone vocabulary to C#’s rules.\n",
   "exercises": [
     {
       "id": "ownership_01",
-      "title": "Move a String",
-      "description": "Create `String::from(\"hi\")`, move it into a second binding, and print the second binding only.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "String reassignment",
+      "description": "Assign `s := \"hi\"`, assign `t := s`, print `t` with `fmt.Print` (no newline).",
+      "starter_code": "var s = \"hi\";\n// var t = s;\n// Console.Write(t);",
       "expected_output": "hi",
-      "hints": [],
-      "solution": "Console.Write(@\"hi\");\n"
+      "hints": [
+        "`string` assignment copies the reference; content is immutable."
+      ],
+      "solution": "var s = \"hi\";\nvar t = s;\nConsole.Write(t);"
     },
     {
       "id": "ownership_02",
-      "title": "Clone to keep both",
-      "description": "Create `String::from(\"x\")`, clone into another binding, and print **both** strings concatenated (no separator): `xx`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
-      "expected_output": "xx",
-      "hints": [],
-      "solution": "Console.Write(@\"xx\");\n"
+      "title": "Slice header copy",
+      "description": "Create `s := []int{1, 2}`, assign `t := s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `fmt.Print` (no space, no newline) → `92`.",
+      "starter_code": "var s = new[] { 1, 2 };\n// var t = s;\n// t[0] = 9;\n// Console.Write($\"{s[0]}{s[1]}\");",
+      "expected_output": "92",
+      "hints": [
+        "Arrays are reference types."
+      ],
+      "solution": "var s = new[] { 1, 2 };\nvar t = s;\nt[0] = 9;\nConsole.Write($\"{s[0]}{s[1]}\");"
     },
     {
       "id": "ownership_03",
-      "title": "Copy integers",
-      "description": "Bind `a` to `3`, copy into `b` by assignment, increment `b` by one, print `a` and `b` separated by a space.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Int copy",
+      "description": "`a := 3`, `b := a`, increment `b` with `b++`, print `a` and `b` space-separated with `fmt.Print` (no trailing newline).",
+      "starter_code": "var a = 3;\n// var b = a;\n// b++;\n// Console.Write($\"{a} {b}\");",
       "expected_output": "3 4",
-      "hints": [],
-      "solution": "Console.Write(@\"3 4\");\n"
+      "hints": [
+        "`int` copies by value."
+      ],
+      "solution": "var a = 3;\nvar b = a;\nb++;\nConsole.Write($\"{a} {b}\");"
     }
   ],
   "exercise_count": 3

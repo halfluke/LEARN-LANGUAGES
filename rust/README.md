@@ -2,7 +2,7 @@
 
 Terminal-based Rust course: chapters, short theory, hands-on exercises, and automatic checks against expected program output.
 
----
+This code lives inside the **LEARN-LANGUAGES** monorepo (**`rust/`**). Paths below assume your shell is **`rust/`** at the repo root (next to **`go/`**, **`c/`**, etc.).
 
 ## What to install
 
@@ -49,7 +49,14 @@ Regenerating or bulk-checking bundled chapter JSON uses **`python3`**. Learners 
 
 ## How to run the app
 
-Clone the repository and run from the **repository root** (the app loads **`chapters/`** relative to the current working directory):
+```bash
+cd path/to/LEARN-LANGUAGES/rust
+cargo run
+```
+
+If you cloned only this subtree (sparse / submodule), still run **`cargo run`** from the directory that contains **`Cargo.toml`** and **`chapters/`**.
+
+Previous standalone repo instructions:
 
 ```bash
 git clone https://github.com/halfluke/learn-rust.git
@@ -68,7 +75,7 @@ cargo build --release
 
 ## How to work through exercises
 
-1. **Start the TUI** (`cargo run` from the repo root).
+1. **Start the TUI** (`cargo run` from **`rust/`** — directory with **`Cargo.toml`** and **`chapters/`**).
 2. **Pick a chapter**, then an **exercise**.
 3. Read the **theory** screen if you want, then open the exercise.
 4. Press **`e`** — your **`$EDITOR`** opens a temporary **`main.rs`** with starter code. Write a normal Rust program (usually with **`fn main()`**). Save and **quit the editor** to return to the TUI.
@@ -126,5 +133,5 @@ There are **17** chapters under **`chapters/*.json`**, loaded in filename order,
 ## Maintainer notes (optional)
 
 - **Regenerate chapter JSON** from port scripts: `python3 scripts/forge_chapters.py` (see script header for inputs and paths).
-- **Verify all reference solutions:** `python3 scripts/check_solutions.py` (uses **`.check-solutions-crate`** and **`.check-solutions-target`** under the repo; see script for flags).
-- **Shared platform write-up** (schema, executor rules, design decisions): if you keep a **`LEARN-LANGUAGES`** tree next to this repo, see **`../TUTORIAL_PLATFORM.md`**.
+- **Verify all reference solutions:** `python3 scripts/check_solutions.py` (run from **`rust/`**; uses **`.check-solutions-crate`** / **`.check-solutions-target`**; see script for flags).
+- **Shared docs** (schema, parity): **`../CURRICULUM.md`**, **`../TUTORIAL_PLATFORM.md`** relative to **`rust/`** in this monorepo.

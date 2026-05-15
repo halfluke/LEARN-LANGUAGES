@@ -1,24 +1,26 @@
 # LEARN-C#
 
-Interactive **C#** course in the terminal: JSON chapters (same schema as other LEARN-* courses / `LEARN-LANGUAGES/TUTORIAL_PLATFORM.md`), **`dotnet`** build/run, and **trimmed stdout** checks.
+Interactive **C#** course in the terminal: **`chapters/*.json`** (**[TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**), **`dotnet`** build/run, **trimmed stdout** checks.
 
-This repo uses a **Python** [Textual](https://textual.textualize.io/) TUI (aligned with using Python for host tooling across LEARN-* apps).
+The UI is **[Textual](https://textual.textualize.io/)** over **Python 3**.
+
+**Location:** **`csharp/`** in the LEARN-LANGUAGES monorepo (no `#` in the path name — the old **`LEARN-C#`** wording referred to standalone repos).
 
 ## Requirements
 
-- **Python 3.10+**
-- **.NET SDK** (`dotnet --version` must succeed)
+- **Python 3.10+** (TUI driver).
+- **.NET SDK** — **`dotnet --version`** must succeed.
 
-**Startup check:** Before the Textual UI starts, the entrypoint runs **`dotnet --version`**. If the SDK is missing or the command fails, it prints an explanation to **stderr** and exits with code **1** (the TUI never starts).
+Optional: **`EDITOR`** for **`e`** in the exercise editor.
 
-Optional: set **`EDITOR`** (otherwise the TUI tries `vim`, `nano`, etc. on `PATH`).
+**Startup:** **`dotnet --version`**; failures print to stderr and exit **1**.
 
-## Install (editable, from repo root)
+**Grading:** your snippet becomes **`Program.cs`** in an SDK-style console project; **`dotnet run`**, trimmed stdout matches **`expected_output`**.
 
-Path contains `#`; quote the directory in the shell.
+## Install (editable)
 
 ```bash
-cd "/path/to/LEARN-C#"
+cd path/to/LEARN-LANGUAGES/csharp
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
@@ -28,13 +30,11 @@ pip install -e ".[dev]"
 
 ```bash
 python -m learn_cs_tui
-# or
+# or after install:
 learn-csharp-tui
 ```
 
-Progress is stored under **`~/.learn-csharp-tui/progress.json`**.
-
-If chapter JSON is not next to the package (e.g. non-editable install), set:
+**Progress:** `~/.learn-csharp-tui/progress.json`
 
 ```bash
 export LEARN_CSHARP_CHAPTERS=/absolute/path/to/chapters
@@ -44,26 +44,32 @@ export LEARN_CSHARP_CHAPTERS=/absolute/path/to/chapters
 
 | Context | Keys |
 |--------|------|
-| Chapter list | `j` / `k`, `Enter`, `/` jump, `?` help, `s` stats, `q` quit |
-| Theory | `j` / `k` scroll, `Enter` exercises, `b` back |
-| Exercises | `j` / `k`, `Enter` open, `b` back |
-| Code | `r` run, `e` external editor, `b` back |
-| Result | `h` hint (on failure), `r` re-run, `b` back to list |
+| Chapter list | **`j`** / **`k`**, **`Enter`**, **`/`** jump, **`?`** help, **`s`** stats, **`q`** quit |
+| Theory | **`j`** / **`k`** scroll, **`Enter`** exercises, **`b`** back |
+| Exercises | **`j`** / **`k`**, **`Enter`** open, **`b`** back |
+| Code | **`r`** run **`dotnet`**, **`e`** **`$EDITOR`**, **`b`** back |
+| Result | **`h`** hint · **`r`** re-run · **`b`** back |
 
-## Verify solutions (CI / maintainers)
+## Verify solutions
 
 ```bash
 python3 scripts/check_solutions.py
 ```
 
-By default the script reuses **`./.check-csharp-work`**. Override with **`LEARN_CSHARP_CHECK_WORK`** if you want a different directory.
+Default **`./.check-csharp-work`**. Override: **`LEARN_CSHARP_CHECK_WORK`**.
+
+(Regenerate C# chapters from the catalog: **`python3 scripts/regenerate_cs_c_parity.py`** at the repo root.)
+
+## Curriculum
+
+Chapter order / parity: **[../CURRICULUM.md](../CURRICULUM.md)**
 
 ## Security
 
-The TUI writes your code to a **temporary .NET project** and runs **`dotnet run`**. Use only on machines where you trust the chapter content (same model as other LEARN-* courses). Builds are subject to a **timeout**; there is no network sandbox beyond your normal user environment.
+Creates a temp **`dotnet`** project and runs **`dotnet run`** locally with timeouts — treat chapter snippets like compiling any untrusted code.
 
 ## Tests
 
 ```bash
-pytest -q
+python3 -m pytest tests/ -q
 ```

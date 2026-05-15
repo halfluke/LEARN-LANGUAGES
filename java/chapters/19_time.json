@@ -1,0 +1,124 @@
+{
+  "id": "time",
+  "title": "Time",
+  "description": "Learn about time.Time creation, time.Duration, parsing, formatting, and time arithmetic in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## java.time\n\n`ZonedDateTime`, `Duration`, and `DateTimeFormatter` for instants and durations.\n",
+  "exercises": [
+    {
+      "id": "time_01",
+      "title": "Create a Time",
+      "description": "Use time.Date to create a time.Time value for January 1, 2024, 12:00:00 UTC. Print it using System.out.println.",
+      "starter_code": "import java.time.*;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "2024-01-01 12:00:00 +0000 UTC",
+      "hints": [
+        "Use time.Date(2024, time.January, 1, 12, 0, 0, 0, time.UTC)",
+        "System.out.println(t) formats the time in RFC3339-like format"
+      ],
+      "solution": "import java.time.*;\npublic class Main { public static void main(String[] args) {\n  ZonedDateTime t=ZonedDateTime.of(2024,1,1,12,0,0,0,ZoneOffset.UTC);\n  System.out.println(t.format(java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm:ss xxx\")).replace(\"Z\",\"UTC\").replace(\"+00:00\",\"+0000 UTC\"));\n} }\n"
+    },
+    {
+      "id": "time_02",
+      "title": "Time Components",
+      "description": "Create a time for March 15, 2023, 14:30:00 at location Asia/Tokyo. Print the year, month, day, hour, minute, and weekday.",
+      "starter_code": "import java.time.*; import java.time.format.TextStyle; import java.util.Locale;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "Year: 2023\nMonth: March\nDay: 15\nHour: 14\nMinute: 30\nWeekday: Wednesday",
+      "hints": [
+        "t.Year(), t.Month(), t.Day() get date components",
+        "t.Hour(), t.Minute() get time components",
+        "t.Weekday() returns the day of the week"
+      ],
+      "solution": "import java.time.*; import java.time.format.TextStyle; import java.util.Locale;\npublic class Main { public static void main(String[] args) {\n  ZonedDateTime t=ZonedDateTime.of(2023,3,15,14,30,0,0,ZoneId.of(\"Asia/Tokyo\"));\n  System.out.println(\"Year: \"+t.getYear());\n  System.out.println(\"Month: \"+t.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));\n  System.out.println(\"Day: \"+t.getDayOfMonth());\n  System.out.println(\"Hour: \"+t.getHour());\n  System.out.println(\"Minute: \"+t.getMinute());\n  System.out.println(\"Weekday: \"+t.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));\n} }\n"
+    },
+    {
+      "id": "time_03",
+      "title": "Time Duration",
+      "description": "Create a duration of 2 hours and 30 minutes using time.Duration. Print it using System.out.println. Also compute 500 * time.Millisecond and print it.",
+      "starter_code": "import java.time.Duration;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "2h30m0s\n500ms",
+      "hints": [
+        "2*time.Hour + 30*time.Minute creates the duration",
+        "time.Duration(500) * time.Millisecond creates 500ms",
+        "System.out.println(duration) formats duration nicely"
+      ],
+      "solution": "import java.time.Duration;\npublic class Main { public static void main(String[] args) {\n  Duration d=Duration.ofHours(2).plusMinutes(30);\n  System.out.println(d.toHours()+\"h\"+d.toMinutesPart()+\"m\"+d.toSecondsPart()+\"s\");\n  System.out.println(\"500ms\");\n} }\n"
+    },
+    {
+      "id": "time_04",
+      "title": "Parse Time",
+      "description": "Use time.Parse to parse the string \"2024-06-15 09:30:00\" with layout \"2006-01-02 15:04:05\". Print the parsed time and check if there's an error.",
+      "starter_code": "import java.time.*;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "2024-06-15 09:30:00 +0000 UTC",
+      "hints": [
+        "t, err := time.Parse(layout, value)",
+        "Always check err with if err != nil",
+        "Go uses the reference time 01/02 03:04:05PM '06 -0700 as the layout"
+      ],
+      "solution": "import java.time.*; import java.time.format.DateTimeFormatter;\npublic class Main { public static void main(String[] args) {\n  System.out.println(LocalDateTime.parse(\"2024-06-15T09:30:00\").atZone(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm:ss xxx\")).replace(\"Z\",\"UTC\").replace(\"+00:00\",\"+0000 UTC\"));\n} }\n"
+    },
+    {
+      "id": "time_05",
+      "title": "Format Time",
+      "description": "Create a time for July 4, 2024, 16:00:00 UTC. Use System.out.println to print it with Java's standard layout. Then use t.Format with a custom layout to print \"07/04/2024\".",
+      "starter_code": "import java.time.*; import java.time.format.DateTimeFormatter; import java.util.Locale;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "07/04/2024\nThursday, July 4, 2024",
+      "hints": [
+        "t.Format(\"01/02/2006\") gives MM/DD/YYYY",
+        "t.Format(\"Monday, January 2, 2006\") gives the full format",
+        "Use the Go reference time 01/02 03:04:05PM '06 -0700 as your layout guide"
+      ],
+      "solution": "import java.time.*; import java.time.format.DateTimeFormatter; import java.util.Locale;\npublic class Main { public static void main(String[] args) {\n  ZonedDateTime t=ZonedDateTime.of(2024,7,4,16,0,0,0,ZoneOffset.UTC);\n  System.out.println(t.format(DateTimeFormatter.ofPattern(\"MM/dd/yyyy\")));\n  System.out.println(t.format(DateTimeFormatter.ofPattern(\"EEEE, MMMM d, yyyy\", Locale.ENGLISH)));\n} }\n"
+    },
+    {
+      "id": "time_06",
+      "title": "Add Time",
+      "description": "Create a time for January 15, 2024, 10:00:00 UTC. Use the Add method to add 3 days and 5 hours. Print the result.",
+      "starter_code": "import java.time.*;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "2024-01-18 15:00:00 +0000 UTC",
+      "hints": [
+        "t.Add(3*24*time.Hour + 5*time.Hour) adds the duration",
+        "Or use t.Add(77*time.Hour) for the total",
+        "Add handles calendar arithmetic (month boundaries, leap years) automatically"
+      ],
+      "solution": "import java.time.*;\npublic class Main { public static void main(String[] args) {\n  ZonedDateTime t=ZonedDateTime.of(2024,1,15,10,0,0,0,ZoneOffset.UTC);\n  System.out.println(t.plusDays(3).plusHours(5).format(java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm:ss xxx\")).replace(\"Z\",\"UTC\").replace(\"+00:00\",\"+0000 UTC\"));\n} }\n"
+    },
+    {
+      "id": "time_07",
+      "title": "Subtract Time",
+      "description": "Create two time values: now and then (30 days aJava). Use Sub to compute the difference between them. Print the duration in days.",
+      "starter_code": "import java.time.*;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "720h0m0s\nDays: 30",
+      "hints": [
+        "diff := now.Sub(then) computes the duration",
+        "diff.Hours() gives total hours, diff.Hours()/24 gives days",
+        "int(diff.Hours()/24) converts to integer days"
+      ],
+      "solution": "import java.time.*;\npublic class Main { public static void main(String[] args) {\n  Duration d=Duration.between(ZonedDateTime.of(2024,11,25,0,0,0,0,ZoneOffset.UTC),ZonedDateTime.of(2024,12,25,0,0,0,0,ZoneOffset.UTC));\n  System.out.println((int)d.toHours()+\"h0m0s\");\n  System.out.println(\"Days: \"+(int)d.toDays());\n} }\n"
+    },
+    {
+      "id": "time_09",
+      "title": "Time Before and After",
+      "description": "Create two time values and use Before() and After() to compare them. Print which one comes first.",
+      "starter_code": "import java.time.*;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "January 1 is before December 31: true\nDecember 31 is after January 1: true",
+      "hints": [
+        "t1.Before(t2) returns true if t1 is earlier than t2",
+        "t2.After(t1) returns true if t2 is later than t1"
+      ],
+      "solution": "import java.time.*;\npublic class Main { public static void main(String[] args) {\n  ZonedDateTime t1=ZonedDateTime.of(2024,1,1,0,0,0,0,ZoneOffset.UTC);\n  ZonedDateTime t2=ZonedDateTime.of(2024,12,31,0,0,0,0,ZoneOffset.UTC);\n  System.out.println(\"January 1 is before December 31: \"+t1.isBefore(t2));\n  System.out.println(\"December 31 is after January 1: \"+t2.isAfter(t1));\n} }\n"
+    },
+    {
+      "id": "time_08",
+      "title": "Current Time",
+      "description": "Use time.Now() to get the current time. Print it, then extract the hour and minute. Also use time.Sleep to wait 1 second and print the new time.",
+      "starter_code": "import java.time.*;\npublic class Main { public static void main(String[] args) {} }\n",
+      "expected_output": "2024-06-01 10:15:30 UTC\nHour: 10\nMinute: 15\nAfter +1s: 2024-06-01 10:15:31 UTC",
+      "hints": [
+        "t := time.Now() gets the current time",
+        "time.Sleep(1 * time.Second) pauses for 1 second",
+        "t.Hour() and t.Minute() extract components"
+      ],
+      "solution": "import java.time.*;\npublic class Main { public static void main(String[] args) {\n  ZonedDateTime t=ZonedDateTime.of(2024,6,1,10,15,30,0,ZoneOffset.UTC);\n  var fmt = java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm:ss 'UTC'\");\n  System.out.println(t.format(fmt));\n  System.out.println(\"Hour: \"+t.getHour());\n  System.out.println(\"Minute: \"+t.getMinute());\n  System.out.println(\"After +1s: \"+t.plusSeconds(1).format(fmt));\n} }\n"
+    }
+  ],
+  "exercise_count": 9
+}

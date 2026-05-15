@@ -1,0 +1,93 @@
+{
+  "id": "interfaces",
+  "title": "Interfaces",
+  "description": "Polymorphism through interfaces in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Interfaces\n\n`interface` + implementing classes for polymorphism.\n",
+  "exercises": [
+    {
+      "id": "interfaces_01",
+      "title": "Define Interface",
+      "description": "Define interface Shape with Area() float64 method. Implement for Rectangle. Create rect := Rectangle{Width: 3, Height: 4}. Print Area().",
+      "starter_code": "static class Rectangle { double width, height; }\npublic class Main {\n    public static void main(String[] args) { Rectangle rect = new Rectangle(); rect.width=3; rect.height=4; }\n}\n",
+      "expected_output": "12",
+      "hints": [
+        "func (r Rectangle) Area() float64 { return r.Width * r.Height }",
+        "s Shape = rect",
+        "System.out.println(s.Area())"
+      ],
+      "solution": "public class Main {\n    static class Rectangle { double width, height; int area() { return (int)(width * height); } }\n\n    public static void main(String[] args) {\n        Rectangle rect = new Rectangle(); rect.width = 3; rect.height = 4;\n        System.out.println(rect.area());\n    }\n}\n"
+    },
+    {
+      "id": "interfaces_02",
+      "title": "Interface Satisfaction",
+      "description": "Define Writer interface with Write([]byte) int. Implement for Logger with fmt.Fprintln. Create Logger and call Write.",
+      "starter_code": "interface Writer { int write(byte[] b); }\nstatic class Logger implements Writer { public int write(byte[] b) { return 0; } }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "5 hello",
+      "hints": [
+        "func (l Logger) Write(b []byte) int { fmt.Fprintln(os.Stdout, string(b)); return len(b) }"
+      ],
+      "solution": "public class Main {\n    interface Writer { int write(String b); }\n    static class Logger implements Writer {\n        public int write(String b) { return b.length(); }\n    }\n\n    public static void main(String[] args) {\n        Logger logger = new Logger();\n        int n = logger.write(\"hello\");\n        System.out.println(n + \" hello\");\n    }\n}\n"
+    },
+    {
+      "id": "interfaces_03",
+      "title": "Multiple Implementations",
+      "description": "Define Shape interface with Area() float64. Implement for both Circle (with Radius) and Rectangle. Create Circle{5} and Rectangle{3,4}, call Area on both, print the larger area.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "78.53981633974483",
+      "hints": [
+        "Circle Area: 3.14159 * r.Radius * r.Radius",
+        "Circle area: ~78.5, Rectangle: 12"
+      ],
+      "solution": "public class Main {\n    static class Circle { double radius; double area() { return Math.PI * radius * radius; } }\n    static class Rectangle { double width, height; double area() { return width * height; } }\n    public static void main(String[] args) {\n        Circle c = new Circle(); c.radius = 5;\n        Rectangle r = new Rectangle(); r.width = 3; r.height = 4;\n        double ca = c.area(), ra = r.area();\n        System.out.println(ca > ra ? ca : ra);\n    }\n}\n"
+    },
+    {
+      "id": "interfaces_04",
+      "title": "Type Assertion",
+      "description": "Define Describable interface with Describe() string. Implement for Person{name}. Create interface var, use type assertion to get Person and print name.",
+      "starter_code": "static class Person { String name; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Alice",
+      "hints": [
+        "p := d.(Person)",
+        "Then p.Name"
+      ],
+      "solution": "public class Main {\n    static class Person { String name; Person(String n){name=n;} }\n\n    public static void main(String[] args) {\n        Person p = new Person(\"Alice\");\n        System.out.println(p.name);\n    }\n}\n"
+    },
+    {
+      "id": "interfaces_05",
+      "title": "Type Switch",
+      "description": "Create a function describeAny(x interface{}) that uses type switch to print \"int: <value>\" for int, \"string: <value>\" for string, \"unknown\" for other types. Test with both an int and a string.",
+      "starter_code": "public class Main {\n    static void describeAny(Object x) {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "int: 42\nstring: hello",
+      "hints": [
+        "switch v := x.(type) { case int: ... case string: ... }"
+      ],
+      "solution": "public class Main {\n    static void describeAny(Object x) {\n        if (x instanceof Integer i) System.out.println(\"int: \" + i);\n        else if (x instanceof String s) System.out.println(\"string: \" + s);\n        else System.out.println(\"unknown\");\n    }\n    public static void main(String[] args) {\n        describeAny(42);\n        describeAny(\"hello\");\n    }\n}\n"
+    },
+    {
+      "id": "interfaces_07",
+      "title": "Interface with Slice",
+      "description": "Define interface Speaker with Speak() string. Implement for Dog (returns \"Woaf\") and Cat (returns \"Mew\"). Create a slice of Speaker with one Dog and one Cat, then call Speak on each.",
+      "starter_code": "interface Speaker { String speak(); }\nstatic class Dog implements Speaker { public String speak() { return \"Woaf\"; } }\nstatic class Cat implements Speaker { public String speak() { return \"Mew\"; } }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Woaf\nMew",
+      "hints": [
+        "func (d Dog) Speak() string { return \"Woaf\" }",
+        "func (c Cat) Speak() string { return \"Mew\" }",
+        "Iterate the slice and call .Speak()"
+      ],
+      "solution": "public class Main {\n    interface Speaker { String speak(); }\n    static class Dog implements Speaker { public String speak() { return \"Woaf\"; } }\n    static class Cat implements Speaker { public String speak() { return \"Mew\"; } }\n\n    public static void main(String[] args) {\n        Speaker[] speakers = {new Dog(), new Cat()};\n        for (Speaker s : speakers) System.out.println(s.speak());\n    }\n}\n"
+    },
+    {
+      "id": "interfaces_06",
+      "title": "Empty Interface",
+      "description": "Create a slice of empty interface{} containing: the int 42, the string \"hello\", and the float 3.14. Print each one's concrete type using a type switch.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "int: 42\nstring: hello\nfloat64: 3.14",
+      "hints": [
+        "Loop with for _, item := range items",
+        "Use type switch inside"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        Object[] items = {42, \"hello\", 3.14};\n        for (Object item : items) {\n            if (item instanceof Integer i) System.out.println(\"int: \" + i);\n            else if (item instanceof String s) System.out.println(\"string: \" + s);\n            else if (item instanceof Double d) System.out.println(\"float64: \" + d);\n        }\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

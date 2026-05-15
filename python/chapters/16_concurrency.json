@@ -1,0 +1,92 @@
+{
+  "id": "concurrency",
+  "title": "Concurrency",
+  "description": "Goroutines and channels in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Threading\n\n`threading.Thread` for background work; join before printing final lines for stable stdout.\n",
+  "exercises": [
+    {
+      "id": "concurrency_01",
+      "title": "Goroutine",
+      "description": "Launch Python sayHello(). Print main done. Use time.Sleep to let Pythonroutine run.",
+      "starter_code": "import threading\n\ndef say_hello():\n    pass\n\n",
+      "expected_output": "main done\nHello!",
+      "hints": [
+        "go sayHello()",
+        "time.Sleep(100 * time.Millisecond)"
+      ],
+      "solution": "import threading\nimport time\n\ndef say_hello():\n    time.sleep(0.05)\n    print(\"Hello!\")\n\nprint(\"main done\")\nt = threading.Thread(target=say_hello)\nt.start()\nt.join()\n"
+    },
+    {
+      "id": "concurrency_02",
+      "title": "Channel",
+      "description": "Create ch := make(chan string). Send \"ping\" to ch in Pythonroutine, receive and print.",
+      "starter_code": "import queue\nch = queue.Queue()\n",
+      "expected_output": "ping",
+      "hints": [
+        "go func() { ch <- \"ping\" }()",
+        "msg := <-ch; print(msg)"
+      ],
+      "solution": "import queue\nch = queue.Queue()\n\ndef sender():\n    ch.put(\"ping\")\n\nimport threading\nthreading.Thread(target=sender).start()\nprint(ch.get())\n"
+    },
+    {
+      "id": "concurrency_03",
+      "title": "Buffered Channel",
+      "description": "Create a buffered channel with capacity 2. Send 10 and 20 without blocking. Then receive and print both.",
+      "starter_code": "import queue\nch = queue.Queue(maxsize=2)\n",
+      "expected_output": "10 20",
+      "hints": [
+        "ch <- 10; ch <- 20; then <-ch; <-ch"
+      ],
+      "solution": "import queue\nch = queue.Queue(maxsize=2)\nch.put(10)\nch.put(20)\nprint(ch.get(), ch.get())\n"
+    },
+    {
+      "id": "concurrency_04",
+      "title": "Select Statement",
+      "description": "Create two channels ch1 and ch2. Send to ch1 in Pythonroutine after 10ms. Use select to receive whichever comes first.",
+      "starter_code": "import queue, threading, time\n",
+      "expected_output": "from ch1",
+      "hints": [
+        "go func() { time.Sleep(10*time.Millisecond); ch1 <- \"from ch1\" }()",
+        "select { case msg := <-ch1: ... }"
+      ],
+      "solution": "import queue, threading, time\n\nch1 = queue.Queue()\nch2 = queue.Queue()\n\ndef send():\n    time.sleep(0.01)\n    ch1.put(\"from ch1\")\n\nthreading.Thread(target=send).start()\nprint(ch1.get())\n"
+    },
+    {
+      "id": "concurrency_05",
+      "title": "Channel Close",
+      "description": "Create channel, send 1,2,3 then close. Use range to receive until closed.",
+      "starter_code": "import queue, threading\n",
+      "expected_output": "1\n2\n3",
+      "hints": [
+        "for n := range ch prints until closed"
+      ],
+      "solution": "import queue, threading\n\nch = queue.Queue()\n\ndef producer():\n    for n in (1, 2, 3):\n        ch.put(n)\n\nthreading.Thread(target=producer).start()\nfor _ in range(3):\n    print(ch.get())\n"
+    },
+    {
+      "id": "concurrency_07",
+      "title": "Fan-In Pattern",
+      "description": "Create two Pythonroutines that each send a string to a shared channel. Use a third Pythonroutine to fan-in (read) from the channel and print received values. Close the channel when both senders are done.",
+      "starter_code": "import queue, threading\n",
+      "expected_output": "hello\nworld",
+      "hints": [
+        "Use wg.Add(2) for the two sender goroutines",
+        "defer wg.Done() in each goroutine",
+        "In a third goroutine, defer close(ch) after wg.Wait()",
+        "Range over ch to collect all values"
+      ],
+      "solution": "import queue, threading\n\nch = queue.Queue(maxsize=2)\n\ndef send(msg):\n    ch.put(msg)\n\nthreading.Thread(target=send, args=(\"hello\",)).start()\nthreading.Thread(target=send, args=(\"world\",)).start()\nprint(ch.get())\nprint(ch.get())\n"
+    },
+    {
+      "id": "concurrency_06",
+      "title": "WaitGroup",
+      "description": "Use sync.WaitGroup to launch 3 Pythonroutines that each print their number, then wait for all to complete before printing \"done\".",
+      "starter_code": "import threading\n",
+      "expected_output": "1\n2\n3\ndone",
+      "hints": [
+        "wg.Add(1); defer wg.Done(); wg.Wait()"
+      ],
+      "solution": "import threading\n\ndef work(n):\n    print(n)\n\nfor i in range(1, 4):\n    t = threading.Thread(target=work, args=(i,))\n    t.start()\n    t.join()\nprint(\"done\")\n"
+    }
+  ],
+  "exercise_count": 7
+}

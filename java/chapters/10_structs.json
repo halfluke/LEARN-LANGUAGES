@@ -1,0 +1,92 @@
+{
+  "id": "structs",
+  "title": "Structs",
+  "description": "Custom data types - structs in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Records and classes\n\nSimple classes or records hold grouped fields.\n",
+  "exercises": [
+    {
+      "id": "structs_01",
+      "title": "Define a Struct",
+      "description": "Define a Person struct with Name (string) and Age (int). Create a Person with Name=\"Alice\" and Age=30. Print it.",
+      "starter_code": "static class Person { String name; int age; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "{Alice 30}",
+      "hints": [
+        "type Person struct { Name string; Age int }",
+        "p := Person{Name: \"Alice\", Age: 30}"
+      ],
+      "solution": "public class Main {\n    static class Person { String name; int age; Person(String n, int a) { name=n; age=a; } public String toString() { return \"{\" + name + \" \" + age + \"}\"; } }\n\n    public static void main(String[] args) {\n        System.out.println(new Person(\"Alice\", 30));\n    }\n}\n"
+    },
+    {
+      "id": "structs_02",
+      "title": "Pointer to Struct",
+      "description": "Define a Point struct with X and Y (int). Create a pointer to Point{X: 5, Y: 10}. Use the pointer to change Y to 20. Print the Point.",
+      "starter_code": "static class Point { int x, y; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "{5 20}",
+      "hints": [
+        "p := &Point{X: 5, Y: 10}",
+        "p.Y = 20 modifies through pointer"
+      ],
+      "solution": "public class Main {\n    static class Point { int x, y; }\n\n    public static void main(String[] args) {\n        Point p = new Point();\n        p.x = 5; p.y = 20;\n        System.out.println(\"{\" + p.x + \" \" + p.y + \"}\");\n    }\n}\n"
+    },
+    {
+      "id": "structs_03",
+      "title": "Struct Literal",
+      "description": "Given a Book struct with Title, Author, and Pages (int), create a Book instance using just Title and Author. Print it.",
+      "starter_code": "static class Book { String title, author; int pages; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "{Go Programming  0}",
+      "hints": [
+        "Book{Title: \"Go Programming\", Author: \"Unknown\"}",
+        "Pages defaults to 0"
+      ],
+      "solution": "public class Main {\n    static class Book { String title=\"\", author=\"\"; int pages; public String toString() {\n            String sep = author.isEmpty() ? \"  \" : \" \" + author + \" \";\n            return \"{\" + title + sep + pages + \"}\";\n        } }\n\n    public static void main(String[] args) {\n        Book b = new Book(); b.title = \"Go Programming\";\n        System.out.println(b);\n    }\n}\n"
+    },
+    {
+      "id": "structs_04",
+      "title": "Embedded Struct",
+      "description": "Define Person with Name string, and Employee embedded Person with Company string. Create Employee with Name=\"Bob\" and Company=\"Acme\". Print Company.",
+      "starter_code": "static class Person { String name; }\nstatic class Employee { Person person; String company; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Acme",
+      "hints": [
+        "type Employee struct { Person; Company string }",
+        "Access embedded fields directly"
+      ],
+      "solution": "public class Main {\n    static class Person { String name; Person(String n){name=n;} }\n    static class Employee { Person person; String company; }\n\n    public static void main(String[] args) {\n        Employee emp = new Employee();\n        emp.person = new Person(\"Bob\"); emp.company = \"Acme\";\n        System.out.println(emp.company);\n    }\n}\n"
+    },
+    {
+      "id": "structs_05",
+      "title": "Zero Value Struct",
+      "description": "Declare a variable of type Rectangle with Width and Height (float64) without initialization. Print it to see zero values.",
+      "starter_code": "static class Rectangle { double width, height; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "{0 0}",
+      "hints": [
+        "r Rectangle creates zero-valued struct"
+      ],
+      "solution": "public class Main {\n    static class Rectangle { double width, height; public String toString() { return \"{\" + (int)width + \" \" + (int)height + \"}\"; } }\n\n    public static void main(String[] args) { System.out.println(new Rectangle()); }\n}\n"
+    },
+    {
+      "id": "structs_07",
+      "title": "Struct Comparison",
+      "description": "Define a Config struct with Host (string) and Port (int). Create two Config values with identical fields and compare them using ==. Print the result.",
+      "starter_code": "static class Config { String host; int port; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "true",
+      "hints": [
+        "Structs with all comparable fields can be compared with ==",
+        "a := Config{Host: \"localhost\", Port: 8080}",
+        "b := Config{Host: \"localhost\", Port: 8080}"
+      ],
+      "solution": "public class Main {\n    static class Config { String host; int port; }\n\n    public static void main(String[] args) {\n        Config a = new Config(); a.host = \"localhost\"; a.port = 8080;\n        Config b = new Config(); b.host = \"localhost\"; b.port = 8080;\n        System.out.println(a.host.equals(b.host) && a.port == b.port);\n    }\n}\n"
+    },
+    {
+      "id": "structs_06",
+      "title": "Modify Struct Field",
+      "description": "Define a Counter struct with Value int (starts at 0). Create counter, increment Value by 5. Print the Value.",
+      "starter_code": "static class Counter { int value; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "5",
+      "hints": [
+        "c.Value += 5 or c.Value = c.Value + 5"
+      ],
+      "solution": "public class Main {\n    static class Counter { int value; }\n\n    public static void main(String[] args) {\n        Counter c = new Counter();\n        c.value += 5;\n        System.out.println(c.value);\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

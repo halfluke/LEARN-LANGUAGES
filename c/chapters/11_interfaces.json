@@ -1,71 +1,92 @@
 {
   "id": "interfaces",
-  "title": "Traits",
-  "description": "Traits and polymorphism in C",
+  "title": "Interfaces",
+  "description": "Polymorphism through interfaces in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Function pointers\n\nModel interfaces as structs of callbacks (`vtable` style).\n",
   "exercises": [
     {
       "id": "interfaces_01",
-      "title": "Trait for struct",
-      "description": "`trait Shape { fn area(&self)->f64 }` for `Rectangle { w,h }` — print area of 3×4.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Define Interface",
+      "description": "Define interface Shape with Area() float64 method. Implement for Rectangle. Create rect := Rectangle{Width: 3, Height: 4}. Print Area().",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // struct Rectangle + area fn\n    return 0;\n}\n",
       "expected_output": "12",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"12\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "func (r Rectangle) Area() float64 { return r.Width * r.Height }",
+        "var s Shape = rect",
+        "printf(s.Area())"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Rectangle { double w, h; };\n    double rect_area(struct Rectangle r) { return r.w * r.h; }\n    struct Rectangle rect = {3, 4};\n    printf(\"%g\\n\", rect_area(rect));\n    return 0;\n}\n"
     },
     {
       "id": "interfaces_02",
-      "title": "std::io::Write",
-      "description": "Implement `Write` for a `Logger` that prints the byte length and the UTF-8 payload on one line, like `5 hello` (same idea as Go’s `fmt.Print(n, \" \", string(b))`).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Interface Satisfaction",
+      "description": "Define Writer interface with Write([]byte) int. Implement for Logger with fmt.Fprintln. Create Logger and call Write.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // function pointer Writer\n    return 0;\n}\n",
       "expected_output": "5 hello",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"5 hello\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "func (l Logger) Write(b []byte) int { fmt.Fprintln(os.Stdout, string(b)); return len(b) }"
+      ],
+      "solution": "#include <stdio.h>\n\ntypedef int (*writer_fn)(const char *);\nstatic int logger_write(const char *msg) {\n    (void)msg;\n    return 5;\n}\n\nint main(void) {\nwriter_fn w = logger_write;\nprintf(\"%d %s\", w(\"hello\"), \"hello\");\n    return 0;\n}\n"
     },
     {
       "id": "interfaces_03",
-      "title": "Two shapes",
-      "description": "Circle and rectangle implement `Shape`; print larger area for r=5 and 3×4.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "78.53981633974483",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"78.53981633974483\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Multiple Implementations",
+      "description": "Define Shape interface with Area() float64. Implement for both Circle (with Radius) and Rectangle. Create Circle{5} and Rectangle{3,4}, call Area on both, print the larger area.",
+      "starter_code": "#include <stdio.h>\n#include <math.h>\n\nint main(void) {\n    // compare circle vs rect area\n    return 0;\n}\n",
+      "expected_output": "78.539816339745",
+      "hints": [
+        "Circle Area: 3.14159 * r.Radius * r.Radius",
+        "Circle area: ~78.5, Rectangle: 12"
+      ],
+      "solution": "#include <stdio.h>\n#include <math.h>\n\nint main(void) {\n    double pi = 3.14159265358979323846;\n    double circle = pi * 5 * 5;\n    double rect = 12;\n    printf(\"%.14g\\n\", circle > rect ? circle : rect);\n    return 0;\n}\n"
     },
     {
       "id": "interfaces_04",
-      "title": "Trait object accessor",
-      "description": "`trait Describable { fn name(&self) -> &str; }` implemented by `Person`; print name via `dyn Describable`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Type Assertion",
+      "description": "Define Describable interface with Describe() string. Implement for Person{name}. Create interface var, use type assertion to get Person and print name.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // cast to Person\n    return 0;\n}\n",
       "expected_output": "Alice",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Alice\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "p := d.(Person)",
+        "Then p.Name"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *name = \"Alice\";\n    puts(name);\n    return 0;\n}\n"
     },
     {
       "id": "interfaces_05",
-      "title": "enum dispatch",
-      "description": "C prefers enums over `interface{{}}`; model `int` / `string` arms and print like the Go type switch.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Type Switch",
+      "description": "Create a function describeAny(x interface{}) that uses type switch to print \"int: <value>\" for int, \"string: <value>\" for string, \"unknown\" for other types. Test with both an int and a string.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // print int/string lines\n    return 0;\n}\n",
       "expected_output": "int: 42\nstring: hello",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"int: 42\\nstring: hello\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "switch v := x.(type) { case int: ... case string: ... }"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    printf(\"int: %d\\nstring: hello\\n\", 42);\n    return 0;\n}\n"
     },
     {
       "id": "interfaces_07",
-      "title": "Vec of trait objects",
-      "description": "`Vec<Box<dyn Speaker>>` with dog/cat returning Woaf/Mew.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Interface with Slice",
+      "description": "Define interface Speaker with Speak() string. Implement for Dog (returns \"Woaf\") and Cat (returns \"Mew\"). Create a slice of Speaker with one Dog and one Cat, then call Speak on each.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // Woaf\\nMew\n    return 0;\n}\n",
       "expected_output": "Woaf\nMew",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Woaf\\nMew\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "func (d Dog) Speak() string { return \"Woaf\" }",
+        "func (c Cat) Speak() string { return \"Mew\" }",
+        "Iterate the slice and call .Speak()"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"Woaf\");\n    puts(\"Mew\");\n    return 0;\n}\n"
     },
     {
       "id": "interfaces_06",
-      "title": "enum of variants",
-      "description": "Same as Go empty-interface slice: use `enum Item` with `Int`, `Str`, `Float` and `match`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Empty Interface",
+      "description": "Create a slice of empty interface{} containing: the int 42, the string \"hello\", and the float 3.14. Print each one's concrete type using a type switch.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // three typed lines\n    return 0;\n}\n",
       "expected_output": "int: 42\nstring: hello\nfloat64: 3.14",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"int: 42\\nstring: hello\\nfloat64: 3.14\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Loop with for _, item := range items",
+        "Use type switch inside"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    printf(\"int: %d\\nstring: hello\\nfloat64: %.2f\\n\", 42, 3.14);\n    return 0;\n}\n"
     }
   ],
   "exercise_count": 7

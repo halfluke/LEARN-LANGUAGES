@@ -1,71 +1,89 @@
 {
   "id": "functions",
   "title": "Functions",
-  "description": "Functions, Result, closures, and deterministic cleanup in C",
+  "description": "Functions, parameters, and return values in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Functions\n\nFile-scope `static` helpers, prototypes, and `struct` parameters.\n",
   "exercises": [
     {
       "id": "functions_01",
-      "title": "Basic function",
-      "description": "Define `fn greet()` printing `Hello` and call it from `main`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Basic Function",
+      "description": "Create a function greet() that prints Hello. Call it in main.",
+      "starter_code": "#include <stdio.h>\n\nstatic void greet(void) { }\n\nint main(void) {\n    // greet();\n    return 0;\n}\n",
       "expected_output": "Hello",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Hello\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Define `greet` before `main`."
+      ],
+      "solution": "#include <stdio.h>\n\nstatic void greet(void) { printf(\"Hello\\n\"); }\n\nint main(void) { greet(); return 0; }\n"
     },
     {
       "id": "functions_02",
-      "title": "Parameters",
-      "description": "`greet(name: &str)` prints `Hello, Alice` for `\"Alice\"`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Function with Parameters",
+      "description": "Create function greet(name string) that prints Hello, name. Call with \"Alice\".",
+      "starter_code": "#include <stdio.h>\n\nstatic void greet(const char *name) { }\n\nint main(void) { return 0; }\n",
       "expected_output": "Hello, Alice",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Hello, Alice\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use fmt.Printf(\"Hello, %s\\n\", name)",
+        "Pass \"Alice\" as argument"
+      ],
+      "solution": "#include <stdio.h>\n\nstatic void greet(const char *name) { printf(\"Hello, %s\\n\", name); }\n\nint main(void) { greet(\"Alice\"); return 0; }\n"
     },
     {
       "id": "functions_03",
-      "title": "Return value",
-      "description": "`add(a: i32, b: i32) -> i32` return sum; print `add(3,4)`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Function with Return",
+      "description": "Create function add(a, b int) int that returns a+b. Call with 3 and 4, print result.",
+      "starter_code": "#include <stdio.h>\n\nstatic int add(int a, int b) { return 0; }\n\nint main(void) {\n    // printf(\"%d\\n\", add(3, 4));\n    return 0;\n}\n",
       "expected_output": "7",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"7\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use return a + b",
+        "Print the returned value"
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int add(int a, int b) { return a + b; }\n\nint main(void) {\n    printf(\"%d\\n\", add(3, 4));\n    return 0;\n}\n"
     },
     {
       "id": "functions_04",
-      "title": "Result return",
-      "description": "`divide(a,b) -> Result<i32,&'static str>` error on zero; print `Debug` of `(divide(10,3))`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "Ok(3)",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Ok(3)\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Multiple Return Values",
+      "description": "Create function divide(a, b int) (int, error) that returns quotient and nil error, or 0 and error if b is 0. Call with 10 and 3, print result and error.",
+      "starter_code": "#include <stdio.h>\n\nstatic int divide(int a, int b, int *ok) {\n    if (b == 0) { *ok = 0; return 0; }\n    *ok = 1; return a / b;\n}\n\nint main(void) {\n    return 0;\n}",
+      "expected_output": "3 <nil>",
+      "hints": [
+        "func divide(a, b int) (int, error)",
+        "Check if b == 0 and return errors.New(\"division by zero\")",
+        "Print result, err"
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int divide(int a, int b, int *ok) {\n    if (b == 0) { *ok = 0; return 0; }\n    *ok = 1; return a / b;\n}\n\nint main(void) {\n    int ok;\n    int r = divide(10, 3, &ok);\n    printf(\"%d \", r);\n    divide(10, 0, &ok);\n    if (!ok) printf(\"<nil>\");\n    return 0;\n}"
     },
     {
       "id": "functions_05",
-      "title": "Variadic style",
-      "description": "Implement `sum(nums: &[i32]) -> i32` summing slice; print sum of `[1,2,3,4,5]`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Variadic Function",
+      "description": "Create function sum(numbers ...int) int that sums all numbers. Call with 1, 2, 3, 4, 5 and print the result.",
+      "starter_code": "#include <stdio.h>\n\nstatic int sum(const int *nums, int n) { return 0; }\n\nint main(void) {\n    // printf(\"%d\\n\", sum(nums, 5));\n    return 0;\n}\n",
       "expected_output": "15",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"15\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Pass pointer + length instead of variadic."
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int sum(const int *nums, int n) {\n    int t = 0;\n    for (int i = 0; i < n; i++) t += nums[i];\n    return t;\n}\n\nint main(void) {\n    int nums[] = {1, 2, 3, 4, 5};\n    printf(\"%d\\n\", sum(nums, 5));\n    return 0;\n}"
     },
     {
       "id": "functions_07",
-      "title": "Drop order demo",
-      "description": "Print `start`, then `working`, then `end` using a helper that prints `end` when a guard struct drops.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Defer Statement",
+      "description": "Create a function process() that prints \"start\", defers printing \"end\", and prints \"working\". Call it in main.",
+      "starter_code": "#include <stdio.h>\n\nstatic void process(void) { /* start, working, end */ }\n\nint main(void) {\n    // process();\n    return 0;\n}\n",
       "expected_output": "start\nworking\nend",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"start\\nworking\\nend\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "`atexit` registers cleanup at process exit (differs from Go defer but models cleanup)."
+      ],
+      "solution": "#include <stdio.h>\n#include <stdlib.h>\n\nstatic void print_end(void) { printf(\"end\\n\"); }\n\nstatic void process(void) {\n    printf(\"start\\n\");\n    atexit(print_end);\n    printf(\"working\\n\");\n}\n\nint main(void) { process(); return 0; }"
     },
     {
       "id": "functions_06",
-      "title": "Closure state",
-      "description": "Implement `make_adder` returning `impl FnMut(i32) -> i32`; print results of `5` then `10` cumulative.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Closure",
+      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder := makeAdder(), then call adder(5) and adder(10), printing both results.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\nstatic int adder(int x) { return 0; }\n\n    return 0;\n}\n",
       "expected_output": "5\n15",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"5\\n15\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "File-scope state models the closure capture."
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int g_sum = 0;\n\nstatic int adder(int x) {\n    g_sum += x;\n    return g_sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", adder(5));\n    printf(\"%d\\n\", adder(10));\n    return 0;\n}"
     }
   ],
   "exercise_count": 7

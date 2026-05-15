@@ -2,6 +2,10 @@
 
 An interactive terminal-based Go learning platform with chapters, exercises, code validation, and progress tracking.
 
+**Monorepo layout:** this tree is **`go/`** inside **LEARN-LANGUAGES** (`cd path/to/LEARN-LANGUAGES/go`).
+
+---
+
 ## Requirements
 
 - **Go** toolchain on your **`PATH`** (the README targets **Go 1.20+**; use a current stable release from [go.dev/dl](https://go.dev/dl/)).
@@ -13,14 +17,15 @@ An interactive terminal-based Go learning platform with chapters, exercises, cod
 
 ## Install
 
+From the **`go/`** directory (repository root layout):
+
 ```bash
-git clone <repo>
-cd learn-go-tui
+cd path/to/LEARN-LANGUAGES/go
 go build -o learn-go-tui .
 ./learn-go-tui
 ```
 
-Or run directly:
+Or run without a separate binary:
 
 ```bash
 go run .
@@ -62,7 +67,7 @@ Progress is saved automatically to `~/.learn-go-tui/progress.json`.
 
 ## Chapters
 
-Chapters load from `chapters/*.json` in **lexicographic filename order** (prefixed names like `01_variables.json` … `19_time.json`). The canonical outline lives in [LEARN-LANGUAGES/CURRICULUM.md](../CURRICULUM.md). There is **no** `05_lifetimes.json` in Go (lifetimes are **N/A** for Go in the shared matrix).
+Chapters load from `chapters/*.json` in **lexicographic filename order** (prefixed names like `01_variables.json` … `19_time.json`). The canonical outline lives in **[../CURRICULUM.md](../CURRICULUM.md)**. There is **no** `05_lifetimes.json` in Go (lifetimes are **N/A** for Go in the shared matrix). Shared schema and grading rules: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**.
 
 | # | Chapter | Exercises |
 |---|---------|-----------|

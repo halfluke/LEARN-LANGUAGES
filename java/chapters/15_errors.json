@@ -1,0 +1,89 @@
+{
+  "id": "errors",
+  "title": "Error Handling",
+  "description": "Go's error handling patterns",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Exceptions\n\n`try`/`catch`, custom exceptions, and `getCause()` for wrapped errors.\n",
+  "exercises": [
+    {
+      "id": "errors_01",
+      "title": "Return Error",
+      "description": "Define divide(a, b float64) (float64, error). Return error if b==0. Call with divide(10, 0) and handle error.",
+      "starter_code": "public class Main {\n    static Double divide(double a, double b) { return null; }\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Error: division by zero",
+      "hints": [
+        "if b == 0 { return 0, errors.New(\"division by zero\") }"
+      ],
+      "solution": "public class Main {\n    static Exception divide(double a, double b) {\n        if (b == 0) return new Exception(\"division by zero\");\n        return null;\n    }\n    public static void main(String[] args) {\n        Exception err = divide(10, 0);\n        if (err != null) System.out.println(\"Error: \" + err.getMessage());\n    }\n}\n"
+    },
+    {
+      "id": "errors_02",
+      "title": "Error Types",
+      "description": "Define custom error type NotFoundError with Unwrap(). Check errors.Is() to handle.",
+      "starter_code": "public class Main {\n    static class NotFoundError extends Exception {}\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "User not found",
+      "hints": [
+        "Need to implement Unwrap() for errors.Is to work"
+      ],
+      "solution": "public class Main {\n    static class NotFoundError extends Exception {\n        NotFoundError(String key) { super(\"not found: \" + key); }\n    }\n    static void findUser(String name) throws NotFoundError {\n        if (!name.equals(\"alice\")) throw new NotFoundError(name);\n    }\n    public static void main(String[] args) {\n        try { findUser(\"bob\"); }\n        catch (NotFoundError e) { System.out.println(\"User not found\"); }\n    }\n}\n"
+    },
+    {
+      "id": "errors_03",
+      "title": "fmt.Errorf Wrapping",
+      "description": "Create a function wrapError() that uses fmt.Errorf to wrap an error with context.",
+      "starter_code": "public class Main {\n    static Exception wrapError() { return null; }\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "wrapped: base error",
+      "hints": [
+        "Use %w to wrap the error"
+      ],
+      "solution": "public class Main {\n    static Exception wrapError() {\n        Exception base = new Exception(\"base error\");\n        return new Exception(\"wrapped: \" + base.getMessage(), base);\n    }\n    public static void main(String[] args) { System.out.println(wrapError().getMessage()); }\n}\n"
+    },
+    {
+      "id": "errors_04",
+      "title": "errors.As Type Assertion",
+      "description": "Create a custom error type ValidationError with a Field string. Use errors.As to extract it.",
+      "starter_code": "public class Main {\n    static class ValidationError extends Exception { String field; }\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "email",
+      "hints": [
+        "errors.As(err, &ve) extracts the error into ve"
+      ],
+      "solution": "public class Main {\n    static class ValidationError extends Exception {\n        String field;\n        ValidationError(String field, String msg) { super(msg); this.field = field; }\n    }\n    static ValidationError validate() { return new ValidationError(\"email\", \"invalid email\"); }\n    public static void main(String[] args) {\n        try { throw validate(); }\n        catch (ValidationError ve) { System.out.println(ve.field); }\n    }\n}\n"
+    },
+    {
+      "id": "errors_05",
+      "title": "Nil Error",
+      "description": "Create a function that returns nil error on success, then check for nil in main.",
+      "starter_code": "public class Main {\n    static Integer safeDivide(int a, int b) { return null; }\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "5",
+      "hints": [
+        "return a / b, nil"
+      ],
+      "solution": "public class Main {\n    static Integer safeDivide(int a, int b) {\n        if (b == 0) return null;\n        return a / b;\n    }\n    public static void main(String[] args) {\n        Integer result = safeDivide(10, 2);\n        if (result == null) System.out.println(\"Error:\");\n        else System.out.println(result);\n    }\n}\n"
+    },
+    {
+      "id": "errors_07",
+      "title": "Multi-Level Error Wrapping",
+      "description": "Create a function readFile that wraps an errors.New(\"disk full\") with context. Then in main, unwrap and check if it wraps the original error using errors.Is.",
+      "starter_code": "public class Main {\n    static Exception errDiskFull;\n    static Exception readFile(String name) { return null; }\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "reading data.txt: disk full\nDisk is full",
+      "hints": [
+        "Use %w verb in fmt.Errorf to wrap the underlying error",
+        "errors.Is(err, target) checks if err wraps or equals target"
+      ],
+      "solution": "public class Main {\n    static final Exception errDiskFull = new Exception(\"disk full\");\n    static Exception readFile(String name) {\n        return new Exception(\"reading \" + name + \": disk full\", errDiskFull);\n    }\n    public static void main(String[] args) {\n        Exception err = readFile(\"data.txt\");\n        System.out.println(err.getMessage());\n        if (err.getCause() == errDiskFull) System.out.println(\"Disk is full\");\n    }\n}\n"
+    },
+    {
+      "id": "errors_06",
+      "title": "Sentinel Errors",
+      "description": "Define a sentinel error variable ErrNotFound = errors.New(\"not found\"). Return it from a function and check with errors.Is.",
+      "starter_code": "public class Main {\n    static Exception ERR_NOT_FOUND;\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "not found",
+      "hints": [
+        "ErrNotFound = errors.New(\"not found\")",
+        "return \"\", ErrNotFound",
+        "if errors.Is(err, ErrNotFound)"
+      ],
+      "solution": "public class Main {\n    static final RuntimeException ERR_NOT_FOUND = new RuntimeException(\"not found\");\n    static Exception getItem(int id) {\n        if (id < 0) return ERR_NOT_FOUND;\n        return null;\n    }\n    public static void main(String[] args) {\n        if (getItem(-1) == ERR_NOT_FOUND) System.out.println(\"not found\");\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

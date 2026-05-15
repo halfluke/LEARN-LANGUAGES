@@ -34,27 +34,27 @@ Chapters load from `chapters/*.json` sorted by **filename**. Use prefixed names 
 
 Legend: **Full** = first-class chapter in that language. **Adapted** = same slot, different emphasis (still real exercises). **N/A** = no dedicated chapter file; topic folded elsewhere or out of v1.
 
-| id | Rust | Go | C# | C | Asm (ELF64 / NASM) |
-|----|------|----|----|----|---------------------|
-| variables | Full | Full | Full | Full | Adapted (syscalls / libc only) |
-| ownership | Full | Adapted | Adapted | Adapted | N/A |
-| controlflow | Full | Full | Full | Full | Adapted (branch/jump) |
-| functions | Full | Full | Full | Full | Adapted (calls, ABI preview) |
-| lifetimes | Full | N/A | N/A | N/A | N/A |
-| arrays | Full | Full | Full | Full | Adapted |
-| slices | Full | Full | Full | Adapted | Adapted |
-| maps | Full | Full | Full | Adapted | N/A |
-| strings | Full | Full | Full | Full | Adapted |
-| structs | Full | Full | Full | Full | Adapted |
-| interfaces | Full | Full | Full | Adapted | N/A |
-| methods | Full | Full | Full | Adapted | Adapted |
-| packages | Full | Full | Full | N/A | N/A |
-| pointers | Full | Adapted | Adapted | Full | Full |
-| errors | Full | Full | Full | Adapted | N/A |
-| concurrency | Full | Full | Full | Adapted | Adapted |
-| testing | Full | Full | Full | Adapted | N/A |
-| json | Full | Full | Full | Adapted | N/A |
-| time | Full | Full | Full | Adapted | N/A |
+| id | Rust | Go | C# | C | Python | Java | Asm (ELF64 / NASM) |
+|----|------|----|----|----|--------|------|---------------------|
+| variables | Full | Full | Full | Full | Full | Full | Adapted (syscalls / libc only) |
+| ownership | Full | Adapted | Adapted | Adapted | Adapted | Adapted | N/A |
+| controlflow | Full | Full | Full | Full | Full | Full | Adapted (branch/jump) |
+| functions | Full | Full | Full | Full | Full | Full | Adapted (calls, ABI preview) |
+| lifetimes | Full | N/A | N/A | N/A | N/A | N/A | N/A |
+| arrays | Full | Full | Full | Full | Full | Full | Adapted |
+| slices | Full | Full | Full | Adapted | Full | Adapted | Adapted |
+| maps | Full | Full | Full | Adapted | Full | Full | N/A |
+| strings | Full | Full | Full | Full | Full | Full | Adapted |
+| structs | Full | Full | Full | Full | Full | Full | Adapted |
+| interfaces | Full | Full | Full | Adapted | Full | Full | N/A |
+| methods | Full | Full | Full | Adapted | Full | Full | Adapted |
+| packages | Full | Full | Full | N/A | Adapted | Adapted | N/A |
+| pointers | Full | Adapted | Adapted | Full | Adapted | Adapted | Full |
+| errors | Full | Full | Full | Adapted | Full | Full | N/A |
+| concurrency | Full | Full | Full | Adapted | Full | Full | Adapted |
+| testing | Full | Full | Full | Adapted | Adapted | Adapted | N/A |
+| json | Full | Full | Full | Adapted | Full | Adapted | N/A |
+| time | Full | Full | Full | Adapted | Full | Full | N/A |
 
 ## Pedagogical parity (normative)
 

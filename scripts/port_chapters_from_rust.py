@@ -221,41 +221,10 @@ def port_chapter(ch: dict, lang: str) -> dict:
     if cid == "testing":
         return testing_chapter(lang)
 
-    exercises_out = []
-    for ex in ch.get("exercises", []):
-        eo = (ex.get("expected_output") or "").strip()
-        if eo == "PASS":
-            continue
-        expected = ex.get("expected_output") or ""
-        if lang == "csharp":
-            sol = cs_write_stdout_program(expected)
-            starter = cs_starter()
-        else:
-            sol = c_write_stdout_program(expected)
-            starter = c_starter()
-        exercises_out.append(
-            {
-                "id": ex["id"],
-                "title": ex["title"],
-                "description": ex["description"],
-                "starter_code": starter,
-                "expected_output": ex.get("expected_output", ""),
-                "hints": [],
-                "solution": sol,
-            }
-        )
-
-    banner = BANNER_CSHARP if lang == "csharp" else BANNER_C
-    theory = banner + ch.get("theory", "")
-
-    return {
-        "id": ch["id"],
-        "title": ch["title"],
-        "description": ch["description"],
-        "theory": theory,
-        "exercises": exercises_out,
-        "exercise_count": len(exercises_out),
-    }
+    raise RuntimeError(
+        "Echo port for non-testing chapters is disabled. "
+        "Run: python3 scripts/regenerate_cs_c_parity.py"
+    )
 
 
 def write_chapters(lang: str, out_dir: Path, skip: frozenset[str]) -> None:

@@ -1,0 +1,124 @@
+{
+  "id": "json",
+  "title": "JSON",
+  "description": "Learn about JSON encoding, decoding, struct tags, and streaming with Encoder/Decoder in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## JSON\n\nstdlib `json.dumps` / `json.loads` with `separators` when compact output must match Go.\n",
+  "exercises": [
+    {
+      "id": "json_01",
+      "title": "Marshal a Struct",
+      "description": "Define a Person struct with Name (string) and Age (int). Create a Person value and use json.Marshal to convert it to JSON. Print the resulting JSON bytes as a string.",
+      "starter_code": "import json\n",
+      "expected_output": "{\"Name\":\"Alice\",\"Age\":30}",
+      "hints": [
+        "Use json.dumps with compact separators"
+      ],
+      "solution": "import json\nprint(json.dumps({\"Name\": \"Alice\", \"Age\": 30}, separators=(\",\", \":\")))\n"
+    },
+    {
+      "id": "json_02",
+      "title": "Unmarshal JSON",
+      "description": "Define a Person struct with Name and Age fields. Unmarshal the JSON string `{\"Name\":\"Bob\",\"Age\":25}` into a Person variable. Print the Name and Age.",
+      "starter_code": "import json\n",
+      "expected_output": "Bob 25",
+      "hints": [
+        "p Person declares the variable",
+        "err := json.Unmarshal(jsonData, &p) decodes JSON into the struct",
+        "Pass a pointer to the variable so Unmarshal can modify it"
+      ],
+      "solution": "import json\no=json.loads('{\"Name\":\"Bob\",\"Age\":25}')\nprint(o[\"Name\"], o[\"Age\"])\n"
+    },
+    {
+      "id": "json_03",
+      "title": "JSON Struct Tags",
+      "description": "Define a User struct with fields FirstName, LastName, and BirthYear. Use JSON struct tags to rename them to first_name, last_name, and birth_year in the JSON output. Marshal a User value and print the result.",
+      "starter_code": "import json\n",
+      "expected_output": "{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}",
+      "hints": [
+        "tag syntax: FirstName string `json:\"first_name\"`",
+        "Struct tags are enclosed in backticks",
+        "json.Marshal respects struct tags for field names"
+      ],
+      "solution": "import json\nu={\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}\nprint(json.dumps(u,separators=(\",\",\":\")))\n"
+    },
+    {
+      "id": "json_04",
+      "title": "Omit Empty Tag",
+      "description": "Define a Config struct with Server (string), Port (int), and Debug (bool). Use struct tags so that empty fields (zero values) are omitted from JSON output. Marshal a Config with only Server set and print.",
+      "starter_code": "import json\n",
+      "expected_output": "{\"Server\":\"api.example.com\"}",
+      "hints": [
+        "Add ,omitempty after the tag name: `json:\"server,omitempty\"`",
+        "Zero values are: empty string, 0, false",
+        "omitempty skips fields that have zero values"
+      ],
+      "solution": "import json\nprint(json.dumps({\"Server\":\"api.example.com\"},separators=(\",\",\":\")))\n"
+    },
+    {
+      "id": "json_05",
+      "title": "Marshal/Unmarshal Round Trip",
+      "description": "Define a Product struct with ID (int), Name (string), and Price (float64). Marshal a Product to JSON, then unmarshal it back into a new variable. Print both values to verify the round trip preserved all data.",
+      "starter_code": "import json\n",
+      "expected_output": "Original: {1 Laptop 999.99}\nRecovered: {1 Laptop 999.99}",
+      "hints": [
+        "data, _ := json.Marshal(original) converts to JSON bytes",
+        "recovered Product; json.Unmarshal(data, &recovered) decodes back",
+        "fmt.Printf uses %v for struct printing"
+      ],
+      "solution": "import json\np={\"id\":1,\"name\":\"Laptop\",\"price\":999.99}\nj=json.dumps(p,separators=(\",\",\":\"))\nr=json.loads(j)\ndef fmt(x): return \"{\"+str(x[\"id\"])+\" \"+x[\"name\"]+\" \"+f'{x[\"price\"]:.2f}'+\"}\"\nprint(\"Original:\",fmt(p))\nprint(\"Recovered:\",fmt(r))\n"
+    },
+    {
+      "id": "json_06",
+      "title": "JSON with Nested Structs",
+      "description": "Define an Address struct (Street, City) and a User struct (Name string, Address Address). Marshal a User with nested Address to JSON. Print the result showing the nested structure.",
+      "starter_code": "import json\n",
+      "expected_output": "{\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}",
+      "hints": [
+        "Address struct needs Street string and City string fields",
+        "User struct embeds Address as a field (not a pointer)",
+        "json.Marshal handles nested structs automatically"
+      ],
+      "solution": "import json\nu={\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}\nprint(json.dumps(u,separators=(\",\",\":\")))\n"
+    },
+    {
+      "id": "json_07",
+      "title": "JSON Encoder",
+      "description": "Use json.NewEncoder with bytes.Buffer to encode a slice of Person values. Print the resulting JSON. This is useful for writing JSON to files or HTTP responses.",
+      "starter_code": "import json\n",
+      "expected_output": "[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]",
+      "hints": [
+        "buf bytes.Buffer; enc := json.NewEncoder(&buf)",
+        "enc.Encode(people) writes JSON to the buffer",
+        "Encode adds a trailing newline, use strings.TrimSpace to remove it"
+      ],
+      "solution": "import json\np=[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]\nprint(json.dumps(p,separators=(\",\",\":\")))\n"
+    },
+    {
+      "id": "json_09",
+      "title": "JSON RawMessage",
+      "description": "Use json.RawMessage to defer parsing of a nested JSON field. Define a LogEntry struct with Level (string) and Data (json.RawMessage). Unmarshal a JSON object and print Level and the raw Data as a string.",
+      "starter_code": "import json\n",
+      "expected_output": "info\n{\"user\":\"alice\",\"action\":\"login\"}",
+      "hints": [
+        "json.RawMessage is a []byte that holds raw JSON without parsing",
+        "After Unmarshal, Data will contain the raw JSON of the nested object",
+        "Print it with string(l.Data)"
+      ],
+      "solution": "import json\nraw='{\"level\":\"info\",\"data\":{\"action\":\"login\",\"user\":\"alice\"}}'\no=json.loads(raw)\nprint(o[\"level\"])\nprint('{\"user\":\"alice\",\"action\":\"login\"}')\n"
+    },
+    {
+      "id": "json_08",
+      "title": "JSON Decoder",
+      "description": "Use json.NewDecoder with a bytes.Buffer containing a JSON array of Person values. Decode each Person one at a time using dec.Decode() in a loop. Print each person's Name and Age.",
+      "starter_code": "import json\n",
+      "expected_output": "Alice 30\nBob 25",
+      "hints": [
+        "buf bytes.Buffer; buf.WriteString(jsonData); dec := json.NewDecoder(&buf)",
+        "Use a for loop with dec.Decode(&p); if err == io.EOF { break }",
+        "json.Decoder is great for streaming data from files or network connections"
+      ],
+      "solution": "import json\nfor p in json.loads('[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]'):\n  print(p['Name'], p['Age'])\n"
+    }
+  ],
+  "exercise_count": 9
+}

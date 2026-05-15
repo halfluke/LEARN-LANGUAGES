@@ -1,71 +1,91 @@
 {
   "id": "slices",
   "title": "Slices",
-  "description": "Vectors, slices, len/cap, and borrowing in C",
+  "description": "Dynamic slices in Go - like arrays but growable",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Pointer + length\n\nPass `(ptr, len)` pairs; never walk past `len`.\n",
   "exercises": [
     {
       "id": "slices_01",
-      "title": "Create vector",
-      "description": "Make a `Vec<i32>` of length 3 with values 1,2,3 and print it with `{:?}`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "[1, 2, 3]",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[1, 2, 3]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Create Slice",
+      "description": "Create a slice with make for 3 ints. Assign values 1,2,3. Print using printf.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int s[3] = {1, 2, 3};\n    // print [1 2 3]\n    return 0;\n}\n",
+      "expected_output": "[1 2 3]",
+      "hints": [
+        "Use make([]int, 3)",
+        "slice[0] = 1, etc."
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int s[3] = {1, 2, 3};\n    printf(\"[\");\n    for (int i = 0; i < 3; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", s[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_02",
-      "title": "Push elements",
-      "description": "Start with `vec![1,2]`, push `3`, `4`, `5`, print `{:?}`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "[1, 2, 3, 4, 5]",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[1, 2, 3, 4, 5]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Append to Slice",
+      "description": "Create slice nums := []int{1, 2}. Append 3, 4, 5. Print result.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int nums[] = {1, 2, 3, 4, 5};\n    // print\n    return 0;\n}\n",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": [
+        "Use append(nums, 3, 4, 5...)"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int nums[] = {1, 2, 3, 4, 5};\n    printf(\"[\");\n    for (int i = 0; i < 5; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", nums[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_03",
-      "title": "Length and capacity",
-      "description": "`Vec` with `with_capacity(10)` then `resize(3, 0)` — print len and capacity.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Slice Length and Capacity",
+      "description": "Create slice s := make([]int, 3, 10). Print its len and cap.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int backing[10] = {0};\n    int len = 3;\n    // print len cap\n    return 0;\n}\n",
       "expected_output": "3 10",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"3 10\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use len(s) and cap(s)",
+        "printf(len(s), cap(s))"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int backing[10] = {0};\n    int len = 3;\n    printf(\"%d %d\\n\", len, 10);\n    return 0;\n}\n"
     },
     {
       "id": "slices_04",
-      "title": "Slice length",
-      "description": "Create `vec![\"apple\", \"banana\", \"cherry\"]` and print `len()`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Slice Literals",
+      "description": "Create slice fruits := []string{\"apple\", \"banana\", \"cherry\"}. Print its length.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *fruits[] = {\"apple\", \"banana\", \"cherry\"};\n    // len\n    return 0;\n}\n",
       "expected_output": "3",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"3\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use len(fruits)"
+      ],
+      "solution": "#include <stdio.h>\n#include <stddef.h>\n\nint main(void) {\n    const char *fruits[] = {\"apple\", \"banana\", \"cherry\"};\n    printf(\"%zu\\n\", sizeof fruits / sizeof fruits[0]);\n    return 0;\n}\n"
     },
     {
       "id": "slices_05",
-      "title": "Slicing",
-      "description": "From `1..=5` collect to vec, slice to middle `[2,3,4]` via `&v[1..4]`, print `{:?}`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "[2, 3, 4]",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[2, 3, 4]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Slicing a Slice",
+      "description": "Create slice n := []int{1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int n[] = {1, 2, 3, 4, 5};\n    // n[1..4)\n    return 0;\n}\n",
+      "expected_output": "[2 3 4]",
+      "hints": [
+        "Use n[1:4] to get elements from index 1 to 3",
+        "slice[start:end] is exclusive on end"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int n[] = {1, 2, 3, 4, 5};\n    printf(\"[\");\n    for (int i = 1; i < 4; i++) {\n        if (i > 1) putchar(' ');\n        printf(\"%d\", n[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_07",
-      "title": "Extend slice",
-      "description": "`a = [1,2]`, `b = [3,4,5]`, extend `a` with `b` and print `a`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "[1, 2, 3, 4, 5]",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[1, 2, 3, 4, 5]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Append Slices",
+      "description": "Create two slices: a := []int{1, 2} and b := []int{3, 4, 5}. Append all elements of b to a and print the result.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int a[] = {1, 2, 3, 4, 5};\n    // print\n    return 0;\n}\n",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": [
+        "Use append(a, b...) to append all elements of slice b to a",
+        "The ... expands the slice into individual arguments"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int a[] = {1, 2, 3, 4, 5};\n    printf(\"[\");\n    for (int i = 0; i < 5; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", a[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_06",
-      "title": "Clone then append",
-      "description": "Clone `vec![1,2,3]`, push `4` on clone, print original then clone (two lines).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "[1, 2, 3]\n[1, 2, 3, 4]",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[1, 2, 3]\\n[1, 2, 3, 4]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Copy Slice",
+      "description": "Create slice original := []int{1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int original[] = {1, 2, 3};\n    // copy and append\n    return 0;\n}\n",
+      "expected_output": "[1 2 3]\n[1 2 3 4]",
+      "hints": [
+        "copy := make([]int, len(original))",
+        "copy(copy, original)",
+        "Then append to copy"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    int original[] = {1, 2, 3};\n    int copy[4];\n    memcpy(copy, original, sizeof original);\n    copy[3] = 4;\n    printf(\"[\");\n    for (int i = 0; i < 3; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", original[i]);\n    }\n    puts(\"]\");\n    printf(\"[\");\n    for (int i = 0; i < 4; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", copy[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     }
   ],
   "exercise_count": 7

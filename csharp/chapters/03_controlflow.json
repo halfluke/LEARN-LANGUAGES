@@ -1,71 +1,91 @@
 {
   "id": "controlflow",
   "title": "Control Flow",
-  "description": "if / loop / while / for / match in C#",
+  "description": "If statements, loops, and switch cases in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Control flow in C#\n\n`if`/`else`, `switch` expressions, `for`, `foreach`, `while`, `break`, and `continue`. Prefer `foreach` for collections.\n",
   "exercises": [
     {
       "id": "controlflow_01",
-      "title": "If expression",
-      "description": "`age = 20`; print `Adult` if `>= 18` else `Minor`.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "If Statement",
+      "description": "Declare age := 20. If age >= 18, print Adult. Otherwise print Minor.",
+      "starter_code": "var age = 20;\n// if (age >= 18) Console.WriteLine(\"Adult\"); else Console.WriteLine(\"Minor\");",
       "expected_output": "Adult",
-      "hints": [],
-      "solution": "Console.Write(@\"Adult\");\n"
+      "hints": [
+        "Use if age >= 18 { Console.WriteLine(\"Adult\") } else { Console.WriteLine(\"Minor\") }"
+      ],
+      "solution": "var age = 20;\nif (age >= 18) Console.WriteLine(\"Adult\");\nelse Console.WriteLine(\"Minor\");"
     },
     {
       "id": "controlflow_02",
-      "title": "For range",
-      "description": "Print 1 through 5 inclusive, one per line.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "For Loop",
+      "description": "Use a for loop to print numbers 1 through 5.",
+      "starter_code": "for (var i = 1; i <= 5; i++) { /* Console.WriteLine(i); */ }",
       "expected_output": "1\n2\n3\n4\n5",
-      "hints": [],
-      "solution": "Console.Write(@\"1\n2\n3\n4\n5\");\n"
+      "hints": [
+        "Use for i := 1; i <= 5; i++ { Console.WriteLine(i) }"
+      ],
+      "solution": "for (var i = 1; i <= 5; i++) Console.WriteLine(i);"
     },
     {
       "id": "controlflow_03",
-      "title": "Match day",
-      "description": "`day = 2`; match to print `Tuesday` for 2 (also arms 1,3, default `Unknown`).",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Switch Statement",
+      "description": "Declare day := 2. Use a switch statement to print the day name: 1=Monday, 2=Tuesday, 3=Wednesday, default=Unknown.",
+      "starter_code": "var day = 2;\n// switch (day) { ... }",
       "expected_output": "Tuesday",
-      "hints": [],
-      "solution": "Console.Write(@\"Tuesday\");\n"
+      "hints": [
+        "switch day { case 1: ... default: ... }",
+        "No break statement needed in Go cases"
+      ],
+      "solution": "var day = 2;\nswitch (day)\n{\n    case 1: Console.WriteLine(\"Monday\"); break;\n    case 2: Console.WriteLine(\"Tuesday\"); break;\n    case 3: Console.WriteLine(\"Wednesday\"); break;\n    default: Console.WriteLine(\"Unknown\"); break;\n}"
     },
     {
       "id": "controlflow_04",
-      "title": "For over vec",
-      "description": "Iterate `[\"red\",\"green\",\"blue\"]` and print each color.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "For-Range Loop",
+      "description": "Create a slice colors := []string{\"red\", \"green\", \"blue\"}. Use for-range to print each color on its own line.",
+      "starter_code": "var colors = new[] { \"red\", \"green\", \"blue\" };\n// foreach (var c in colors) Console.WriteLine(c);",
       "expected_output": "red\ngreen\nblue",
-      "hints": [],
-      "solution": "Console.Write(@\"red\ngreen\nblue\");\n"
+      "hints": [
+        "for index, color := range colors { }",
+        "Use Console.WriteLine(color)"
+      ],
+      "solution": "var colors = new[] { \"red\", \"green\", \"blue\" };\nforeach (var c in colors) Console.WriteLine(c);"
     },
     {
       "id": "controlflow_05",
-      "title": "Grade chain",
-      "description": "`score = 85` print `A`/`B`/… same thresholds as Go exercise.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Else If Chain",
+      "description": "Declare score := 85. Print the grade: 90+ = A, 80+ = B, 70+ = C, 60+ = D, below 60 = F.",
+      "starter_code": "var score = 85;\n// chain if / else if for grade",
       "expected_output": "B",
-      "hints": [],
-      "solution": "Console.Write(@\"B\");\n"
+      "hints": [
+        "Use if score >= 90 { A } else if score >= 80 { B } ...",
+        "Check from highest to lowest"
+      ],
+      "solution": "var score = 85;\nstring grade = score >= 90 ? \"A\" : score >= 80 ? \"B\" : score >= 70 ? \"C\" : score >= 60 ? \"D\" : \"F\";\nConsole.WriteLine(grade);"
     },
     {
       "id": "controlflow_07",
-      "title": "Loop with break",
-      "description": "Print 1..4 using `loop` and `break` when reaching 5.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "For Loop with Break",
+      "description": "Use a for loop to count from 1 upward. When i reaches 5, break out of the loop. Print each number before the break.",
+      "starter_code": "var i = 1;\n// while / for with break at 5",
       "expected_output": "1\n2\n3\n4",
-      "hints": [],
-      "solution": "Console.Write(@\"1\n2\n3\n4\");\n"
+      "hints": [
+        "Use for { } for an infinite loop",
+        "if i >= 5 { break } exits the loop",
+        "Increment i inside the loop"
+      ],
+      "solution": "for (var i = 1; ; i++)\n{\n    if (i >= 5) break;\n    Console.WriteLine(i);\n}"
     },
     {
       "id": "controlflow_06",
-      "title": "Continue",
-      "description": "Print odd numbers 1..=10 one per line.",
-      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "title": "Continue Statement",
+      "description": "Use a for loop to print numbers 1 to 10, but skip printing even numbers using continue.",
+      "starter_code": "for (var i = 1; i <= 10; i++) { /* skip evens */ }",
       "expected_output": "1\n3\n5\n7\n9",
-      "hints": [],
-      "solution": "Console.Write(@\"1\n3\n5\n7\n9\");\n"
+      "hints": [
+        "if i % 2 == 0 { continue } skips even numbers",
+        "Check i % 2 != 0 or i % 2 == 1 to print odd numbers"
+      ],
+      "solution": "for (var i = 1; i <= 10; i++)\n{\n    if (i % 2 == 0) continue;\n    Console.WriteLine(i);\n}"
     }
   ],
   "exercise_count": 7

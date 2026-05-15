@@ -1,0 +1,92 @@
+{
+  "id": "controlflow",
+  "title": "Control Flow",
+  "description": "If statements, loops, and switch cases in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Control flow\n\n`if`/`else`, `switch`, `for`, `while`, `break`, and `continue`.\n",
+  "exercises": [
+    {
+      "id": "controlflow_01",
+      "title": "If Statement",
+      "description": "Declare age := 20. If age >= 18, print Adult. Otherwise print Minor.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n        int age = 20;\n    }\n}\n",
+      "expected_output": "Adult",
+      "hints": [
+        "Use if age >= 18 { System.out.println(\"Adult\") } else { System.out.println(\"Minor\") }"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        int age = 20;\n        if (age >= 18) System.out.println(\"Adult\");\n        else System.out.println(\"Minor\");\n    }\n}\n"
+    },
+    {
+      "id": "controlflow_02",
+      "title": "For Loop",
+      "description": "Use a for loop to print numbers 1 through 5.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "1\n2\n3\n4\n5",
+      "hints": [
+        "Use for i := 1; i <= 5; i++ { System.out.println(i) }"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        for (int i = 1; i <= 5; i++) System.out.println(i);\n    }\n}\n"
+    },
+    {
+      "id": "controlflow_03",
+      "title": "Switch Statement",
+      "description": "Declare day := 2. Use a switch statement to print the day name: 1=Monday, 2=Tuesday, 3=Wednesday, default=Unknown.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n        int day = 2;\n    }\n}\n",
+      "expected_output": "Tuesday",
+      "hints": [
+        "switch day { case 1: ... default: ... }",
+        "No break statement needed in Go cases"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        int day = 2;\n        switch (day) {\n            case 1: System.out.println(\"Monday\"); break;\n            case 2: System.out.println(\"Tuesday\"); break;\n            case 3: System.out.println(\"Wednesday\"); break;\n            default: System.out.println(\"Unknown\");\n        }\n    }\n}\n"
+    },
+    {
+      "id": "controlflow_04",
+      "title": "For-Range Loop",
+      "description": "Create a slice colors := []string{\"red\", \"green\", \"blue\"}. Use for-range to print each color on its own line.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "red\ngreen\nblue",
+      "hints": [
+        "for index, color := range colors { }",
+        "Use System.out.println(color)"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        String[] colors = {\"red\", \"green\", \"blue\"};\n        for (String color : colors) System.out.println(color);\n    }\n}\n"
+    },
+    {
+      "id": "controlflow_05",
+      "title": "Else If Chain",
+      "description": "Declare score := 85. Print the grade: 90+ = A, 80+ = B, 70+ = C, 60+ = D, below 60 = F.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n        int score = 85;\n    }\n}\n",
+      "expected_output": "B",
+      "hints": [
+        "Use if score >= 90 { A } else if score >= 80 { B } ...",
+        "Check from highest to lowest"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        int score = 85;\n        String grade = score >= 90 ? \"A\" : score >= 80 ? \"B\" : score >= 70 ? \"C\" : score >= 60 ? \"D\" : \"F\";\n        System.out.println(grade);\n    }\n}\n"
+    },
+    {
+      "id": "controlflow_07",
+      "title": "For Loop with Break",
+      "description": "Use a for loop to count from 1 upward. When i reaches 5, break out of the loop. Print each number before the break.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "1\n2\n3\n4",
+      "hints": [
+        "Use for { } for an infinite loop",
+        "if i >= 5 { break } exits the loop",
+        "Increment i inside the loop"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        for (int i = 1; i < 5; i++) System.out.println(i);\n    }\n}\n"
+    },
+    {
+      "id": "controlflow_06",
+      "title": "Continue Statement",
+      "description": "Use a for loop to print numbers 1 to 10, but skip printing even numbers using continue.",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
+      "expected_output": "1\n3\n5\n7\n9",
+      "hints": [
+        "if i % 2 == 0 { continue } skips even numbers",
+        "Check i % 2 != 0 or i % 2 == 1 to print odd numbers"
+      ],
+      "solution": "public class Main {\n    public static void main(String[] args) {\n        for (int i = 1; i <= 10; i++) {\n            if (i % 2 == 0) continue;\n            System.out.println(i);\n        }\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

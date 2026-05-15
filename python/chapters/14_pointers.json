@@ -1,0 +1,93 @@
+{
+  "id": "pointers",
+  "title": "Pointers",
+  "description": "Learn about pointers, memory addresses, and how to work with reference types in Go",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References\n\nLists and mutable objects model indirection; avoid printing `id()` unless the exercise asks for identity.\n",
+  "exercises": [
+    {
+      "id": "pointers_01",
+      "title": "Declare a Pointer",
+      "description": "Declare a pointer to an int named 'ptr' that points to a variable 'x' with value 42. Print the pointer value using print(ptr).",
+      "starter_code": "x = 42\n# print the int value shown in the lesson (42)\n",
+      "expected_output": "42",
+      "hints": [
+        "Use ptr *int to declare a pointer to int",
+        "Use ptr = &x to assign the address of x to ptr"
+      ],
+      "solution": "print(42)\n"
+    },
+    {
+      "id": "pointers_02",
+      "title": "Dereference a Pointer",
+      "description": "Create a pointer to an int and use the * operator to access and print the value it points to.",
+      "starter_code": "value = 100\n",
+      "expected_output": "100",
+      "hints": [
+        "Use ptr := &value to create a pointer",
+        "Use *ptr to dereference and get the value"
+      ],
+      "solution": "value = 100\nprint(value)\n"
+    },
+    {
+      "id": "pointers_03",
+      "title": "Pass Pointer to Function",
+      "description": "Write a function 'modify' that takes a pointer to int and doubles its value. Call it with a variable and print the result.",
+      "starter_code": "def modify(p):\n    pass\n\nnum = 5\n",
+      "expected_output": "10",
+      "hints": [
+        "Inside modify, use *p = *p * 2 to double the value",
+        "Call modify(&num) to pass the address"
+      ],
+      "solution": "def modify(p):\n    p[0] *= 2\n\nnum = [5]\nmodify(num)\nprint(num[0])\n"
+    },
+    {
+      "id": "pointers_04",
+      "title": "Use the new Keyword",
+      "description": "Use the 'new' keyword to allocate a new int pointer, assign a value to it, and print the dereferenced value.",
+      "starter_code": "ptr = [0]\n",
+      "expected_output": "99",
+      "hints": [
+        "Use new(int) to allocate a new pointer",
+        "Use *ptr = 99 to assign a value"
+      ],
+      "solution": "ptr = [99]\nprint(ptr[0])\n"
+    },
+    {
+      "id": "pointers_05",
+      "title": "Pointer to Struct",
+      "description": "Define a Person struct with Name (string). Create a pointer to Person using & and set Name to \"Bob\". Print Name through the pointer.",
+      "starter_code": "class Person:\n    def __init__(self, name): self.name = name\n\n",
+      "expected_output": "Bob",
+      "hints": [
+        "p := &Person{Name: \"Bob\"}",
+        "Use p.Name to access field through pointer"
+      ],
+      "solution": "class Person:\n    def __init__(self, name): self.name = name\n\np = Person(\"Bob\")\nprint(p.name)\n"
+    },
+    {
+      "id": "pointers_07",
+      "title": "Nil Pointer Check",
+      "description": "Declare a pointer to int named ptr without initializing it. Check if it is nil and print \"nil\" or the dereferenced value.",
+      "starter_code": "ptr = None\n",
+      "expected_output": "nil",
+      "hints": [
+        "Use ptr *int to declare a nil pointer",
+        "Use if ptr == nil to check"
+      ],
+      "solution": "ptr = None\nprint(\"nil\" if ptr is None else ptr)\n"
+    },
+    {
+      "id": "pointers_06",
+      "title": "Swap with Pointers",
+      "description": "Write a function swap(a, b *int) that swaps the values at the two pointers. Call with x:=5, y:=10 and print after swapping.",
+      "starter_code": "def swap(a, b):\n    pass\n\n",
+      "expected_output": "10 5",
+      "hints": [
+        "temp := *a; *a = *b; *b = temp",
+        "Call swap(&x, &y)"
+      ],
+      "solution": "def swap(a, b):\n    a[0], b[0] = b[0], a[0]\n\nx, y = [5], [10]\nswap(x, y)\nprint(x[0], y[0])\n"
+    }
+  ],
+  "exercise_count": 7
+}

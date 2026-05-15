@@ -1,71 +1,87 @@
 {
   "id": "maps",
   "title": "Maps",
-  "description": "Hash maps and ordered maps in C",
+  "description": "Hash maps (dictionaries) in Go",
   "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Small tables\n\nParallel arrays / linear search keep exercises portable without a hash library.\n",
   "exercises": [
     {
       "id": "maps_01",
-      "title": "Create map",
-      "description": "Build a `BTreeMap` with `Alice -> 25`, `Bob -> 30` and print `{:?}`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "{\"Alice\": 25, \"Bob\": 30}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Alice\\\": 25, \\\"Bob\\\": 30}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Create Map",
+      "description": "Create a map ages with keys \"Alice\" (25), \"Bob\" (30). Print the map.",
+      "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"Alice\", \"Bob\"};\n    int vals[] = {25, 30};\n    print_str_int_map(keys, vals, 2);\n    putchar('\\n');\n    return 0;\n}\n",
+      "expected_output": "map[Alice:25 Bob:30]",
+      "hints": [
+        "Use ages := map[string]int{\"Alice\": 25, \"Bob\": 30}"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"Alice\", \"Bob\"};\n    int vals[] = {25, 30};\n    print_str_int_map(keys, vals, 2);\n    putchar('\\n');\n    return 0;\n}\n"
     },
     {
       "id": "maps_02",
-      "title": "Lookup",
-      "description": "Print the Math score from a `BTreeMap` of scores.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Map Lookup",
+      "description": "Create map scores := map[string]int{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
+      "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    // parallel arrays lookup \"Math\"\n    return 0;\n}\n",
       "expected_output": "95",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"95\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use scores[\"Math\"] to get value",
+        "printf(scores[\"Math\"])"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"Math\", \"Physics\"};\n    int vals[] = {95, 88};\n    int found;\n    printf(\"%d\\n\", map_get_str_int(keys, vals, 2, \"Math\", &found));\n    return 0;\n}\n"
     },
     {
       "id": "maps_03",
-      "title": "Insert entries",
-      "description": "Empty `BTreeMap`, insert `1 -> One`, `2 -> Two`, print Debug.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "{\"1\": \"One\", \"2\": \"Two\"}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"1\\\": \\\"One\\\", \\\"2\\\": \\\"Two\\\"}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Add to Map",
+      "description": "Create empty map names := make(map[string]string). Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
+      "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_str_map(const char **keys, const char **vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%s\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\n\nint main(void) {\n    // keys 1,2\n    return 0;\n}\n",
+      "expected_output": "map[1:One 2:Two]",
+      "hints": [
+        "names[\"1\"] = \"One\""
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_str_map(const char **keys, const char **vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%s\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\n\nint main(void) {\n    const char *keys[] = {\"1\", \"2\"};\n    const char *vals[] = {\"One\", \"Two\"};\n    print_str_str_map(keys, vals, 2);\n    return 0;\n}\n"
     },
     {
       "id": "maps_04",
-      "title": "Remove",
-      "description": "Remove key `b` from map `a,b,c` and print Debug.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
-      "expected_output": "{\"a\": 1, \"c\": 3}",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"a\\\": 1, \\\"c\\\": 3}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "title": "Delete from Map",
+      "description": "Create map data := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
+      "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    // without key b\n    return 0;\n}\n",
+      "expected_output": "map[a:1 c:3]",
+      "hints": [
+        "Use delete(data, \"b\")"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"a\", \"c\"};\n    int vals[] = {1, 3};\n    print_str_int_map(keys, vals, 2);\n    return 0;\n}\n"
     },
     {
       "id": "maps_05",
-      "title": "Key presence",
-      "description": "If `bananas` missing from inventory print `not found`.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Check Key Existence",
+      "description": "Create map inventory := map[string]int{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
+      "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    // lookup bananas\n    return 0;\n}\n",
       "expected_output": "not found",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"not found\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use value, exists := inventory[\"bananas\"]",
+        "Check the exists variable"
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"apples\", \"oranges\"};\n    int vals[] = {5, 3};\n    int found;\n    map_get_str_int(keys, vals, 2, \"bananas\", &found);\n    puts(found ? \"exists\" : \"not found\");\n    return 0;\n}\n"
     },
     {
       "id": "maps_07",
-      "title": "Length",
-      "description": "Print `len()` of three-entry map.",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Map Length",
+      "description": "Create map counts := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // n = 3 entries\n    return 0;\n}\n",
       "expected_output": "3",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"3\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use len(counts) to get the number of key-value pairs"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *keys[] = {\"one\", \"two\", \"three\"};\n    int vals[] = {1, 2, 3};\n    printf(\"%d\\n\", 3);\n    return 0;\n}\n"
     },
     {
       "id": "maps_06",
-      "title": "Iterate",
-      "description": "Print each `key value` on its own line for grades map (BTree order).",
-      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "title": "Iterate Map",
+      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // print A 90\\nB 80\\nC 70\n    return 0;\n}\n",
       "expected_output": "A 90\nB 80\nC 70",
-      "hints": [],
-      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"A 90\\nB 80\\nC 70\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+      "hints": [
+        "Use for key, value := range grades"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *keys[] = {\"A\", \"B\", \"C\"};\n    int vals[] = {90, 80, 70};\n    for (int i = 0; i < 3; i++) printf(\"%s %d\\n\", keys[i], vals[i]);\n    return 0;\n}\n"
     }
   ],
   "exercise_count": 7

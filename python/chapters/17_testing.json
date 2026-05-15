@@ -1,0 +1,64 @@
+{
+  "id": "testing",
+  "title": "Testing",
+  "description": "Writing tests in Go with the testing package",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Testing\n\nProduction code uses `pytest` or `unittest`. Here, small scripts print the same outcomes you would assert in tests.\n",
+  "exercises": [
+    {
+      "id": "testing_01",
+      "title": "Basic test (stdout)",
+      "description": "Implement `sum` and print `sum(2, 3)` (same intent as the Go `testing` exercise).",
+      "starter_code": "def sum(a, b):\n    return 0\n\n# print(sum(2, 3))\n",
+      "expected_output": "5",
+      "hints": [
+        "Return `a + b`."
+      ],
+      "solution": "def sum(a, b):\n    return a + b\n\nprint(sum(2, 3))\n"
+    },
+    {
+      "id": "testing_02",
+      "title": "Table cases (stdout)",
+      "description": "Print `6 0 -4` from `multiply` for (2,3), (0,5), (-1,4).",
+      "starter_code": "def multiply(a, b):\n    return 0\n\n",
+      "expected_output": "6 0 -4",
+      "hints": [
+        "Use one `print` with three values."
+      ],
+      "solution": "def multiply(a, b):\n    return a * b\n\nprint(multiply(2, 3), multiply(0, 5), multiply(-1, 4))\n"
+    },
+    {
+      "id": "testing_03",
+      "title": "Divide and error (stdout)",
+      "description": "Print `ok` if `divide(10,2)` is 5 and `divide(10,0)` is `None`.",
+      "starter_code": "def divide(a, b):\n    return None\n\n",
+      "expected_output": "ok",
+      "hints": [
+        "Return `None` when `b == 0`."
+      ],
+      "solution": "def divide(a, b):\n    if b == 0:\n        return None\n    return a // b\n\nif divide(10, 2) == 5 and divide(10, 0) is None:\n    print('ok')\n"
+    },
+    {
+      "id": "testing_04",
+      "title": "Error message check (stdout)",
+      "description": "If `validate(-5)` raises `ValueError` with `negative` in the message, print `yes`.",
+      "starter_code": "def validate(age):\n    pass\n\n",
+      "expected_output": "yes",
+      "hints": [
+        "`raise ValueError('age cannot be negative')` when `age < 0`."
+      ],
+      "solution": "def validate(age):\n    if age < 0:\n        raise ValueError('age cannot be negative')\n\ntry:\n    validate(-5)\nexcept ValueError as e:\n    print('yes' if 'negative' in str(e) else 'no')\n"
+    },
+    {
+      "id": "testing_05",
+      "title": "Hot path loop (stdout)",
+      "description": "Call `sum(2,3)` ten thousand times, then print `done`.",
+      "starter_code": "def sum(a, b):\n    return a + b\n\n",
+      "expected_output": "done",
+      "hints": [
+        "`for _ in range(10000): sum(2, 3)`"
+      ],
+      "solution": "def sum(a, b):\n    return a + b\n\nfor _ in range(10000):\n    sum(2, 3)\nprint('done', end='')\n"
+    }
+  ],
+  "exercise_count": 5
+}

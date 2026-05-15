@@ -1,0 +1,93 @@
+{
+  "id": "methods",
+  "title": "Methods",
+  "description": "Learn how to define methods on types in Go, including pointer and value receivers",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Instance methods\n\nReceivers are explicit instance methods; use `static` helpers in `Main` for small exercises.\n",
+  "exercises": [
+    {
+      "id": "methods_01",
+      "title": "Define a Method",
+      "description": "Define a method on a struct type 'Person' with a 'Name' field that returns a greeting string.",
+      "starter_code": "static class Person { String name; }\npublic class Main {\n    public static void main(String[] args) { Person p = new Person(); p.name = \"Alice\"; }\n}\n",
+      "expected_output": "Hello, Alice",
+      "hints": [
+        "Use func (p Person) Greet() string { return ... } to define the method",
+        "Access the field with p.Name"
+      ],
+      "solution": "public class Main {\n    static class Person { String name; String greet() { return \"Hello, \" + name; } }\n\n    public static void main(String[] args) {\n        Person p = new Person(); p.name = \"Alice\";\n        System.out.println(p.greet());\n    }\n}\n"
+    },
+    {
+      "id": "methods_02",
+      "title": "Pointer Receiver",
+      "description": "Define a method with a pointer receiver that modifies the receiver's state. Create a 'SetName' method on Person.",
+      "starter_code": "static class Person { String name; void setName(String n) {} }\npublic class Main {\n    public static void main(String[] args) { Person p = new Person(); p.name = \"Bob\"; }\n}\n",
+      "expected_output": "Charlie",
+      "hints": [
+        "Use func (p *Person) SetName(name string) to define a pointer receiver method",
+        "Set p.Name = name inside the method"
+      ],
+      "solution": "public class Main {\n    static class Person { String name; void setName(String n) { name = n; } }\n\n    public static void main(String[] args) {\n        Person p = new Person(); p.name = \"Bob\";\n        p.setName(\"Charlie\");\n        System.out.println(p.name);\n    }\n}\n"
+    },
+    {
+      "id": "methods_03",
+      "title": "Value Receiver",
+      "description": "Define a method with a value receiver that returns a new value without modifying the original.",
+      "starter_code": "static class Counter { int value; Counter increment() { return new Counter(); } }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "{6}",
+      "hints": [
+        "Use func (c Counter) Increment() Counter to define a value receiver method",
+        "Return c with Value + 1"
+      ],
+      "solution": "public class Main {\n    static class Counter { int value; Counter increment() { Counter c = new Counter(); c.value = value + 1; return c; } public String toString() { return \"{\" + value + \"}\"; } }\n\n    public static void main(String[] args) {\n        Counter c = new Counter(); c.value = 5;\n        System.out.println(c.increment());\n    }\n}\n"
+    },
+    {
+      "id": "methods_04",
+      "title": "Interface Satisfaction",
+      "description": "Define a 'Stringer' interface with a String() method, then satisfy it with a type.",
+      "starter_code": "static class Point { int x, y; }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "Point(10, 20)",
+      "hints": [
+        "Define interface Stringer with func String() string",
+        "Implement func (p Point) String() string { return ... } on Point"
+      ],
+      "solution": "public class Main {\n    static class Point { int x, y; public String toString() { return \"Point(\" + x + \", \" + y + \")\"; } }\n\n    public static void main(String[] args) {\n        Point p = new Point(); p.x = 10; p.y = 20;\n        System.out.println(p);\n    }\n}\n"
+    },
+    {
+      "id": "methods_05",
+      "title": "Method Chaining",
+      "description": "Define a Builder type with Methods Add(str) Builder and Build() string. Add returns the Builder for chaining. Test by chaining Add(\"Hello\").Add(\"World\").Build().",
+      "starter_code": "static class Builder { String result = \"\"; Builder add(String s) { return this; } String build() { return result; } }\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "HelloWorld",
+      "hints": [
+        "func (b Builder) Add(s string) Builder { b.result += s; return b }",
+        "func (b Builder) Build() string { return b.result }"
+      ],
+      "solution": "public class Main {\n    static class Builder { String result = \"\"; Builder add(String s) { result += s; return this; } String build() { return result; } }\n\n    public static void main(String[] args) {\n        System.out.println(new Builder().add(\"Hello\").add(\"World\").build());\n    }\n}\n"
+    },
+    {
+      "id": "methods_07",
+      "title": "Multiple Methods on Same Type",
+      "description": "Define a Circle type with Radius float64. Add two methods: Area() float64 and Perimeter() float64. Create a circle with radius 5.0, compute both, and print them.",
+      "starter_code": "static class Circle { double radius; }\npublic class Main {\n    public static void main(String[] args) { Circle c = new Circle(); c.radius = 5.0; }\n}\n",
+      "expected_output": "78.53981633974483\n31.41592653589793",
+      "hints": [
+        "Use math.Pi for pi",
+        "func (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }",
+        "func (c Circle) Perimeter() float64 { return 2 * math.Pi * c.Radius }"
+      ],
+      "solution": "public class Main {\n    static class Circle {\n        double radius;\n        double area() { return Math.PI * radius * radius; }\n        double perimeter() { return 2 * Math.PI * radius; }\n    }\n\n    public static void main(String[] args) {\n        Circle c = new Circle(); c.radius = 5.0;\n        System.out.println(c.area());\n        System.out.println(c.perimeter());\n    }\n}\n"
+    },
+    {
+      "id": "methods_06",
+      "title": "Method on Primitive Type",
+      "description": "Create a type MyInt int. Define a method IsEven() bool on MyInt that returns true if the value is even. Test with MyInt(42).",
+      "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
+      "expected_output": "true",
+      "hints": [
+        "func (m MyInt) IsEven() bool { return m%2 == 0 }"
+      ],
+      "solution": "public class Main {\n    static class MyInt {\n        int v;\n        MyInt(int v) { this.v = v; }\n        boolean isEven() { return v % 2 == 0; }\n    }\n    public static void main(String[] args) {\n        System.out.println(new MyInt(42).isEven());\n    }\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

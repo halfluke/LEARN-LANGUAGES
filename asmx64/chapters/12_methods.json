@@ -1,0 +1,53 @@
+{
+  "id": "methods",
+  "title": "Method-style calls",
+  "description": "Passing a receiver pointer in `rdi` like the System V C++ ABI",
+  "theory": "## Receiver in `rdi`\n\nMany ABIs pass the **this** pointer as the first argument. Here small procedures read from the object pointer in `rdi` and issue `write`.\n",
+  "exercises": [
+    {
+      "id": "methods_01",
+      "title": "Print tag",
+      "description": "Object layout: first byte is tag `'T'`, second byte is payload `'!'` (both in `.data`). Write `show` that takes object pointer in `rdi`, writes **only the tag** (one byte), returns. `_start` passes the object address.",
+      "starter_code": "global _start\nsection .data\nobj:\n    db 'T'\n    db '!'\nsection .text\nshow:\n    ret\n_start:\n    lea rdi, [rel obj]\n    call show\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "T",
+      "hints": [
+        "Save `rdi` to a callee-saved scratch like `r8` before setting syscall args"
+      ],
+      "solution": "global _start\nsection .data\nobj:\n    db 'T'\n    db '!'\nsection .text\nshow:\n    mov r8, rdi\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, r8\n    mov rdx, 1\n    syscall\n    ret\n_start:\n    lea rdi, [rel obj]\n    call show\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "methods_02",
+      "title": "Second field",
+      "description": "Same object layout (`T` then `!`). Procedure `payload` in `rdi` prints the **second** byte only.",
+      "starter_code": "global _start\nsection .data\nobj:\n    db 'T'\n    db '!'\nsection .text\npayload:\n    ret\n_start:\n    lea rdi, [rel obj]\n    call payload\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "!",
+      "hints": [
+        "`lea rsi, [r8+1]` after copying `rdi` to `r8`"
+      ],
+      "solution": "global _start\nsection .data\nobj:\n    db 'T'\n    db '!'\nsection .text\npayload:\n    mov r8, rdi\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [r8+1]\n    mov rdx, 1\n    syscall\n    ret\n_start:\n    lea rdi, [rel obj]\n    call payload\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "methods_03",
+      "title": "Chained calls",
+      "description": "`first` prints `'A'` (one byte). `second` prints `'B'`. `_start` calls `first` then `second`. Both take ignored `rdi` (set to 0 in `_start`).",
+      "starter_code": "global _start\nsection .data\n    a: db 'A'\n    b: db 'B'\nsection .text\nfirst:\n    ret\nsecond:\n    ret\n_start:\n    xor rdi, rdi\n    call first\n    xor rdi, rdi\n    call second\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "AB",
+      "hints": [
+        "Each helper issues its own `write` syscall"
+      ],
+      "solution": "global _start\nsection .data\n    a: db 'A'\n    b: db 'B'\nsection .text\nfirst:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel a]\n    mov rdx, 1\n    syscall\n    ret\nsecond:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel b]\n    mov rdx, 1\n    syscall\n    ret\n_start:\n    xor rdi, rdi\n    call first\n    xor rdi, rdi\n    call second\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "methods_04",
+      "title": "Emit whole object",
+      "description": "Object in `.data`: three bytes `db '1','2','3'`. Procedure `dump` takes object pointer in **`rdi`** and length in **`rsi`** (here `3`), issues one `write`, returns. `_start` passes the object address and `rsi=3`. Expected stdout (trimmed) is `123`.",
+      "starter_code": "global _start\nsection .data\nobj:\n    db '1','2','3'\nsection .text\ndump:\n    ret\n_start:\n    lea rdi, [rel obj]\n    mov rsi, 3\n    call dump\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "123",
+      "hints": [
+        "Same register shuffle as `emit` in the slices chapter: stash `rdi`/`rsi` before clobbering for the syscall"
+      ],
+      "solution": "global _start\nsection .data\nobj:\n    db '1', '2', '3'\nsection .text\ndump:\n    mov rax, 1\n    mov r8, rdi\n    mov r9, rsi\n    mov rdi, 1\n    mov rsi, r8\n    mov rdx, r9\n    syscall\n    ret\n_start:\n    lea rdi, [rel obj]\n    mov rsi, 3\n    call dump\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

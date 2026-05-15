@@ -1,0 +1,53 @@
+{
+  "id": "functions",
+  "title": "Functions & calls",
+  "description": "`call` / `ret`, stack discipline, and small procedures",
+  "theory": "## Procedures\n\nUse `call label` to push the return address and jump; `ret` pops it back. Keep the stack **16-byte aligned** before `call` when you will reach libc (not required for raw syscalls here, but good hygiene).\n\nArguments can follow the **System V AMD64 ABI** (`rdi`, `rsi`, `rdx`, …) when interoperating with C; this chapter uses custom internal conventions for tiny examples.\n",
+  "exercises": [
+    {
+      "id": "functions_01",
+      "title": "Call prints",
+      "description": "Put a procedure `say_hi` that performs one `write` of `Hi` (2 bytes, no newline). From `_start`, `call say_hi`, then exit 0.",
+      "starter_code": "global _start\nsection .data\n    msg: db 'H','i'\n    mlen equ $ - msg\nsection .text\nsay_hi:\n    ; rax=1 rdi=1 rsi=msg rdx=mlen syscall then ret\n    ret\n_start:\n    ; call say_hi then exit\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "Hi",
+      "hints": [
+        "`say_hi` must preserve registers you care about — here scratch `rax/rdi/rsi/rdx` freely"
+      ],
+      "solution": "global _start\nsection .data\n    msg: db 'H', 'i'\n    mlen equ $ - msg\nsection .text\nsay_hi:\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, msg\n    mov rdx, mlen\n    syscall\n    ret\n_start:\n    call say_hi\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "functions_02",
+      "title": "Tail of string",
+      "description": "Write `tail` that takes pointer in `rdi` and length in `rsi`, issues `write` with those registers, then returns. `_start` passes address of bytes `OK` with length `2`.",
+      "starter_code": "global _start\nsection .data\n    buf: db 'O','K'\nlen equ $ - buf\nsection .text\ntail:\n    ; write(rdi, rsi) syscall layout: adjust to rax=1 rdi=1 stdout? exercise: stdout fd=1\n    ret\n_start:\n    lea rdi, [rel buf]\n    mov rsi, len\n    call tail\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "OK",
+      "hints": [
+        "Inside `tail`, move `rdi`/`rsi` into the `rsi`/`rdx` slots for `write`, set `rdi=1`"
+      ],
+      "solution": "global _start\nsection .data\n    buf: db 'O', 'K'\nlen equ $ - buf\nsection .text\ntail:\n    mov rax, 1\n    mov r8, rdi\n    mov r9, rsi\n    mov rdi, 1\n    mov rsi, r8\n    mov rdx, r9\n    syscall\n    ret\n_start:\n    lea rdi, [rel buf]\n    mov rsi, len\n    call tail\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "functions_03",
+      "title": "Nested calls",
+      "description": "`outer` calls `inner` which prints `1` (one byte). Then `outer` returns to `_start` which exits 0.",
+      "starter_code": "global _start\nsection .data\n    one: db '1'\nsection .text\ninner:\n    ; write one byte '1'\n    ret\nouter:\n    call inner\n    ret\n_start:\n    call outer\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "1",
+      "hints": [
+        "`inner` issues `write` of length 1 to stdout"
+      ],
+      "solution": "global _start\nsection .data\n    one: db '1'\nsection .text\ninner:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel one]\n    mov rdx, 1\n    syscall\n    ret\nouter:\n    call inner\n    ret\n_start:\n    call outer\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "functions_04",
+      "title": "Counted stars",
+      "description": "Procedure `emit_stars` takes the star count in **`rdi`** (here `4`). It fills a `.bss` buffer with that many `'*'` bytes and issues **one** `write` of length `rdi`. `_start` sets `rdi=4`, calls `emit_stars`, then exits 0. Expected stdout (trimmed) is `****`.",
+      "starter_code": "global _start\nsection .bss\n    buf: resb 32\nsection .text\nemit_stars:\n    ; save count in r12; loop i=0..count-1 mov byte [buf+i], '*'\n    ; then write once: rdx = r12\n    ret\n_start:\n    mov rdi, 4\n    call emit_stars\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "****",
+      "hints": [
+        "`syscall` clobbers `rcx` and `r11` — keep the count in a callee-saved reg like `r12`"
+      ],
+      "solution": "global _start\nsection .bss\n    buf: resb 32\nsection .text\nemit_stars:\n    mov r12, rdi\n    xor rbx, rbx\nfill:\n    cmp rbx, r12\n    jge done\n    mov byte [rel buf+rbx], '*'\n    inc rbx\n    jmp fill\ndone:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel buf]\n    mov rdx, r12\n    syscall\n    ret\n_start:\n    mov rdi, 4\n    call emit_stars\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

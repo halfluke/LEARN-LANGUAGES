@@ -1,0 +1,123 @@
+{
+  "id": "time",
+  "title": "Time",
+  "description": "Learn about time.Time creation, time.Duration, parsing, formatting, and time arithmetic in Go",
+  "exercises": [
+    {
+      "id": "time_01",
+      "title": "Create a Time",
+      "description": "Use time.Date to create a time.Time value for January 1, 2024, 12:00:00 UTC. Print it using fmt.Println.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    // Create a time.Time for January 1, 2024, 12:00:00 UTC\n    \n    // Print the time",
+      "expected_output": "2024-01-01 12:00:00 +0000 UTC",
+      "hints": [
+        "Use time.Date(2024, time.January, 1, 12, 0, 0, 0, time.UTC)",
+        "fmt.Println(t) formats the time in RFC3339-like format"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    t := time.Date(2024, time.January, 1, 12, 0, 0, 0, time.UTC)\n    fmt.Println(t)\n}"
+    },
+    {
+      "id": "time_02",
+      "title": "Time Components",
+      "description": "Create a time for March 15, 2023, 14:30:00 at location Asia/Tokyo. Print the year, month, day, hour, minute, and weekday.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    loc, _ := time.LoadLocation(\"Asia/Tokyo\")\n    t := time.Date(2023, time.March, 15, 14, 30, 0, 0, loc)\n    \n    // Print year, month, day\n    // Print hour and minute\n    // Print weekday",
+      "expected_output": "Year: 2023\nMonth: March\nDay: 15\nHour: 14\nMinute: 30\nWeekday: Wednesday",
+      "hints": [
+        "t.Year(), t.Month(), t.Day() get date components",
+        "t.Hour(), t.Minute() get time components",
+        "t.Weekday() returns the day of the week"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    loc, _ := time.LoadLocation(\"Asia/Tokyo\")\n    t := time.Date(2023, time.March, 15, 14, 30, 0, 0, loc)\n    \n    fmt.Println(\"Year:\", t.Year())\n    fmt.Println(\"Month:\", t.Month())\n    fmt.Println(\"Day:\", t.Day())\n    fmt.Println(\"Hour:\", t.Hour())\n    fmt.Println(\"Minute:\", t.Minute())\n    fmt.Println(\"Weekday:\", t.Weekday())\n}"
+    },
+    {
+      "id": "time_03",
+      "title": "Time Duration",
+      "description": "Create a duration of 2 hours and 30 minutes using time.Duration. Print it using fmt.Println. Also compute 500 * time.Millisecond and print it.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    // Create a duration of 2 hours and 30 minutes\n    // Hint: 1 hour = time.Hour, 1 minute = time.Minute\n    \n    // Print the duration\n    \n    // Create 500 milliseconds and print it",
+      "expected_output": "2h30m0s\n500ms",
+      "hints": [
+        "2*time.Hour + 30*time.Minute creates the duration",
+        "time.Duration(500) * time.Millisecond creates 500ms",
+        "fmt.Println(duration) formats duration nicely"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    d := 2*time.Hour + 30*time.Minute\n    fmt.Println(d)\n    \n    ms := time.Duration(500) * time.Millisecond\n    fmt.Println(ms)\n}"
+    },
+    {
+      "id": "time_04",
+      "title": "Parse Time",
+      "description": "Use time.Parse to parse the string \"2024-06-15 09:30:00\" with layout \"2006-01-02 15:04:05\". Print the parsed time and check if there's an error.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    layout := \"2006-01-02 15:04:05\"\n    value := \"2024-06-15 09:30:00\"\n    \n    // Parse the time string\n    // Check for error\n    // Print the parsed time",
+      "expected_output": "2024-06-15 09:30:00 +0000 UTC",
+      "hints": [
+        "t, err := time.Parse(layout, value)",
+        "Always check err with if err != nil",
+        "Go uses the reference time 01/02 03:04:05PM '06 -0700 as the layout"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    layout := \"2006-01-02 15:04:05\"\n    value := \"2024-06-15 09:30:00\"\n    \n    t, err := time.Parse(layout, value)\n    if err != nil {\n        fmt.Println(\"Error:\", err)\n        return\n    }\n    fmt.Println(t)\n}"
+    },
+    {
+      "id": "time_05",
+      "title": "Format Time",
+      "description": "Create a time for July 4, 2024, 16:00:00 UTC. Use fmt.Println to print it with Go's standard layout. Then use t.Format with a custom layout to print \"07/04/2024\".",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    t := time.Date(2024, time.July, 4, 16, 0, 0, 0, time.UTC)\n    \n    // Print using Go's reference time layout for month/day/year\n    // Reference: 01/02/06 = MM/DD/YY\n    \n    // Print using a layout for \"Monday, January 2, 2006\"",
+      "expected_output": "07/04/2024\nThursday, July 4, 2024",
+      "hints": [
+        "t.Format(\"01/02/2006\") gives MM/DD/YYYY",
+        "t.Format(\"Monday, January 2, 2006\") gives the full format",
+        "Use the Go reference time 01/02 03:04:05PM '06 -0700 as your layout guide"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    t := time.Date(2024, time.July, 4, 16, 0, 0, 0, time.UTC)\n    \n    fmt.Println(t.Format(\"01/02/2006\"))\n    fmt.Println(t.Format(\"Monday, January 2, 2006\"))\n}"
+    },
+    {
+      "id": "time_06",
+      "title": "Add Time",
+      "description": "Create a time for January 15, 2024, 10:00:00 UTC. Use the Add method to add 3 days and 5 hours. Print the result.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    t := time.Date(2024, time.January, 15, 10, 0, 0, 0, time.UTC)\n    \n    // Add 3 days and 5 hours using t.Add()\n    // 3 days = 3 * 24 hours = 72 hours\n    \n    // Print the result",
+      "expected_output": "2024-01-18 15:00:00 +0000 UTC",
+      "hints": [
+        "t.Add(3*24*time.Hour + 5*time.Hour) adds the duration",
+        "Or use t.Add(77*time.Hour) for the total",
+        "Add handles calendar arithmetic (month boundaries, leap years) automatically"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    t := time.Date(2024, time.January, 15, 10, 0, 0, 0, time.UTC)\n    \n    result := t.Add(3*24*time.Hour + 5*time.Hour)\n    fmt.Println(result)\n}"
+    },
+    {
+      "id": "time_07",
+      "title": "Subtract Time",
+      "description": "Create two time values: now and then (30 days ago). Use Sub to compute the difference between them. Print the duration in days.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    now := time.Date(2024, time.December, 25, 0, 0, 0, 0, time.UTC)\n    then := time.Date(2024, time.November, 25, 0, 0, 0, 0, time.UTC)\n    \n    // Subtract then from now\n    // Print the duration\n    // Print the number of days",
+      "expected_output": "720h0m0s\nDays: 30",
+      "hints": [
+        "diff := now.Sub(then) computes the duration",
+        "diff.Hours() gives total hours, diff.Hours()/24 gives days",
+        "int(diff.Hours()/24) converts to integer days"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    now := time.Date(2024, time.December, 25, 0, 0, 0, 0, time.UTC)\n    then := time.Date(2024, time.November, 25, 0, 0, 0, 0, time.UTC)\n    \n    diff := now.Sub(then)\n    fmt.Println(diff)\n    fmt.Printf(\"Days: %d\\n\", int(diff.Hours()/24))\n}"
+    },
+    {
+      "id": "time_09",
+      "title": "Time Before and After",
+      "description": "Create two time values and use Before() and After() to compare them. Print which one comes first.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    t1 := time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)\n    t2 := time.Date(2024, time.December, 31, 0, 0, 0, 0, time.UTC)\n    \n    // Use Before and After to compare\n    // Print results\n}",
+      "expected_output": "January 1 is before December 31: true\nDecember 31 is after January 1: true",
+      "hints": [
+        "t1.Before(t2) returns true if t1 is earlier than t2",
+        "t2.After(t1) returns true if t2 is later than t1"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    t1 := time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)\n    t2 := time.Date(2024, time.December, 31, 0, 0, 0, 0, time.UTC)\n    \n    fmt.Println(\"January 1 is before December 31:\", t1.Before(t2))\n    fmt.Println(\"December 31 is after January 1:\", t2.After(t1))\n}"
+    },
+    {
+      "id": "time_08",
+      "title": "Current Time",
+      "description": "Use time.Now() to get the current time. Print it, then extract the hour and minute. Also use time.Sleep to wait 1 second and print the new time.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    // Get current time\n    // Print it\n    // Print hour and minute\n    \n    // Sleep for 1 second\n    // Print the time after sleep",
+      "expected_output": "2024-XX-XX HH:MM:SS.XXXXXX+XX:XX\nHour: XX\nMinute: XX\nAfter sleep: 2024-XX-XX HH:MM:SS.XXXXXX+XX:XX",
+      "hints": [
+        "t := time.Now() gets the current time",
+        "time.Sleep(1 * time.Second) pauses for 1 second",
+        "t.Hour() and t.Minute() extract components"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    now := time.Now()\n    fmt.Println(now)\n    fmt.Println(\"Hour:\", now.Hour())\n    fmt.Println(\"Minute:\", now.Minute())\n    \n    time.Sleep(1 * time.Second)\n    after := time.Now()\n    fmt.Println(\"After sleep:\", after)\n}"
+    }
+  ],
+  "theory": "## Time in Go\n\nThe `time` package provides functionality for measuring and displaying time.\n\n### time.Time\n\nRepresents an instant in time with nanosecond precision:\n```go\nt := time.Date(2024, time.January, 1, 12, 0, 0, 0, time.UTC)\nt := time.Now()\n```\n\n### time.Duration\n\n```go\nhour := time.Hour\nminute := time.Minute\nduration := 2*time.Hour + 30*time.Minute\n```\n\n### Parsing\n\n```go\nt, err := time.Parse(\"2006-01-02\", \"2024-01-01\")\n```\n\n### Formatting\n\n```go\nt.Format(\"01/02/2006\")\n```\n\n### Time Arithmetic\n\n```go\nlater := t.Add(24 * time.Hour)\nearlier := t.Sub(otherTime)\n```"
+}

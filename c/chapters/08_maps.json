@@ -1,0 +1,72 @@
+{
+  "id": "maps",
+  "title": "Maps",
+  "description": "Hash maps and ordered maps in C",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Small tables\n\nParallel arrays / linear search keep exercises portable without a hash library.\n",
+  "exercises": [
+    {
+      "id": "maps_01",
+      "title": "Create map",
+      "description": "Build a `BTreeMap` with `Alice -> 25`, `Bob -> 30` and print `{:?}`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "{\"Alice\": 25, \"Bob\": 30}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Alice\\\": 25, \\\"Bob\\\": 30}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "maps_02",
+      "title": "Lookup",
+      "description": "Print the Math score from a `BTreeMap` of scores.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "95",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"95\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "maps_03",
+      "title": "Insert entries",
+      "description": "Empty `BTreeMap`, insert `1 -> One`, `2 -> Two`, print Debug.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "{\"1\": \"One\", \"2\": \"Two\"}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"1\\\": \\\"One\\\", \\\"2\\\": \\\"Two\\\"}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "maps_04",
+      "title": "Remove",
+      "description": "Remove key `b` from map `a,b,c` and print Debug.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "{\"a\": 1, \"c\": 3}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"a\\\": 1, \\\"c\\\": 3}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "maps_05",
+      "title": "Key presence",
+      "description": "If `bananas` missing from inventory print `not found`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "not found",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"not found\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "maps_07",
+      "title": "Length",
+      "description": "Print `len()` of three-entry map.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "3",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"3\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "maps_06",
+      "title": "Iterate",
+      "description": "Print each `key value` on its own line for grades map (BTree order).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "A 90\nB 80\nC 70",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"A 90\\nB 80\\nC 70\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

@@ -1,0 +1,95 @@
+{
+  "id": "strings",
+  "title": "Strings & Runes",
+  "description": "Learn about string constants, runes, string manipulation, and formatting in Go",
+  "theory": "## Strings in Go\n\nStrings in Go are immutable sequences of bytes (usually UTF-8).\n\n### String Basics\n\n```go\nstr := \"Hello, World!\"\nfmt.Println(len(str))        // 13 bytes\nfmt.Println(str[0])          // 72 (byte, not character)\n```\n\n### Runes (Unicode Code Points)\n\nA rune is Go's term for a Unicode code point:\n```go\nch := 'A'          // rune literal\nr := rune('中')     // Chinese character\n\nfmt.Printf(\"%c\", ch)  // Print as character\nfmt.Printf(\"%d\", ch)  // Print as code point (65)\n```\n\n### Converting String to Runes\n\n```go\nstr := \"hello\"\nrunes := []rune(str)  // Convert to []rune\nbytes := []byte(str)  // Convert to []byte\n```\n\n### The strings Package\n\n```go\nimport \"strings\"\n\nstrings.Contains(s, \"ell\")     // true\nstrings.Replace(s, \"l\", \"x\", 1)  // \"hexlo\" (first only)\nstrings.Replace(s, \"l\", \"x\", -1) // \"hexxo\" (all)\nstrings.Split(s, \"l\")           // [\"he\", \"\", \"o\"]\nstrings.Join([]string{\"a\",\"b\"}, \"-\")  // \"a-b\"\nstrings.ToUpper(s)\nstrings.ToLower(s)\nstrings.TrimSpace(s)\nstrings.HasPrefix(s, \"he\")\nstrings.HasSuffix(s, \"lo\")\n```\n\n### String Formatting\n\n```go\n// Sprintf - returns string\ns := fmt.Sprintf(\"%s is %d years old\", \"Alice\", 30)\n\n// Printf - prints to stdout\nfmt.Printf(\"Pi: %.2f\\n\", 3.14159)\n\n// Common verbs:\n// %s - string\n// %d - integer\n// %f, %.2f - float, float with 2 decimals\n// %c - character/rune\n// %v - any value\n// %T - type\n```\n\n### String Indexing\n\nStrings are byte-indexed, not character-indexed (important for non-ASCII):\n```go\ns := \"héllo\"\ns[0] // 'h' (first byte of 'h')\ns[1] // 'é' (first byte of 'é', which is 2 bytes in UTF-8)\n```\nFor proper Unicode iteration, use runes or for-range.\n",
+  "exercises": [
+    {
+      "id": "strings_01",
+      "title": "String Constants",
+      "description": "Declare a string variable greeting and assign it the value \"Hello, Go!\". Then print it using fmt.Println.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Declare a string variable greeting\n    // Assign it the value \"Hello, Go!\"\n    \n    // Print the greeting\n}",
+      "expected_output": "Hello, Go!",
+      "hints": [
+        "Use greeting := \"Hello, Go!\" to declare and assign",
+        "Use fmt.Println(greeting) to print"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    greeting := \"Hello, Go!\"\n    fmt.Println(greeting)\n}"
+    },
+    {
+      "id": "strings_02",
+      "title": "Using Runes",
+      "description": "Declare a rune variable and assign it the Unicode character for 'A'. Print it using both %c and %d verbs to see character vs code point.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Declare a rune variable ch\n    // Assign it the Unicode character 'A'\n    \n    // Print as character using %c\n    \n    // Print as code point using %d\n}",
+      "expected_output": "Character: A\nCode Point: 65",
+      "hints": [
+        "Use var ch rune = 'A' or ch := 'A'",
+        "Use fmt.Printf(\"Character: %c\\n\", ch) for the character",
+        "Use fmt.Printf(\"Code Point: %d\\n\", ch) for the Unicode code point"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    ch := 'A'\n    fmt.Printf(\"Character: %c\\n\", ch)\n    fmt.Printf(\"Code Point: %d\\n\", ch)\n}"
+    },
+    {
+      "id": "strings_03",
+      "title": "String Manipulation",
+      "description": "Use strings.Contains to check if \"Hello\" is in \"Hello, World!\", strings.Replace to replace \"World\" with \"Go\", and strings.Split to split \"a,b,c\" by comma.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    text := \"Hello, World!\"\n    \n    // Use strings.Contains to check if \"Hello\" is in text\n    // Print true if found\n    \n    // Use strings.Replace to replace \"World\" with \"Go\"\n    // Print the result\n    \n    // Use strings.Split on \"a,b,c\" with separator \",\"\n    // Print the first element\n}",
+      "expected_output": "Contains: true\nReplaced: Hello, Go!\nFirst: a",
+      "hints": [
+        "strings.Contains(text, \"Hello\") returns true if found",
+        "strings.Replace(text, \"World\", \"Go\", 1) replaces first occurrence",
+        "strings.Split(\"a,b,c\", \",\") returns []string{\"a\", \"b\", \"c\"}"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    text := \"Hello, World!\"\n    \n    fmt.Println(\"Contains:\", strings.Contains(text, \"Hello\"))\n    \n    replaced := strings.Replace(text, \"World\", \"Go\", 1)\n    fmt.Println(\"Replaced:\", replaced)\n    \n    parts := strings.Split(\"a,b,c\", \",\")\n    fmt.Println(\"First:\", parts[0])\n}"
+    },
+    {
+      "id": "strings_04",
+      "title": "String Formatting",
+      "description": "Use fmt.Sprintf to format a string with a name and age, then print it. Also use fmt.Printf to format a floating point number to 2 decimal places.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    name := \"Alice\"\n    age := 30\n    \n    // Use fmt.Sprintf to create a string like \"Alice is 30 years old\"\n    // Print the formatted string\n    \n    pi := 3.14159\n    // Use fmt.Printf to print pi with 2 decimal places: \"Pi is 3.14\"\n}",
+      "expected_output": "Alice is 30 years old\nPi is 3.14",
+      "hints": [
+        "fmt.Sprintf(\"%s is %d years old\", name, age) creates the formatted string",
+        "Use fmt.Printf(\"Pi is %.2f\\n\", pi) for 2 decimal places"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    name := \"Alice\"\n    age := 30\n    \n    s := fmt.Sprintf(\"%s is %d years old\", name, age)\n    fmt.Println(s)\n    \n    pi := 3.14159\n    fmt.Printf(\"Pi is %.2f\\n\", pi)\n}"
+    },
+    {
+      "id": "strings_05",
+      "title": "To Upper and To Lower",
+      "description": "Given s := \"Go Programming\", print it in all uppercase and then all lowercase.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    s := \"Go Programming\"\n    // Print uppercase\n    \n    // Print lowercase\n}",
+      "expected_output": "GO PROGRAMMING\ngo programming",
+      "hints": [
+        "strings.ToUpper(s)",
+        "strings.ToLower(s)"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    s := \"Go Programming\"\n    fmt.Println(strings.ToUpper(s))\n    fmt.Println(strings.ToLower(s))\n}"
+    },
+    {
+      "id": "strings_07",
+      "title": "Reverse a String",
+      "description": "Given s := \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := \"hello\"\n    // Convert to []rune\n    \n    // Reverse in place\n    \n    // Convert back and print\n}",
+      "expected_output": "olleh",
+      "hints": [
+        "Use []rune(s) to convert the string",
+        "Swap runes[0] with runes[len-1], runes[1] with len-2, etc.",
+        "Use string(runes) to convert back"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := \"hello\"\n    runes := []rune(s)\n    for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {\n        runes[i], runes[j] = runes[j], runes[i]\n    }\n    fmt.Println(string(runes))\n}"
+    },
+    {
+      "id": "strings_06",
+      "title": "String HasPrefix and HasSuffix",
+      "description": "Declare url := \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    url := \"https://example.com\"\n    // Check has prefix\n    \n    // Check has suffix\n}",
+      "expected_output": "true true",
+      "hints": [
+        "strings.HasPrefix(url, \"https://\")",
+        "strings.HasSuffix(url, \".com\")"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    url := \"https://example.com\"\n    fmt.Println(strings.HasPrefix(url, \"https://\"))\n    fmt.Println(strings.HasSuffix(url, \".com\"))\n}"
+    }
+  ]
+}

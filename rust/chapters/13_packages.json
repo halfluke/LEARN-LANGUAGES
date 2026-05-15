@@ -1,0 +1,87 @@
+{
+  "id": "packages",
+  "title": "Packages",
+  "description": "Modules, visibility, and std patterns in Rust",
+  "theory": "## Modules in Rust\n\nRust uses `mod` to declare modules, `use` for paths, and `pub` for visibility.\n\nUnlike Go files in a folder, a single `main.rs` can contain nested `mod` blocks for small exercises.\n",
+  "exercises": [
+    {
+      "id": "packages_01",
+      "title": "Nested module",
+      "description": "Define `mod utils { pub fn greet() { ... } }` and call `utils::greet()` from `main`.",
+      "starter_code": "fn main() {\n    // utils::greet();\n}\n\n// mod utils { pub fn greet() { println!(\"Hello from utils\"); } }\n",
+      "expected_output": "Hello from utils",
+      "hints": [
+        "`pub fn` inside nested mod"
+      ],
+      "solution": "mod utils {\n    pub fn greet() {\n        println!(\"Hello from utils\");\n    }\n}\n\nfn main() {\n    utils::greet();\n}\n"
+    },
+    {
+      "id": "packages_02",
+      "title": "std math",
+      "description": "Print integer square root of `144` using `144_f64.sqrt()`.",
+      "starter_code": "fn main() {\n}\n",
+      "expected_output": "12",
+      "hints": [
+        "`(144_f64).sqrt() as i32`"
+      ],
+      "solution": "fn main() {\n    let r = (144_f64).sqrt() as i32;\n    println!(\"{}\", r);\n}\n"
+    },
+    {
+      "id": "packages_03",
+      "title": "pub static",
+      "description": "`mod counter` with `pub static mut COUNT` is unsafe; use `AtomicI32` instead: print `Count: 0` then increment and print `Incremented: 1`.",
+      "starter_code": "use std::sync::atomic::{AtomicI32, Ordering};\n\nfn main() {\n}\n",
+      "expected_output": "Count: 0\nIncremented: 1",
+      "hints": [
+        "`AtomicI32::new(0)`",
+        "`fetch_add(1, Ordering::SeqCst)`"
+      ],
+      "solution": "use std::sync::atomic::{AtomicI32, Ordering};\n\nmod counter {\n    use std::sync::atomic::{AtomicI32, Ordering};\n    pub static COUNT: AtomicI32 = AtomicI32::new(0);\n    pub fn increment() {\n        COUNT.fetch_add(1, Ordering::SeqCst);\n    }\n}\n\nfn main() {\n    println!(\"Count: {}\", counter::COUNT.load(Ordering::SeqCst));\n    counter::increment();\n    println!(\"Incremented: {}\", counter::COUNT.load(Ordering::SeqCst));\n}\n"
+    },
+    {
+      "id": "packages_04",
+      "title": "Lazy init",
+      "description": "Use `std::sync::OnceLock` to hold version string `1.0.0` initialized once.",
+      "starter_code": "use std::sync::OnceLock;\n\nfn main() {\n}\n",
+      "expected_output": "Version: 1.0.0",
+      "hints": [
+        "`static V: OnceLock<String> = OnceLock::new();`"
+      ],
+      "solution": "use std::sync::OnceLock;\n\nstatic VERSION: OnceLock<String> = OnceLock::new();\n\nfn main() {\n    let v = VERSION.get_or_init(|| \"1.0.0\".into());\n    println!(\"Version: {}\", v);\n}\n"
+    },
+    {
+      "id": "packages_05",
+      "title": "Visibility",
+      "description": "In nested `mod formatter`, public `format` prints `Formatted`; private helper stays unused.",
+      "starter_code": "fn main() {\n    formatter::format();\n}\n\nmod formatter {\n}\n",
+      "expected_output": "Formatted",
+      "hints": [
+        "`pub fn format()`"
+      ],
+      "solution": "mod formatter {\n    pub fn format() {\n        println!(\"Formatted\");\n    }\n    fn _internal() {}\n}\n\nfn main() {\n    formatter::format();\n}\n"
+    },
+    {
+      "id": "packages_07",
+      "title": "Trait import",
+      "description": "Use `std::io::Write` with a `Vec<u8>` buffer to write `Hello` and print it (no trailing newline from `print!`).",
+      "starter_code": "fn main() {\n}\n",
+      "expected_output": "Hello",
+      "hints": [
+        "Use a `Vec<u8>` as an alias-named writer if you like."
+      ],
+      "solution": "use std::io::Write;\n\nfn main() {\n    let mut io: Vec<u8> = Vec::new();\n    writeln!(io, \"Hello\").unwrap();\n    print!(\"{}\", String::from_utf8_lossy(&io).trim());\n}\n"
+    },
+    {
+      "id": "packages_06",
+      "title": "Multiple use",
+      "description": "Print `HELLO` using `to_uppercase` on `&str`.",
+      "starter_code": "fn main() {\n}\n",
+      "expected_output": "HELLO",
+      "hints": [
+        "`\"hello\".to_uppercase()`"
+      ],
+      "solution": "fn main() {\n    println!(\"{}\", \"hello\".to_uppercase());\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

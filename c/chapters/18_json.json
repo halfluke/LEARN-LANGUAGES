@@ -1,0 +1,90 @@
+{
+  "id": "json",
+  "title": "JSON",
+  "description": "JSON with serde and hand-built JSON or a tiny parser",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## JSON-shaped text\n\nExercises use string composition; production code would link a parser library.\n",
+  "exercises": [
+    {
+      "id": "json_01",
+      "title": "Serialize a struct",
+      "description": "`Person { Name, Age }` with `Serialize`. Build `Person { Name: \"Alice\", Age: 30 }`, serialize with `hand-built JSON or a tiny parser::to_string`, print it.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "{\"Name\":\"Alice\",\"Age\":30}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Name\\\":\\\"Alice\\\",\\\"Age\\\":30}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_02",
+      "title": "Deserialize JSON",
+      "description": "Deserialize `{\"Name\":\"Bob\",\"Age\":25}` into `Person` with `Deserialize`. Print name and age separated by a space (one line: `Bob 25`).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Bob 25",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Bob 25\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_03",
+      "title": "serde rename",
+      "description": "`User` with C fields `first_name`, `last_name`, `birth_year` but JSON keys `first_name`, `last_name`, `birth_year` in snake_case (use `#[serde(rename = ...)]`). Marshal John/Doe/1990 and print JSON.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"first_name\\\":\\\"John\\\",\\\"last_name\\\":\\\"Doe\\\",\\\"birth_year\\\":1990}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_04",
+      "title": "skip_serializing_if / Option",
+      "description": "Model Go’s `,omitempty` with `Option` fields: only set `server: Some(\"api.example.com\")`, leave others `None`. Serialize so output is `{\"Server\":\"api.example.com\"}` (capital `Server` to match the Go exercise).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "{\"Server\":\"api.example.com\"}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Server\\\":\\\"api.example.com\\\"}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_05",
+      "title": "Round trip",
+      "description": "`Product { id, name, price }` with Serialize+Deserialize. Marshal `{1, Laptop, 999.99}`, unmarshal into a new value, print two lines exactly: `Original: {1 Laptop 999.99}` and `Recovered: {1 Laptop 999.99}` (use the same formatting for both).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Original: {1 Laptop 999.99}\nRecovered: {1 Laptop 999.99}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Original: {1 Laptop 999.99}\\nRecovered: {1 Laptop 999.99}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_06",
+      "title": "Nested structs",
+      "description": "`Address { street, city }` and `User { name, address }` with `Serialize`. Marshal and print JSON matching Go’s field names (`Street`, `City`, `Name`, `Address`).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "{\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"{\\\"Name\\\":\\\"Alice\\\",\\\"Address\\\":{\\\"Street\\\":\\\"123 Main St\\\",\\\"City\\\":\\\"Springfield\\\"}}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_07",
+      "title": "Encode a slice",
+      "description": "Serialize `Vec<Person>` with two entries to a JSON array string and print it (no extra spaces beyond what `hand-built JSON or a tiny parser` emits).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[{\\\"Name\\\":\\\"Alice\\\",\\\"Age\\\":30},{\\\"Name\\\":\\\"Bob\\\",\\\"Age\\\":25}]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_09",
+      "title": "Deferred nested JSON",
+      "description": "`LogEntry { level, data }` where `data` is `hand-built JSON or a tiny parser::Value`. Parse the sample, print `level` then `data` as compact JSON on the next line. (Object key order follows `hand-built JSON or a tiny parser`’s canonicalization, not the source text.)",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "info\n{\"action\":\"login\",\"user\":\"alice\"}",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"info\\n{\\\"action\\\":\\\"login\\\",\\\"user\\\":\\\"alice\\\"}\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "json_08",
+      "title": "Decode an array",
+      "description": "Parse a JSON array of people with `hand-built JSON or a tiny parser::from_str::<Vec<Person>>`, then print each line as `Name Age` (same output as the Go decoder loop).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Alice 30\nBob 25",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Alice 30\\nBob 25\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    }
+  ],
+  "exercise_count": 9
+}

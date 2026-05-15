@@ -1,0 +1,53 @@
+{
+  "id": "arrays",
+  "title": "Arrays in .data",
+  "description": "Contiguous bytes and indexed addressing modes",
+  "theory": "## Contiguous storage\n\nArrays in assembly are mostly **labels + stride**. Use `base + index*scale + disp` addressing (`[arr + rbx]`) to walk elements.\n",
+  "exercises": [
+    {
+      "id": "arrays_01",
+      "title": "First element",
+      "description": "`.data` holds `db 'A','B','C'`. Print only the first byte (`A`, no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    arr: db 'A','B','C'\nsection .text\n_start:\n    ; write 1 byte from arr\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "A",
+      "hints": [
+        "`lea rsi, [rel arr]` then `mov rdx, 1`"
+      ],
+      "solution": "global _start\nsection .data\n    arr: db 'A', 'B', 'C'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel arr]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "arrays_02",
+      "title": "Walk indices",
+      "description": "Sum the three **numeric** bytes `2`, `3`, `4` stored in `.data` into an 8-bit register (result `9`). Print one character digit `9` (no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    nums: db 2, 3, 4\nsection .text\n_start:\n    xor al, al\n    ; add nums[0..2] into al (watch zero-extension)\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "9",
+      "hints": [
+        "Clear a register, add bytes with `movzx` into a wider reg, sum, then add `'0'` only if result <10"
+      ],
+      "solution": "global _start\nsection .data\n    nums: db 2, 3, 4\nsection .text\n_start:\n    xor ecx, ecx\n    movzx eax, byte [rel nums]\n    add ecx, eax\n    movzx eax, byte [rel nums+1]\n    add ecx, eax\n    movzx eax, byte [rel nums+2]\n    add ecx, eax\n    add ecx, '0'\n    mov [rel digit], cl\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel digit]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\nsection .bss\n    digit: resb 1\n"
+    },
+    {
+      "id": "arrays_03",
+      "title": "Whole buffer write",
+      "description": "Print the three-byte buffer `db 'x','y','z'` with a **single** `write` syscall (no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    buf: db 'x','y','z'\n    blen equ $ - buf\nsection .text\n_start:\n    ; one syscall rdx=blen\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "xyz",
+      "hints": [
+        "`mov rdx, blen`"
+      ],
+      "solution": "global _start\nsection .data\n    buf: db 'x', 'y', 'z'\n    blen equ $ - buf\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel buf]\n    mov rdx, blen\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "arrays_04",
+      "title": "Last element",
+      "description": "Same buffer `db 'A','B','C'`. Print only the **last** byte (`C`, no newline) using `lea` with offset `2`, then exit 0.",
+      "starter_code": "global _start\nsection .data\n    arr: db 'A','B','C'\nsection .text\n_start:\n    ; rsi -> arr+2, rdx=1, write\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "C",
+      "hints": [
+        "`lea rsi, [rel arr+2]`"
+      ],
+      "solution": "global _start\nsection .data\n    arr: db 'A', 'B', 'C'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel arr+2]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

@@ -1,0 +1,45 @@
+{
+  "id": "ownership",
+  "title": "Values, copies, and references (Go)",
+  "description": "Go has garbage collection and no Rust-style ownership, but values vs pointers still shape how data is shared.",
+  "theory": "## Values in Go\n\nSmall values copy by assignment. Slices, maps, and pointers carry **shared** underlying data unless you copy explicitly.\n\n### `string` immutability\n\nReassigning a `string` binding is cheap; the underlying bytes may be shared by the runtime.\n\n### Slices share backing arrays\n\nTwo slices built from the same backing array observe each other's element updates through that array.\n",
+  "exercises": [
+    {
+      "id": "ownership_01",
+      "title": "String reassignment",
+      "description": "Assign `s := \"hi\"`, assign `t := s`, print `t` with `fmt.Print` (no newline).",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\t// s := \"hi\"\n}\n",
+      "expected_output": "hi",
+      "hints": [
+        "`t := s` copies the string header, both refer to same bytes",
+        "`fmt.Print(t)`"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ts := \"hi\"\n\tt := s\n\tfmt.Print(t)\n}\n"
+    },
+    {
+      "id": "ownership_02",
+      "title": "Slice header copy",
+      "description": "Create `s := []int{1, 2}`, assign `t := s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `fmt.Print` (no space, no newline) → `92`.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\t// s := []int{1, 2}\n}\n",
+      "expected_output": "92",
+      "hints": [
+        "`t := s` shares backing array",
+        "`t[0] = 9` affects `s[0]`"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ts := []int{1, 2}\n\tt := s\n\tt[0] = 9\n\tfmt.Printf(\"%d%d\", s[0], s[1])\n}\n"
+    },
+    {
+      "id": "ownership_03",
+      "title": "Int copy",
+      "description": "`a := 3`, `b := a`, increment `b` with `b++`, print `a` and `b` space-separated with `fmt.Print` (no trailing newline).",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n}\n",
+      "expected_output": "3 4",
+      "hints": [
+        "`b := a` copies the `int`",
+        "`b++`"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ta := 3\n\tb := a\n\tb++\n\tfmt.Print(a, \" \", b)\n}\n"
+    }
+  ],
+  "exercise_count": 3
+}

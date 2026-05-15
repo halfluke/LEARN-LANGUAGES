@@ -1,0 +1,53 @@
+{
+  "id": "slices",
+  "title": "Pointer + length",
+  "description": "Representing a view into memory (slice-like)",
+  "theory": "## Pointer + length\n\nA *logical slice* is `(ptr, len)` in registers. The Linux `write` syscall already wants `rsi` as pointer and `rdx` as length—use that as the mental model.\n",
+  "exercises": [
+    {
+      "id": "slices_01",
+      "title": "Middle window",
+      "description": "Buffer `db '0','1','2','3','4'` lives in `.data`. Set `rsi` to address of `'2'` and `rdx` to `3`; issue one `write` to print `234` (no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    buf: db '0','1','2','3','4'\nsection .text\n_start:\n    ; lea rsi ... buf+2 ; mov rdx, 3 ; write\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "234",
+      "hints": [
+        "`lea rsi, [rel buf+2]`"
+      ],
+      "solution": "global _start\nsection .data\n    buf: db '0', '1', '2', '3', '4'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel buf+2]\n    mov rdx, 3\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "slices_02",
+      "title": "Empty slice",
+      "description": "Call `write` with `rdx=0` (zero-length) and any valid `rsi` (use `buf` label). Should print nothing; exit 0.",
+      "starter_code": "global _start\nsection .data\n    buf: db 'X'\nsection .text\n_start:\n    ; write(fd=1, buf, 0)\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "",
+      "hints": [
+        "`mov rdx, 0` is legal for `write`"
+      ],
+      "solution": "global _start\nsection .data\n    buf: db 'X'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel buf]\n    mov rdx, 0\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "slices_03",
+      "title": "Pass slice to helper",
+      "description": "Write `emit` that expects pointer in `rdi` and length in `rsi`, performs `write` to stdout, returns. `_start` passes `buf` and length `4` for bytes `abcd`.",
+      "starter_code": "global _start\nsection .data\n    buf: db 'a','b','c','d'\nsection .text\nemit:\n    ret\n_start:\n    lea rdi, [rel buf]\n    mov rsi, 4\n    call emit\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "abcd",
+      "hints": [
+        "Inside `emit`, `mov rax,1; mov r8,rdi; mov r9,rsi; mov rdi,1; mov rsi,r8; mov rdx,r9; syscall`"
+      ],
+      "solution": "global _start\nsection .data\n    buf: db 'a', 'b', 'c', 'd'\nsection .text\nemit:\n    mov rax, 1\n    mov r8, rdi\n    mov r9, rsi\n    mov rdi, 1\n    mov rsi, r8\n    mov rdx, r9\n    syscall\n    ret\n_start:\n    lea rdi, [rel buf]\n    mov rsi, 4\n    call emit\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "slices_04",
+      "title": "Prefix window",
+      "description": "Buffer `db 'p','q','r','s'` in `.data`. One `write` with `rsi` at the start and `rdx=2` must print `pq` (no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    buf: db 'p','q','r','s'\nsection .text\n_start:\n    ; rsi = buf, rdx = 2\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "pq",
+      "hints": [
+        "Prefix slice: pointer is `buf`, length is `2`"
+      ],
+      "solution": "global _start\nsection .data\n    buf: db 'p', 'q', 'r', 's'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel buf]\n    mov rdx, 2\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

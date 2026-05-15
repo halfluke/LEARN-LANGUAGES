@@ -1,0 +1,96 @@
+{
+  "id": "variables",
+  "title": "Variables & Types",
+  "description": "Learn about variables, types, and type conversions in Go",
+  "theory": "## Variables in Go\n\nIn Go, variables are declared using the `var` keyword or using the short declaration operator `:=`.\n\n### Variable Declaration\n\nThe basic syntax is:\n```go\nvar name string = \"Alice\"\nvar age int = 25\n```\n\nOr using short declaration (only inside functions):\n```go\nname := \"Alice\"\nage := 25\n```\n\n### Basic Types\n\nGo has several basic types:\n- **Integers**: `int`, `int8`, `int16`, `int32`, `int64` (signed) and `uint`, `uint8`, `uint16`, `uint32`, `uint64` (unsigned)\n- **Floating Point**: `float32`, `float64`\n- **Complex**: `complex64`, `complex128`\n- **String**: `string`\n- **Boolean**: `bool`\n\n\n### Type Inference\n\nWhen you assign a value at declaration, Go infers the type:\n```go\nx := 10      // int\ny := 10.5    // float64\nname := \"hi\" // string\n```\n\n### Zero Values\n\nVariables declared without initialization get a zero value:\n- `0` for numeric types\n- `\"\"` for strings\n- `false` for booleans\n- `nil` for pointers, interfaces, slices, maps, channels, functions\n\n\n### Type Conversions\n\nGo is a statically typed language. You must explicitly convert between types:\n```go\nvar i int = 42\nvar f float64 = float64(i)\nvar u uint = uint(i)\n```\n\n### Constants\n\nConstants are declared with `const` and cannot be changed:\n```go\nconst Pi = 3.14159\nconst Name = \"Go\" // untyped constant\n```\n",
+  "exercises": [
+    {
+      "id": "variables_01",
+      "title": "Declare a Variable",
+      "description": "Declare a variable age of type int and assign it the value 25. Then use fmt.Println to print it.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Declare variable age and assign 25\n    \n    // Print the variable\n}",
+      "expected_output": "25",
+      "hints": [
+        "Use var age int = 25 or age := 25 to declare and assign",
+        "Use fmt.Println(age) to print"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    age := 25\n    fmt.Println(age)\n}"
+    },
+    {
+      "id": "variables_02",
+      "title": "Multiple Variable Declaration",
+      "description": "Declare two variables: name (string) with value \"Golang\" and version (float64) with value 1.21. Print them on the same line separated by a space.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Declare name and version\n    \n    // Print them\n}",
+      "expected_output": "Golang 1.21",
+      "hints": [
+        "Use var name string = \"Golang\" or name := \"Golang\"",
+        "Use var version float64 = 1.21 or version := 1.21",
+        "fmt.Println(name, version) separates with spaces"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    name := \"Golang\"\n    version := 1.21\n    fmt.Println(name, version)\n}"
+    },
+    {
+      "id": "variables_03",
+      "title": "Type Conversion",
+      "description": "Declare an integer variable x with value 100. Convert it to a float64 and store in y. Print the result.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    x := 100\n    \n    // Convert x to float64 and store in y\n    \n    // Print y\n}",
+      "expected_output": "100",
+      "hints": [
+        "Use float64(x) to convert int to float64",
+        "fmt.Println(y) prints the float64 value"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 100\n    y := float64(x)\n    fmt.Println(y)\n}"
+    },
+    {
+      "id": "variables_04",
+      "title": "Zero Values",
+      "description": "Declare variables of type int, float64, string, and bool without assigning values. Print each one to see their zero values.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Declare: intVar (int), floatVar (float64), strVar (string), boolVar (bool)\n    \n    // Print all four in order\n}",
+      "expected_output": "0 0  false",
+      "hints": [
+        "var intVar int declares an int with zero value 0",
+        "var strVar string has zero value \"\" (empty string)",
+        "var boolVar bool has zero value false",
+        "fmt.Println prints them space-separated"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    var intVar int\n    var floatVar float64\n    var strVar string\n    var boolVar bool\n    fmt.Println(intVar, floatVar, strVar, boolVar)\n}"
+    },
+    {
+      "id": "variables_05",
+      "title": "Constants",
+      "description": "Create a constant named MaxScore with value 100 and a constant named MinScore with value 0. Print both constants.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    // Declare constants MaxScore and MinScore\n    \n    // Print them\n}",
+      "expected_output": "100 0",
+      "hints": [
+        "Use const MaxScore = 100 (Go infers the type)",
+        "Use const MinScore = 0",
+        "fmt.Println(MaxScore, MinScore)"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    const MaxScore = 100\n    const MinScore = 0\n    fmt.Println(MaxScore, MinScore)\n}"
+    },
+    {
+      "id": "variables_07",
+      "title": "Grouped Variable Declaration",
+      "description": "Use a grouped var declaration to declare host (string, \"localhost\"), port (int, 8080), and debug (bool, true). Print all three values.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Use grouped var declaration\n    \n    // Print all three\n}",
+      "expected_output": "localhost 8080 true",
+      "hints": [
+        "Use var ( host string = \"localhost\"; port int = 8080; debug bool = true )",
+        "Print them with fmt.Println"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    var (\n        host  string = \"localhost\"\n        port  int    = 8080\n        debug bool   = true\n    )\n    fmt.Println(host, port, debug)\n}"
+    },
+    {
+      "id": "variables_06",
+      "title": "Variable Swap",
+      "description": "Declare two variables a and b with values 5 and 10. Swap their values without using a temp variable. Print the values after swapping.",
+      "starter_code": "package main\n\n\nimport \"fmt\"\n\nfunc main() {\n    a, b := 5, 10\n    \n    // Swap a and b using Go's multiple assignment\n    \n    // Print a and b\n}",
+      "expected_output": "10 5",
+      "hints": [
+        "In Go, you can swap in one line: a, b = b, a",
+        "fmt.Println(a, b)"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    a, b := 5, 10\n    a, b = b, a\n    fmt.Println(a, b)\n}"
+    }
+  ]
+}

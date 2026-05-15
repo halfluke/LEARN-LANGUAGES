@@ -1,0 +1,75 @@
+{
+  "id": "structs",
+  "title": "Structs",
+  "description": "Custom data types - structs in Go",
+  "theory": "## Structs in Go\n\nStructs are composite data types that group together fields of possibly different types.\n\n\n### Defining a Struct\n\n```go\ntype Person struct {\n    Name string\n    Age  int\n}\n```\n\n### Creating Instances\n\n```go\n// Zero value (all fields zero)\np := Person{}\n\n// Literal with fields\np := Person{Name: \"Alice\", Age: 25}\n// Order matters with this syntax\np := Person{\"Alice\", 25}\n\n// Using new (returns pointer)\np := new(Person) // *Person\n```\n\n### Accessing Fields\n\n```go\np.Name = \"Bob\"\nfmt.Println(p.Age)\n```\n\n### Pointers to Structs\n\n```go\np := &Person{Name: \"Charlie\", Age: 35}\np.Age = 36 // Works directly on pointer\n```\n\n### Embedded Structs (Like Inheritance)\n\n\n```go\ntype Employee struct {\n    Person  // embedded\n    Company string\n}\n\nemp := Employee{\n    Person: Person{Name: \"Dave\"},\n    Company: \"Acme\",\n}\nfmt.Println(emp.Name) // access embedded field directly\n```\n\n### Anonymous Structs\n\n```go\npoint := struct{X, Y int}{10, 20}\n```\n",
+  "exercises": [
+    {
+      "id": "structs_01",
+      "title": "Define a Struct",
+      "description": "Define a Person struct with Name (string) and Age (int). Create a Person with Name=\"Alice\" and Age=30. Print it.",
+      "starter_code": "package main\n\nimport \"fmt\"\n// Define Person struct\n\nfunc main() {\n    // Create Person and print\n}",
+      "expected_output": "{Alice 30}",
+      "hints": ["type Person struct { Name string; Age int }", "p := Person{Name: \"Alice\", Age: 30}"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n    Age  int\n}\nfunc main() {\n    p := Person{Name: \"Alice\", Age: 30}\n    fmt.Println(p)\n}"
+    },
+    {
+      "id": "structs_02",
+      "title": "Pointer to Struct",
+      "description": "Define a Point struct with X and Y (int). Create a pointer to Point{X: 5, Y: 10}. Use the pointer to change Y to 20. Print the Point.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n// Define Point\n\nfunc main() {\n    // Create pointer, modify Y, print\n}",
+      "expected_output": "{5 20}",
+      "hints": ["p := &Point{X: 5, Y: 10}", "p.Y = 20 modifies through pointer"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Point struct {\n    X int\n    Y int\n}\n\nfunc main() {\n    p := &Point{X: 5, Y: 10}\n    p.Y = 20\n    fmt.Println(*p)\n}"
+    },
+    {
+      "id": "structs_03",
+      "title": "Struct Literal",
+      "description": "Given a Book struct with Title, Author, and Pages (int), create a Book instance using just Title and Author. Print it.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Book struct {\n    Title  string\n    Author string\n    Pages  int\n}\nfunc main() {\n    // Create Book with Title and Author only\n}",
+      "expected_output": "{Go Programming  0}",
+      "hints": ["Book{Title: \"Go Programming\", Author: \"Unknown\"}", "Pages defaults to 0"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Book struct {\n    Title  string\n    Author string\n    Pages  int\n}\n\nfunc main() {\n    book := Book{Title: \"Go Programming\"}\n    fmt.Println(book)\n}"
+    },
+    {
+      "id": "structs_04",
+      "title": "Embedded Struct",
+      "description": "Define Person with Name string, and Employee embedded Person with Company string. Create Employee with Name=\"Bob\" and Company=\"Acme\". Print Company.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n// Define Person and Employee\n\nfunc main() {\n    // Create Employee and print Company\n}",
+      "expected_output": "Acme",
+      "hints": ["type Employee struct { Person; Company string }", "Access embedded fields directly"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\ntype Employee struct {\n    Person\n    Company string\n}\n\nfunc main() {\n    emp := Employee{\n        Person:  Person{Name: \"Bob\"},\n        Company: \"Acme\",\n    }\n    fmt.Println(emp.Company)\n}"
+    },
+    {
+      "id": "structs_05",
+      "title": "Zero Value Struct",
+      "description": "Declare a variable of type Rectangle with Width and Height (float64) without initialization. Print it to see zero values.",
+      "starter_code": "package main\n\n\nimport \"fmt\"\n\ntype Rectangle struct {\n    Width  float64\n    Height float64\n}\n\n\nfunc main() {\n    // Declare Rectangle variable\n    \n    // Print\n}",
+      "expected_output": "{0 0}",
+      "hints": ["var r Rectangle creates zero-valued struct"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Rectangle struct {\n    Width  float64\n    Height float64\n}\n\nfunc main() {\n    var r Rectangle\n    fmt.Println(r)\n}"
+    },
+    {
+      "id": "structs_07",
+      "title": "Struct Comparison",
+      "description": "Define a Config struct with Host (string) and Port (int). Create two Config values with identical fields and compare them using ==. Print the result.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n// Define Config struct\n\nfunc main() {\n    // Create two identical Configs\n    // Compare with == and print\n}",
+      "expected_output": "true",
+      "hints": [
+        "Structs with all comparable fields can be compared with ==",
+        "a := Config{Host: \"localhost\", Port: 8080}",
+        "b := Config{Host: \"localhost\", Port: 8080}"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Config struct {\n    Host string\n    Port int\n}\n\nfunc main() {\n    a := Config{Host: \"localhost\", Port: 8080}\n    b := Config{Host: \"localhost\", Port: 8080}\n    fmt.Println(a == b)\n}"
+    },
+    {
+      "id": "structs_06",
+      "title": "Modify Struct Field",
+      "description": "Define a Counter struct with Value int (starts at 0). Create counter, increment Value by 5. Print the Value.",
+      "starter_code": "package main\n\nimport \"fmt\"\n// Define Counter\n\nfunc main() {\n    // Create counter, increment, print\n}",
+      "expected_output": "5",
+      "hints": ["c.Value += 5 or c.Value = c.Value + 5"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Counter struct {\n    Value int\n}\n\nfunc main() {\n    c := Counter{}\n    c.Value += 5\n    fmt.Println(c.Value)\n}"
+    }
+  ]
+}

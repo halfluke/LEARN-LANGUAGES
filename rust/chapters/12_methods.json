@@ -1,0 +1,86 @@
+{
+  "id": "methods",
+  "title": "Methods",
+  "description": "Methods and traits (`Display`) in Rust",
+  "theory": "## Methods in Rust\n\nAttach functions to types with `impl Type { ... }`. Use `&self`, `&mut self`, or `self` receivers.\n\nRust does not have Go-style `defer`; scope-based `Drop` covers some patterns.\n",
+  "exercises": [
+    {
+      "id": "methods_01",
+      "title": "Method on struct",
+      "description": "`Person { name }` method `greet` returns `Hello, ` + name; print it.",
+      "starter_code": "struct Person {\n    name: String,\n}\n\nimpl Person {\n    // fn greet(&self) -> String\n}\n\nfn main() {\n    let p = Person { name: \"Alice\".into() };\n}\n",
+      "expected_output": "Hello, Alice",
+      "hints": [
+        "`format!(\"Hello, {}\", self.name)`"
+      ],
+      "solution": "struct Person {\n    name: String,\n}\n\nimpl Person {\n    fn greet(&self) -> String {\n        format!(\"Hello, {}\", self.name)\n    }\n}\n\nfn main() {\n    let p = Person { name: \"Alice\".into() };\n    println!(\"{}\", p.greet());\n}\n"
+    },
+    {
+      "id": "methods_02",
+      "title": "Mutating method",
+      "description": "`SetName` with `&mut self` sets `name`.",
+      "starter_code": "struct Person {\n    name: String,\n}\n\nimpl Person {\n    // pub fn set_name(&mut self, n: &str)\n}\n\nfn main() {\n    let mut p = Person { name: \"Bob\".into() };\n}\n",
+      "expected_output": "Charlie",
+      "hints": [
+        "`self.name = n.to_string();`"
+      ],
+      "solution": "struct Person {\n    name: String,\n}\n\nimpl Person {\n    fn set_name(&mut self, n: &str) {\n        self.name = n.to_string();\n    }\n}\n\nfn main() {\n    let mut p = Person { name: \"Bob\".into() };\n    p.set_name(\"Charlie\");\n    println!(\"{}\", p.name);\n}\n"
+    },
+    {
+      "id": "methods_03",
+      "title": "Value receiver",
+      "description": "`Counter` with `increment(self) -> Self` returning new counter +1.",
+      "starter_code": "struct Counter {\n    value: i32,\n}\n\nimpl Counter {\n}\n\nfn main() {\n    let c = Counter { value: 5 };\n}\n",
+      "expected_output": "Counter { value: 6 }",
+      "hints": [
+        "`#[derive(Debug)]`"
+      ],
+      "solution": "#[derive(Debug)]\nstruct Counter {\n    value: i32,\n}\n\nimpl Counter {\n    fn increment(self) -> Self {\n        Counter {\n            value: self.value + 1,\n        }\n    }\n}\n\nfn main() {\n    let c = Counter { value: 5 };\n    println!(\"{:?}\", c.increment());\n}\n"
+    },
+    {
+      "id": "methods_04",
+      "title": "Display trait",
+      "description": "Implement `std::fmt::Display` for `Point` like Go `Stringer`.",
+      "starter_code": "use std::fmt;\n\nstruct Point {\n    x: i32,\n    y: i32,\n}\n\n// impl fmt::Display for Point\n\nfn main() {\n    let p = Point { x: 10, y: 20 };\n    println!(\"{}\", p);\n}\n",
+      "expected_output": "Point(10, 20)",
+      "hints": [
+        "`write!(f, \"Point({}, {})\", self.x, self.y)`"
+      ],
+      "solution": "use std::fmt;\n\nstruct Point {\n    x: i32,\n    y: i32,\n}\n\nimpl fmt::Display for Point {\n    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n        write!(f, \"Point({}, {})\", self.x, self.y)\n    }\n}\n\nfn main() {\n    let p = Point { x: 10, y: 20 };\n    println!(\"{}\", p);\n}\n"
+    },
+    {
+      "id": "methods_05",
+      "title": "Builder chain",
+      "description": "`Builder` with `add` consuming `self` and returning new `Builder`; `build` returns `String`.",
+      "starter_code": "struct Builder {\n    s: String,\n}\n\nimpl Builder {\n    fn new() -> Self {\n        Self { s: String::new() }\n    }\n}\n\nfn main() {}\n",
+      "expected_output": "HelloWorld",
+      "hints": [
+        "`fn add(mut self, t: &str) -> Self { self.s.push_str(t); self }`"
+      ],
+      "solution": "struct Builder {\n    s: String,\n}\n\nimpl Builder {\n    fn new() -> Self {\n        Self { s: String::new() }\n    }\n    fn add(mut self, t: &str) -> Self {\n        self.s.push_str(t);\n        self\n    }\n    fn build(self) -> String {\n        self.s\n    }\n}\n\nfn main() {\n    let out = Builder::new().add(\"Hello\").add(\"World\").build();\n    println!(\"{}\", out);\n}\n"
+    },
+    {
+      "id": "methods_07",
+      "title": "Circle geometry",
+      "description": "Print area then perimeter for radius `5.0` using `PI`.",
+      "starter_code": "struct Circle {\n    radius: f64,\n}\n\nimpl Circle {\n}\n\nfn main() {\n    let c = Circle { radius: 5.0 };\n}\n",
+      "expected_output": "78.53981633974483\n31.41592653589793",
+      "hints": [
+        "`std::f64::consts::PI`"
+      ],
+      "solution": "struct Circle {\n    radius: f64,\n}\n\nimpl Circle {\n    fn area(&self) -> f64 {\n        std::f64::consts::PI * self.radius * self.radius\n    }\n    fn perimeter(&self) -> f64 {\n        2.0 * std::f64::consts::PI * self.radius\n    }\n}\n\nfn main() {\n    let c = Circle { radius: 5.0 };\n    println!(\"{}\", c.area());\n    println!(\"{}\", c.perimeter());\n}\n"
+    },
+    {
+      "id": "methods_06",
+      "title": "Newtype method",
+      "description": "`struct MyInt(i32);` method `is_even` -> bool.",
+      "starter_code": "struct MyInt(i32);\n\nimpl MyInt {\n}\n\nfn main() {\n    let n = MyInt(42);\n}\n",
+      "expected_output": "true",
+      "hints": [
+        "`self.0 % 2 == 0`"
+      ],
+      "solution": "struct MyInt(i32);\n\nimpl MyInt {\n    fn is_even(&self) -> bool {\n        self.0 % 2 == 0\n    }\n}\n\nfn main() {\n    let n = MyInt(42);\n    println!(\"{}\", n.is_even());\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

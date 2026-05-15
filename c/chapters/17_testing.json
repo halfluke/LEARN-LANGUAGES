@@ -1,0 +1,64 @@
+{
+  "id": "testing",
+  "title": "Testing",
+  "description": "Unit-test ideas expressed as small stdout-checked programs (adapted for this platform).",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Testing\n\nStdout exercises stand in for a real unit harness.\n",
+  "exercises": [
+    {
+      "id": "testing_01",
+      "title": "Basic test (stdout)",
+      "description": "Implement `sum` and print `sum(2, 3)` (same intent as the C `#[test]` exercise).",
+      "starter_code": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return 0; }\n\nint main(void) {\n    printf(\"%d\", sum(2, 3));\n    return 0;\n}\n",
+      "expected_output": "5",
+      "hints": [
+        "Return `a + b`."
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return a + b; }\n\nint main(void) {\n    printf(\"%d\", sum(2, 3));\n    return 0;\n}\n"
+    },
+    {
+      "id": "testing_02",
+      "title": "Table cases (stdout)",
+      "description": "Print `6 0 -4` from `multiply` for the three pairs.",
+      "starter_code": "#include <stdio.h>\n\nstatic int multiply(int a, int b) { return 0; }\n\nint main(void) {\n    return 0;\n}\n",
+      "expected_output": "6 0 -4",
+      "hints": [
+        "Use `printf(\"%d %d %d\", ...);` with no trailing newline if expected has none."
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int multiply(int a, int b) { return a * b; }\n\nint main(void) {\n    printf(\"%d %d %d\", multiply(2, 3), multiply(0, 5), multiply(-1, 4));\n    return 0;\n}\n"
+    },
+    {
+      "id": "testing_03",
+      "title": "Divide and error (stdout)",
+      "description": "Print `ok` if `divide(10,2)` is 5 and `divide(10,0)` is -1 (use -1 as error sentinel).",
+      "starter_code": "#include <stdio.h>\n\nstatic int divide(int a, int b) { return 0; }\n\nint main(void) {\n    return 0;\n}\n",
+      "expected_output": "ok",
+      "hints": [
+        "Return `-1` when `b == 0`."
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int divide(int a, int b) {\n    if (b == 0) return -1;\n    return a / b;\n}\n\nint main(void) {\n    if (divide(10, 2) == 5 && divide(10, 0) == -1)\n        printf(\"ok\");\n    return 0;\n}\n"
+    },
+    {
+      "id": "testing_04",
+      "title": "Error message check (stdout)",
+      "description": "If `validate(-5)` returns a string containing `negative`, print `yes`.",
+      "starter_code": "#include <stdio.h>\n#include <string.h>\n\nconst char *validate(int age) { return \"\"; }\n\nint main(void) { return 0; }\n",
+      "expected_output": "yes",
+      "hints": [
+        "Use `strstr` on the returned message."
+      ],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nconst char *validate(int age) {\n    if (age < 0) return \"age cannot be negative\";\n    return \"ok\";\n}\n\nint main(void) {\n    const char *msg = validate(-5);\n    printf(strstr(msg, \"negative\") ? \"yes\" : \"no\");\n    return 0;\n}\n"
+    },
+    {
+      "id": "testing_05",
+      "title": "Hot path loop (stdout)",
+      "description": "Call `sum(2,3)` ten thousand times, then print `done`.",
+      "starter_code": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return a + b; }\n\nint main(void) {\n    return 0;\n}\n",
+      "expected_output": "done",
+      "hints": [
+        "Use a `for` loop with a large bound."
+      ],
+      "solution": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return a + b; }\n\nint main(void) {\n    for (int i = 0; i < 10000; i++) (void)sum(2, 3);\n    printf(\"done\");\n    return 0;\n}\n"
+    }
+  ],
+  "exercise_count": 5
+}

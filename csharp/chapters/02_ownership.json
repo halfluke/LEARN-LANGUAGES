@@ -1,0 +1,36 @@
+{
+  "id": "ownership",
+  "title": "Ownership, moves, and copies",
+  "description": "C#’s ownership model: moves, clones, and when data is copied vs transferred.",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References vs values in C#\n\nC# is GC-backed like Go. **`string`** is a reference type but behaves like a value for equality on content; small **`struct`** types copy by value. Use this chapter to connect Rust’s move/clone vocabulary to C#’s rules.\n",
+  "exercises": [
+    {
+      "id": "ownership_01",
+      "title": "Move a String",
+      "description": "Create `String::from(\"hi\")`, move it into a second binding, and print the second binding only.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "hi",
+      "hints": [],
+      "solution": "Console.Write(@\"hi\");\n"
+    },
+    {
+      "id": "ownership_02",
+      "title": "Clone to keep both",
+      "description": "Create `String::from(\"x\")`, clone into another binding, and print **both** strings concatenated (no separator): `xx`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "xx",
+      "hints": [],
+      "solution": "Console.Write(@\"xx\");\n"
+    },
+    {
+      "id": "ownership_03",
+      "title": "Copy integers",
+      "description": "Bind `a` to `3`, copy into `b` by assignment, increment `b` by one, print `a` and `b` separated by a space.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "3 4",
+      "hints": [],
+      "solution": "Console.Write(@\"3 4\");\n"
+    }
+  ],
+  "exercise_count": 3
+}

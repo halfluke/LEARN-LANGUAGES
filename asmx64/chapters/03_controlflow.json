@@ -1,0 +1,55 @@
+{
+  "id": "controlflow",
+  "title": "Control flow",
+  "description": "Compares, flags, and conditional branches in NASM",
+  "theory": "## Branches on x86-64\n\nThe `cmp` instruction subtracts for flags only; combine it with **conditional jumps** (`je`, `jne`, `jg`, `jl`, …) to implement `if` / `else`.\n\nThis chapter stays on **`_start` + syscalls** (no libc required).\n",
+  "exercises": [
+    {
+      "id": "controlflow_01",
+      "title": "Pick a branch",
+      "description": "If `rax` holds `7`, print `T` else print `F` (single character, no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    t: db 'T'\n    f: db 'F'\nsection .text\n_start:\n    mov rax, 7\n    ; cmp / jmp to pick one byte write of length 1\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "T",
+      "hints": [
+        "`cmp rax, 7` then `je` to a label that points `rsi` at `t`",
+        "Reuse one `write` syscall block after choosing `rsi`"
+      ],
+      "solution": "global _start\nsection .data\n    t: db 'T'\n    f: db 'F'\nsection .text\n_start:\n    mov rax, 7\n    cmp rax, 7\n    lea rsi, [rel f]\n    jne skip\n    lea rsi, [rel t]\nskip:\n    mov rax, 1\n    mov rdi, 1\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "controlflow_02",
+      "title": "Count-down loop",
+      "description": "Use a loop in `.text` to print exactly three stars `***` (no newline) with three single-character writes or one write of length 3 from a buffer you fill.",
+      "starter_code": "global _start\nsection .bss\n    buf: resb 3\nsection .text\n_start:\n    ; store '*' '*' '*' into buf then write syscall rdx=3\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "***",
+      "hints": [
+        "`mov byte [buf], '*'` then bump index in a register",
+        "Or place `db '*','*','*'` in `.data` and write once"
+      ],
+      "solution": "global _start\nsection .data\n    stars: db '*', '*', '*'\n    slen equ $ - stars\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, stars\n    mov rdx, slen\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "controlflow_03",
+      "title": "Signed compare",
+      "description": "If `eax` is **less than** `0` (signed), print `N`, else print `P` (one character, no newline), then exit 0. Initialize `eax` to `-3`.",
+      "starter_code": "global _start\nsection .data\n    n: db 'N'\n    p: db 'P'\nsection .text\n_start:\n    mov eax, -3\n    ; jl vs jge to pick letter\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "N",
+      "hints": [
+        "`cmp eax, 0` then `jl` to the `N` path"
+      ],
+      "solution": "global _start\nsection .data\n    n: db 'N'\n    p: db 'P'\nsection .text\n_start:\n    mov eax, -3\n    cmp eax, 0\n    lea rsi, [rel p]\n    jge pos\n    lea rsi, [rel n]\npos:\n    mov rax, 1\n    mov rdi, 1\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "controlflow_04",
+      "title": "Unsigned compare",
+      "description": "Set `rbx` to `10`. If `rbx` equals `10`, print `Y`, else print `N` (one character, no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    y: db 'Y'\n    n: db 'N'\nsection .text\n_start:\n    mov rbx, 10\n    ; cmp rbx, 10 then pick y or n\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "Y",
+      "hints": [
+        "`cmp rbx, 10` / `je` to the `Y` label path"
+      ],
+      "solution": "global _start\nsection .data\n    y: db 'Y'\n    n: db 'N'\nsection .text\n_start:\n    mov rbx, 10\n    cmp rbx, 10\n    lea rsi, [rel n]\n    jne skip\n    lea rsi, [rel y]\nskip:\n    mov rax, 1\n    mov rdi, 1\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

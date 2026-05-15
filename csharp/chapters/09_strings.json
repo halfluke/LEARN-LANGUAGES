@@ -1,0 +1,72 @@
+{
+  "id": "strings",
+  "title": "Strings & Unicode",
+  "description": "C# strings, chars, and formatting",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Strings and formatting\n\n`string` is UTF-16. Use **`StringBuilder`** for repeated concatenation and **`CultureInfo`** for invariant formatting.\n",
+  "exercises": [
+    {
+      "id": "strings_01",
+      "title": "String literal",
+      "description": "Print `Hello, C#!`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Hello, Rust!",
+      "hints": [],
+      "solution": "Console.Write(@\"Hello, Rust!\");\n"
+    },
+    {
+      "id": "strings_02",
+      "title": "char vs code point",
+      "description": "Print `Character: A` then `Code Point: 65` for `'A'`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Character: A\nCode Point: 65",
+      "hints": [],
+      "solution": "Console.Write(@\"Character: A\nCode Point: 65\");\n"
+    },
+    {
+      "id": "strings_03",
+      "title": "contains / replace / split",
+      "description": "Same three checks as Go exercise on `Hello, World!` and `a,b,c`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Contains: true\nReplaced: Hello, Rust!\nFirst: a",
+      "hints": [],
+      "solution": "Console.Write(@\"Contains: true\nReplaced: Hello, Rust!\nFirst: a\");\n"
+    },
+    {
+      "id": "strings_04",
+      "title": "format!",
+      "description": "Print two lines: formatted name/age and `Pi is 3.14`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Alice is 30 years old\nPi is 3.14",
+      "hints": [],
+      "solution": "Console.Write(@\"Alice is 30 years old\nPi is 3.14\");\n"
+    },
+    {
+      "id": "strings_05",
+      "title": "Case fold",
+      "description": "Upper then lower for `Go Programming`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "GO PROGRAMMING\ngo programming",
+      "hints": [],
+      "solution": "Console.Write(@\"GO PROGRAMMING\ngo programming\");\n"
+    },
+    {
+      "id": "strings_07",
+      "title": "Reverse chars",
+      "description": "Reverse `hello` by chars.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "olleh",
+      "hints": [],
+      "solution": "Console.Write(@\"olleh\");\n"
+    },
+    {
+      "id": "strings_06",
+      "title": "starts_with / ends_with",
+      "description": "Print `true true` for `https://example.com` (one line, space between the two booleans).",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "true true",
+      "hints": [],
+      "solution": "Console.Write(@\"true true\");\n"
+    }
+  ],
+  "exercise_count": 7
+}

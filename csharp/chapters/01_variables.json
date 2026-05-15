@@ -1,0 +1,93 @@
+{
+  "id": "variables",
+  "title": "Variables & Types",
+  "description": "Bindings, types, casts, and constants in C#",
+  "theory": "## Variables & types in C#\n\nLocals use `var` or explicit types. Value types copy by assignment; **`string`** is an immutable reference type with convenient literals. Use **`CultureInfo.InvariantCulture`** when exercises require stable decimal text.\n",
+  "exercises": [
+    {
+      "id": "variables_01",
+      "title": "Declare a binding",
+      "description": "Bind `age` to `25` (use `var` or `int`). Print it with `Console.WriteLine`.",
+      "starter_code": "// var age = ...\n// Console.WriteLine(...);\n",
+      "expected_output": "25",
+      "hints": [
+        "Use `var age = 25;` or `int age = 25;`",
+        "Use `Console.WriteLine(age);`"
+      ],
+      "solution": "var age = 25;\nConsole.WriteLine(age);\n"
+    },
+    {
+      "id": "variables_02",
+      "title": "Multiple bindings",
+      "description": "Bind `name` to `\"Rust\"` and `version` to `1.85` (double). Print them on one line separated by a space. Use invariant culture so the decimal is always `1.85`.",
+      "starter_code": "using System.Globalization;\n// var name = ...\n// double version = ...\n",
+      "expected_output": "Rust 1.85",
+      "hints": [
+        "var name = \"Rust\";",
+        "double version = 1.85;",
+        "Console.WriteLine($\"{name} {version.ToString(CultureInfo.InvariantCulture)}\");"
+      ],
+      "solution": "using System.Globalization;\nvar name = \"Rust\";\ndouble version = 1.85;\nConsole.WriteLine($\"{name} {version.ToString(CultureInfo.InvariantCulture)}\");\n"
+    },
+    {
+      "id": "variables_03",
+      "title": "Numeric cast",
+      "description": "Bind `x` to `100` as `int`. Assign to `double y`. Print `y` so it looks like `100` with no fractional part.",
+      "starter_code": "int x = 100;\n// double y = ...\n",
+      "expected_output": "100",
+      "hints": [
+        "`double y = x;`",
+        "`Console.WriteLine(y.ToString(\"0\", System.Globalization.CultureInfo.InvariantCulture));`"
+      ],
+      "solution": "using System.Globalization;\nint x = 100;\ndouble y = x;\nConsole.WriteLine(y.ToString(\"0\", CultureInfo.InvariantCulture));\n"
+    },
+    {
+      "id": "variables_04",
+      "title": "Printing default values",
+      "description": "Print `int` zero, `double` zero, an empty string, and `false`, space-separated (same layout as the Go/C# zero-value demo; C# prints `False` with capital F).",
+      "starter_code": "// Console.WriteLine(...)\n",
+      "expected_output": "0 0  False",
+      "hints": [
+        "`Console.WriteLine(string.Format(\"{0} {1} {2} {3}\", 0, 0.0, \"\", false));`"
+      ],
+      "solution": "Console.WriteLine(string.Format(\"{0} {1} {2} {3}\", 0, 0.0, \"\", false));\n"
+    },
+    {
+      "id": "variables_05",
+      "title": "Constants",
+      "description": "Define constants `MaxScore` and `MinScore` as `100` and `0`. Print both separated by a space.",
+      "starter_code": "// const int MaxScore = ...\n",
+      "expected_output": "100 0",
+      "hints": [
+        "`const int MaxScore = 100;`",
+        "`const int MinScore = 0;`"
+      ],
+      "solution": "const int MaxScore = 100;\nconst int MinScore = 0;\nConsole.WriteLine($\"{MaxScore} {MinScore}\");\n"
+    },
+    {
+      "id": "variables_07",
+      "title": "Grouped deconstruction",
+      "description": "Use tuple deconstruction to bind `host`, `port`, and `debug` from `(\"localhost\", 8080, true)`. Print all three separated by spaces.",
+      "starter_code": "// var (host, port, debug) = ...\n",
+      "expected_output": "localhost 8080 true",
+      "hints": [
+        "`var (host, port, debug) = (\"localhost\", 8080, true);`",
+        "`Console.WriteLine($\"{host} {port} {debug}\");`"
+      ],
+      "solution": "var (host, port, debug) = (\"localhost\", 8080, true);\nConsole.WriteLine($\"{host} {port} {debug.ToString().ToLowerInvariant()}\");\n"
+    },
+    {
+      "id": "variables_06",
+      "title": "Swap with tuple assignment",
+      "description": "Bind `a` and `b` to `5` and `10`. Swap using tuple assignment `(a, b) = (b, a);`. Print `a` and `b` separated by a space.",
+      "starter_code": "var a = 5;\nvar b = 10;\n// swap\n",
+      "expected_output": "10 5",
+      "hints": [
+        "`(a, b) = (b, a);` requires `a` and `b` to be assignable — use `var` and reassign pattern or declare as mutable locals.",
+        "Use two ints and tuple swap: `(a, b) = (b, a);`"
+      ],
+      "solution": "var a = 5;\nvar b = 10;\n(a, b) = (b, a);\nConsole.WriteLine($\"{a} {b}\");\n"
+    }
+  ],
+  "exercise_count": 7
+}

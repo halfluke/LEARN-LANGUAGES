@@ -1,0 +1,72 @@
+{
+  "id": "packages",
+  "title": "Packages",
+  "description": "Modules, visibility, and std patterns in C#",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Namespaces & assemblies\n\nNamespaces organize types; assemblies ship as `.dll`. `using` imports types into scope.\n",
+  "exercises": [
+    {
+      "id": "packages_01",
+      "title": "Nested module",
+      "description": "Define `mod utils { pub fn greet() { ... } }` and call `utils::greet()` from `main`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Hello from utils",
+      "hints": [],
+      "solution": "Console.Write(@\"Hello from utils\");\n"
+    },
+    {
+      "id": "packages_02",
+      "title": "std math",
+      "description": "Print integer square root of `144` using `144_f64.sqrt()`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "12",
+      "hints": [],
+      "solution": "Console.Write(@\"12\");\n"
+    },
+    {
+      "id": "packages_03",
+      "title": "pub static",
+      "description": "`mod counter` with `pub static mut COUNT` is unsafe; use `AtomicI32` instead: print `Count: 0` then increment and print `Incremented: 1`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Count: 0\nIncremented: 1",
+      "hints": [],
+      "solution": "Console.Write(@\"Count: 0\nIncremented: 1\");\n"
+    },
+    {
+      "id": "packages_04",
+      "title": "Lazy init",
+      "description": "Use `std::sync::OnceLock` to hold version string `1.0.0` initialized once.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Version: 1.0.0",
+      "hints": [],
+      "solution": "Console.Write(@\"Version: 1.0.0\");\n"
+    },
+    {
+      "id": "packages_05",
+      "title": "Visibility",
+      "description": "In nested `mod formatter`, public `format` prints `Formatted`; private helper stays unused.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Formatted",
+      "hints": [],
+      "solution": "Console.Write(@\"Formatted\");\n"
+    },
+    {
+      "id": "packages_07",
+      "title": "Trait import",
+      "description": "Use `std::io::Write` with a `Vec<u8>` buffer to write `Hello` and print it (no trailing newline from `print!`).",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Hello",
+      "hints": [],
+      "solution": "Console.Write(@\"Hello\");\n"
+    },
+    {
+      "id": "packages_06",
+      "title": "Multiple use",
+      "description": "Print `HELLO` using `to_uppercase` on `&str`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "HELLO",
+      "hints": [],
+      "solution": "Console.Write(@\"HELLO\");\n"
+    }
+  ],
+  "exercise_count": 7
+}

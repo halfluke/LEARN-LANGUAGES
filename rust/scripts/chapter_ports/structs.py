@@ -1,0 +1,105 @@
+"""Port: structs — struct literals, mutability, composition."""
+
+from __future__ import annotations
+
+import copy
+
+
+def build(go: dict) -> dict:
+    theory = """## Structs in Rust
+
+Structs group named fields. Use `#[derive(Debug)]` for printing with `{:?}`.
+
+### Defining
+
+```rust
+#[derive(Debug)]
+struct Person {
+    name: String,
+    age: i32,
+}
+```
+
+### Update syntax
+
+```rust
+let p2 = Person { age: 31, ..p1 };
+```
+
+### No inheritance
+
+Rust favors **composition** over embedding; you can nest structs and access nested fields.
+"""
+
+    exercises = [
+        {
+            "id": "structs_01",
+            "title": "Define a struct",
+            "description": "`Person { name, age }` with Alice 30; print `Debug`.",
+            "starter_code": "#[derive(Debug)]\nstruct Person {\n    name: String,\n    age: i32,\n}\n\nfn main() {\n}\n",
+            "expected_output": "Person { name: \"Alice\", age: 30 }",
+            "hints": ["`Person { name: \"Alice\".into(), age: 30 }`"],
+            "solution": "#[derive(Debug)]\nstruct Person {\n    name: String,\n    age: i32,\n}\n\nfn main() {\n    let p = Person {\n        name: \"Alice\".into(),\n        age: 30,\n    };\n    println!(\"{:?}\", p);\n}\n",
+        },
+        {
+            "id": "structs_02",
+            "title": "Mutate through reference",
+            "description": "`Point { x,y }` pointer, set `y` to 20, print `Debug`.",
+            "starter_code": "#[derive(Debug)]\nstruct Point {\n    x: i32,\n    y: i32,\n}\n\nfn main() {\n    let mut p = Point { x: 5, y: 10 };\n}\n",
+            "expected_output": "Point { x: 5, y: 20 }",
+            "hints": ["`p.y = 20;`"],
+            "solution": "#[derive(Debug)]\nstruct Point {\n    x: i32,\n    y: i32,\n}\n\nfn main() {\n    let mut p = Point { x: 5, y: 10 };\n    p.y = 20;\n    println!(\"{:?}\", p);\n}\n",
+        },
+        {
+            "id": "structs_03",
+            "title": "Partial struct literal",
+            "description": "`Book` with title, author, pages — set only title `Go Programming`, others default.",
+            "starter_code": "#[derive(Debug)]\nstruct Book {\n    title: String,\n    author: String,\n    pages: i32,\n}\n\nfn main() {\n}\n",
+            "expected_output": "Book { title: \"Go Programming\", author: \"\", pages: 0 }",
+            "hints": ["`Book { title: \"Go Programming\".into(), ..Default::default() }` requires `Default` impl"],
+            "solution": "#[derive(Debug, Default)]\nstruct Book {\n    title: String,\n    author: String,\n    pages: i32,\n}\n\nfn main() {\n    let book = Book {\n        title: \"Go Programming\".into(),\n        ..Default::default()\n    };\n    println!(\"{:?}\", book);\n}\n",
+        },
+        {
+            "id": "structs_04",
+            "title": "Composition",
+            "description": "`Employee { name, company }` print company `Acme`.",
+            "starter_code": "struct Employee {\n    name: String,\n    company: String,\n}\n\nfn main() {\n}\n",
+            "expected_output": "Acme",
+            "hints": ["`emp.company`"],
+            "solution": "struct Employee {\n    name: String,\n    company: String,\n}\n\nfn main() {\n    let emp = Employee {\n        name: \"Bob\".into(),\n        company: \"Acme\".into(),\n    };\n    println!(\"{}\", emp.company);\n}\n",
+        },
+        {
+            "id": "structs_05",
+            "title": "Zero value",
+            "description": "Default `Rectangle` and print Debug.",
+            "starter_code": "#[derive(Debug, Default)]\nstruct Rectangle {\n    width: f64,\n    height: f64,\n}\n\nfn main() {\n}\n",
+            "expected_output": "Rectangle { width: 0.0, height: 0.0 }",
+            "hints": ["`Rectangle::default()`"],
+            "solution": "#[derive(Debug, Default)]\nstruct Rectangle {\n    width: f64,\n    height: f64,\n}\n\nfn main() {\n    let r = Rectangle::default();\n    println!(\"{:?}\", r);\n}\n",
+        },
+        {
+            "id": "structs_07",
+            "title": "Compare structs",
+            "description": "Two identical `Config` values — print `true` from `==` (derive Eq).",
+            "starter_code": "#[derive(Debug, PartialEq, Eq)]\nstruct Config {\n    host: String,\n    port: i32,\n}\n\nfn main() {\n}\n",
+            "expected_output": "true",
+            "hints": ["`#[derive(PartialEq, Eq)]`"],
+            "solution": "#[derive(Debug, PartialEq, Eq)]\nstruct Config {\n    host: String,\n    port: i32,\n}\n\nfn main() {\n    let a = Config {\n        host: \"localhost\".into(),\n        port: 8080,\n    };\n    let b = Config {\n        host: \"localhost\".into(),\n        port: 8080,\n    };\n    println!(\"{}\", a == b);\n}\n",
+        },
+        {
+            "id": "structs_06",
+            "title": "Mutate field",
+            "description": "`Counter` increment value by 5, print value.",
+            "starter_code": "struct Counter {\n    value: i32,\n}\n\nfn main() {\n    let mut c = Counter { value: 0 };\n}\n",
+            "expected_output": "5",
+            "hints": ["`c.value += 5;`"],
+            "solution": "struct Counter {\n    value: i32,\n}\n\nfn main() {\n    let mut c = Counter { value: 0 };\n    c.value += 5;\n    println!(\"{}\", c.value);\n}\n",
+        },
+    ]
+
+    out = copy.deepcopy(go)
+    out["description"] = "Structs and composition in Rust"
+    out["theory"] = theory
+    out["exercises"] = exercises
+    out["exercise_count"] = len(exercises)
+    return out

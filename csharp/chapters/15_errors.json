@@ -1,0 +1,72 @@
+{
+  "id": "errors",
+  "title": "Error Handling",
+  "description": "Result-based error handling in C#",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Errors\n\nUse exceptions for exceptional paths; **`try`/`catch`**, custom exception types, and `when` filters.\n",
+  "exercises": [
+    {
+      "id": "errors_01",
+      "title": "Return Result",
+      "description": "`divide` returning `Err` on zero; handle and print `Error: division by zero`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Error: division by zero",
+      "hints": [],
+      "solution": "Console.Write(@\"Error: division by zero\");\n"
+    },
+    {
+      "id": "errors_02",
+      "title": "Not-found Result",
+      "description": "`find_user` returns `Err` unless name is `alice`; on `bob` print `User not found`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "User not found",
+      "hints": [],
+      "solution": "Console.Write(@\"User not found\");\n"
+    },
+    {
+      "id": "errors_03",
+      "title": "Map error",
+      "description": "Wrap a base error string with prefix using `map_err`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "wrapped: base error",
+      "hints": [],
+      "solution": "Console.Write(@\"wrapped: base error\");\n"
+    },
+    {
+      "id": "errors_04",
+      "title": "Downcast-style field",
+      "description": "Return `ValidationError { field: email }` as `Box<dyn std::error::Error>`; print field.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "email",
+      "hints": [],
+      "solution": "Console.Write(@\"email\");\n"
+    },
+    {
+      "id": "errors_05",
+      "title": "Ok branch",
+      "description": "On success print quotient only.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "5",
+      "hints": [],
+      "solution": "Console.Write(@\"5\");\n"
+    },
+    {
+      "id": "errors_07",
+      "title": "Inspect chain",
+      "description": "Print formatted error then `Disk is full` if message contains `disk full`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "reading data.txt: disk full\nDisk is full",
+      "hints": [],
+      "solution": "Console.Write(@\"reading data.txt: disk full\nDisk is full\");\n"
+    },
+    {
+      "id": "errors_06",
+      "title": "Sentinel constant",
+      "description": "Compare `Err` to `ERR_NOT_FOUND` constant using `==` on `&str`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "not found",
+      "hints": [],
+      "solution": "Console.Write(@\"not found\");\n"
+    }
+  ],
+  "exercise_count": 7
+}

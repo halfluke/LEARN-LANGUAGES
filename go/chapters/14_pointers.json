@@ -1,0 +1,92 @@
+{
+  "id": "pointers",
+  "title": "Pointers",
+  "description": "Learn about pointers, memory addresses, and how to work with reference types in Go",
+  "theory": "## Pointers in Go\n\nPointers store memory addresses instead of values directly.\n\n### Pointer Basics\n\n```go\nvar p *int       // p is a pointer to int (nil initially)\nx := 10\np = &x          // & gets address of x\n\nfmt.Println(*p)  // * dereferences - prints 10\n```\n\n### Why Use Pointers?\n\n1. **Modify the caller's variable** - pass by reference\n2. **Avoid copying large data** - pass pointer to struct\n3. **Create mutable data structures**\n\n### The & Operator\n\n& gets the memory address of a variable:\n```go\nx := 42\nptr := &x // ptr holds address of x\n```\n\n### The * Operator\n\n* has two meanings:\n- In a type declaration: `*int` means \"pointer to int\"\n- In code: `*ptr` dereferences the pointer\n\n```go\nptr := &x\nvalue := *ptr // read value through pointer\n*ptr = 99    // modify value through pointer\n```\n\n### The new Function\n\n`new(Type)` allocates memory and returns a pointer:\n```go\nptr := new(int)\n*ptr = 42\n```\n\n### Pointers to Structs\n\n```go\ntype Person struct {\n    Name string\n    Age  int\n}\n\np := &Person{Name: \"Alice\", Age: 30}\np.Age = 31 // Can access fields directly on pointer\n```\n",
+  "exercises": [
+    {
+      "id": "pointers_01",
+      "title": "Declare a Pointer",
+      "description": "Declare a pointer to an int named 'ptr' that points to a variable 'x' with value 42. Print the pointer value using fmt.Println(ptr).",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 42\n    // Declare a pointer ptr that points to x\n    \n    // Print the pointer\n}",
+      "expected_output": "0xc000",
+      "hints": [
+        "Use var ptr *int to declare a pointer to int",
+        "Use ptr = &x to assign the address of x to ptr"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 42\n    var ptr *int\n    ptr = &x\n    fmt.Println(ptr)\n}"
+    },
+    {
+      "id": "pointers_02",
+      "title": "Dereference a Pointer",
+      "description": "Create a pointer to an int and use the * operator to access and print the value it points to.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    value := 100\n    // Create a pointer to value\n    \n    // Dereference the pointer and print the value\n}",
+      "expected_output": "100",
+      "hints": [
+        "Use ptr := &value to create a pointer",
+        "Use *ptr to dereference and get the value"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    value := 100\n    ptr := &value\n    fmt.Println(*ptr)\n}"
+    },
+    {
+      "id": "pointers_03",
+      "title": "Pass Pointer to Function",
+      "description": "Write a function 'modify' that takes a pointer to int and doubles its value. Call it with a variable and print the result.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc modify(p *int) {\n    // Double the value at p\n}\n\nfunc main() {\n    num := 5\n    // Call modify with a pointer to num\n    \n    // Print num\n}",
+      "expected_output": "10",
+      "hints": [
+        "Inside modify, use *p = *p * 2 to double the value",
+        "Call modify(&num) to pass the address"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc modify(p *int) {\n    *p = *p * 2\n}\n\nfunc main() {\n    num := 5\n    modify(&num)\n    fmt.Println(num)\n}"
+    },
+    {
+      "id": "pointers_04",
+      "title": "Use the new Keyword",
+      "description": "Use the 'new' keyword to allocate a new int pointer, assign a value to it, and print the dereferenced value.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Use new to create a pointer to int\n    \n    // Assign 99 to the pointed-to value\n    \n    // Print the value\n}",
+      "expected_output": "99",
+      "hints": [
+        "Use new(int) to allocate a new pointer",
+        "Use *ptr = 99 to assign a value"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ptr := new(int)\n    *ptr = 99\n    fmt.Println(*ptr)\n}"
+    },
+    {
+      "id": "pointers_05",
+      "title": "Pointer to Struct",
+      "description": "Define a Person struct with Name (string). Create a pointer to Person using & and set Name to \"Bob\". Print Name through the pointer.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n\ntype Person struct {\n    Name string\n}\n\n\nfunc main() {\n    // Create pointer to Person, set Name\n    \n    // Print Name through pointer\n}",
+      "expected_output": "Bob",
+      "hints": [
+        "p := &Person{Name: \"Bob\"}",
+        "Use p.Name to access field through pointer"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\n\nfunc main() {\n    p := &Person{Name: \"Bob\"}\n    fmt.Println(p.Name)\n}"
+    },
+    {
+      "id": "pointers_07",
+      "title": "Nil Pointer Check",
+      "description": "Declare a pointer to int named ptr without initializing it. Check if it is nil and print \"nil\" or the dereferenced value.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Declare a pointer without initialization\n    \n    // Check if nil and print\n}",
+      "expected_output": "nil",
+      "hints": [
+        "Use var ptr *int to declare a nil pointer",
+        "Use if ptr == nil to check"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    var ptr *int\n    if ptr == nil {\n        fmt.Println(\"nil\")\n    } else {\n        fmt.Println(*ptr)\n    }\n}"
+    },
+    {
+      "id": "pointers_06",
+      "title": "Swap with Pointers",
+      "description": "Write a function swap(a, b *int) that swaps the values at the two pointers. Call with x:=5, y:=10 and print after swapping.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc swap(a, b *int) {\n    // Swap values at a and b\n}\n\n\nfunc main() {\n    x, y := 5, 10\n    // Call swap with pointers to x and y\n    \n    // Print x and y\n}",
+      "expected_output": "10 5",
+      "hints": [
+        "temp := *a; *a = *b; *b = temp",
+        "Call swap(&x, &y)"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc swap(a, b *int) {\n    temp := *a\n    *a = *b\n    *b = temp\n}\n\nfunc main() {\n    x, y := 5, 10\n    swap(&x, &y)\n    fmt.Println(x, y)\n}"
+    }
+  ]
+}

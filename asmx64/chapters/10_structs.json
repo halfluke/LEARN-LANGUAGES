@@ -1,0 +1,54 @@
+{
+  "id": "structs",
+  "title": "Struct layout",
+  "description": "Offsets, padding awareness, and little-endian fields",
+  "theory": "## Manual layout\n\nWithout `struct` syntax, model records as **labels + equates** for offsets. Respect alignment rules when interoperating with C (`align` directives).\n",
+  "exercises": [
+    {
+      "id": "structs_01",
+      "title": "Field offset",
+      "description": "In `.data`, define bytes: tag `'x'` then value `'7'` (two contiguous bytes). Print the **second** byte only (`7`, no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\nrec:\n    db 'x'\n    db '7'\nsection .text\n_start:\n    ; rsi points to second byte\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "7",
+      "hints": [
+        "`lea rsi, [rel rec+1]`"
+      ],
+      "solution": "global _start\nsection .data\nrec:\n    db 'x'\n    db '7'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel rec+1]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "structs_02",
+      "title": "Little-endian dword",
+      "description": "Place a **4-byte** little-endian dword with value `3` at label `n` (`dd 3`). Print the character `'3'` (one byte) by loading the **least-significant** byte of `n` and writing it—**not** by embedding another `'3'` literal elsewhere.",
+      "starter_code": "global _start\nsection .data\nn: dd 3\nsection .text\n_start:\n    ; movzx from first byte of n, add '0', write one digit\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "3",
+      "hints": [
+        "`movzx eax, byte [rel n]` gives `3` for `dd 3` on little-endian",
+        "Add `'0'` only works for single-digit 0..9"
+      ],
+      "solution": "global _start\nsection .bss\n    digit: resb 1\nsection .data\nn: dd 3\nsection .text\n_start:\n    movzx eax, byte [rel n]\n    add eax, '0'\n    mov [rel digit], al\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel digit]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "structs_03",
+      "title": "Packed pair",
+      "description": "Two consecutive 16-bit words: first is `0`, second has numeric value `0x32` (so the **low byte** is ASCII `'2'`). Print that single low byte (`'2'`, no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\npair:\n    dw 0\n    dw 0x32\nsection .text\n_start:\n    ; second word starts at pair+2\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "2",
+      "hints": [
+        "`lea rsi, [rel pair+2]` then `write` one byte"
+      ],
+      "solution": "global _start\nsection .data\npair:\n    dw 0\n    dw 0x32\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel pair+2]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "structs_04",
+      "title": "Three-byte record",
+      "description": "Contiguous bytes `db 'f','u','n'` at label `tri`. Print the **middle** byte `u` (no newline) using offset `1`, then exit 0.",
+      "starter_code": "global _start\nsection .data\ntri:\n    db 'f','u','n'\nsection .text\n_start:\n    ; lea rsi, [rel tri+1]; write 1 byte\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "u",
+      "hints": [
+        "Middle field lives at `tri+1`"
+      ],
+      "solution": "global _start\nsection .data\ntri:\n    db 'f', 'u', 'n'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel tri+1]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

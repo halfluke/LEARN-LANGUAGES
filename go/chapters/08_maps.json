@@ -1,0 +1,76 @@
+{
+  "id": "maps",
+  "title": "Maps",
+  "description": "Hash maps (dictionaries) in Go",
+  "theory": "## Maps in Go\n\nMaps are key-value data structures (hash tables/dictionaries).\n\n### Creating Maps\n\n```go\n// make function (recommended)\nages := make(map[string]int)\n\n// Literal syntax\nages := map[string]int{\n    \"Alice\": 25,\n    \"Bob\":   30,\n}\n\n// Empty map\nvar ages map[string]int // nil map (don't use!)\nages := map[string]int{} // empty map (OK)\n```\n\n### Basic Operations\n\n```go\n// Insert/Update\nages[\"Charlie\"] = 35\n\n// Retrieve (value, exists)\nage, ok := ages[\"Alice\"]\n\n// Delete\ndelete(ages, \"Bob\")\n\n// Check existence\nif _, ok := ages[\"Alice\"]; ok {\n    fmt.Println(\"Alice exists\")\n}\n```\n\n### Iteration with Range\n\n```go\nfor key, value := range ages {\n    fmt.Println(key, value)\n}\n```\n\n### Map Properties\n\n- Keys must be comparable (no slices, maps, functions)\n- No guarantee of iteration order\n- Using nil map to write causes panic - always use make or literal\n",
+  "exercises": [
+    {
+      "id": "maps_01",
+      "title": "Create Map",
+      "description": "Create a map ages with keys \"Alice\" (25), \"Bob\" (30). Print the map.",
+      "starter_code": "package main\n\n\nimport \"fmt\"\n\n\nfunc main() {\n    // Create map with ages\n    \n    // Print\n}",
+      "expected_output": "map[Alice:25 Bob:30]",
+      "hints": ["Use ages := map[string]int{\"Alice\": 25, \"Bob\": 30}"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ages := map[string]int{\n        \"Alice\": 25,\n        \"Bob\":   30,\n    }\n    fmt.Println(ages)\n}"
+    },
+    {
+      "id": "maps_02",
+      "title": "Map Lookup",
+      "description": "Create map scores := map[string]int{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    scores := map[string]int{\n        \"Math\":    95,\n        \"Physics\": 88,\n    }\n    // Look up Math\n    \n    // Print\n}",
+      "expected_output": "95",
+      "hints": ["Use scores[\"Math\"] to get value", "fmt.Println(scores[\"Math\"])"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    scores := map[string]int{\n        \"Math\":    95,\n        \"Physics\": 88,\n    }\n    fmt.Println(scores[\"Math\"])\n}"
+    },
+    {
+      "id": "maps_03",
+      "title": "Add to Map",
+      "description": "Create empty map names := make(map[string]string). Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    names := make(map[string]string)\n    // Add entries\n    \n    // Print\n}",
+      "expected_output": "map[1:One 2:Two]",
+      "hints": ["names[\"1\"] = \"One\""],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    names := make(map[string]string)\n    names[\"1\"] = \"One\"\n    names[\"2\"] = \"Two\"\n    fmt.Println(names)\n}"
+    },
+    {
+      "id": "maps_04",
+      "title": "Delete from Map",
+      "description": "Create map data := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    data := map[string]int{\n        \"a\": 1,\n        \"b\": 2,\n        \"c\": 3,\n    }\n    // Delete \"b\"\n    \n    // Print\n}",
+      "expected_output": "map[a:1 c:3]",
+      "hints": ["Use delete(data, \"b\")"],
+      "solution": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    data := map[string]int{\n        \"a\": 1,\n        \"b\": 2,\n        \"c\": 3,\n    }\n    delete(data, \"b\")\n    fmt.Println(data)\n}"
+    },
+    {
+      "id": "maps_05",
+      "title": "Check Key Existence",
+      "description": "Create map inventory := map[string]int{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    inventory := map[string]int{\n        \"apples\":  5,\n        \"oranges\": 3,\n    }\n    // Check if bananas exists\n    \n    // Print appropriate message\n}",
+      "expected_output": "not found",
+      "hints": [
+        "Use value, exists := inventory[\"bananas\"]",
+        "Check the exists variable"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    inventory := map[string]int{\n        \"apples\":  5,\n        \"oranges\": 3,\n    }\n    if _, exists := inventory[\"bananas\"]; exists {\n        fmt.Println(\"exists\")\n    } else {\n        fmt.Println(\"not found\")\n    }\n}"
+    },
+    {
+      "id": "maps_07",
+      "title": "Map Length",
+      "description": "Create map counts := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    counts := map[string]int{\n        \"one\":   1,\n        \"two\":   2,\n        \"three\": 3,\n    }\n    // Print the number of entries\n}",
+      "expected_output": "3",
+      "hints": [
+        "Use len(counts) to get the number of key-value pairs"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    counts := map[string]int{\n        \"one\":   1,\n        \"two\":   2,\n        \"three\": 3,\n    }\n    fmt.Println(len(counts))\n}"
+    },
+    {
+      "id": "maps_06",
+      "title": "Iterate Map",
+      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    grades := map[string]int{\n        \"A\": 90,\n        \"B\": 80,\n        \"C\": 70,\n    }\n    // Iterate and print each key-value\n}",
+      "expected_output": "A 90\nB 80\nC 70",
+      "hints": ["Use for key, value := range grades"],
+      "solution": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    grades := map[string]int{\n        \"A\": 90,\n        \"B\": 80,\n        \"C\": 70,\n    }\n    for key, value := range grades {\n        fmt.Println(key, value)\n    }\n}"
+    }
+  ]
+}

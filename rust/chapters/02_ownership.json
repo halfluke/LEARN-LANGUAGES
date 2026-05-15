@@ -1,0 +1,45 @@
+{
+  "id": "ownership",
+  "title": "Ownership, moves, and copies",
+  "description": "Rust’s ownership model: moves, clones, and when data is copied vs transferred.",
+  "theory": "## Ownership\n\nEvery value in Rust has a single **owner**. Assigning a heap-allocated value like **`String`** to another binding **moves** it unless you **`clone()`**.\n\n### Moves\n\nAfter `let t = s;`, `s` is no longer valid if `String` was moved.\n\n### Copies\n\n`Copy` types (`i32`, `bool`, …) duplicate bits without move rules.\n\n### Clone\n\n`Clone::clone` duplicates heap data explicitly (`String::clone`).\n",
+  "exercises": [
+    {
+      "id": "ownership_01",
+      "title": "Move a String",
+      "description": "Create `String::from(\"hi\")`, move it into a second binding, and print the second binding only.",
+      "starter_code": "fn main() {\n    // let s = String::from(\"hi\");\n    // let t = s;\n    // println!(...);\n}\n",
+      "expected_output": "hi",
+      "hints": [
+        "`let t = s;` moves ownership",
+        "`println!(\"{}\", t);`"
+      ],
+      "solution": "fn main() {\n    let s = String::from(\"hi\");\n    let t = s;\n    println!(\"{}\", t);\n}\n"
+    },
+    {
+      "id": "ownership_02",
+      "title": "Clone to keep both",
+      "description": "Create `String::from(\"x\")`, clone into another binding, and print **both** strings concatenated (no separator): `xx`.",
+      "starter_code": "fn main() {\n    let s = String::from(\"x\");\n    // let t = ...\n    // println!(...);\n}\n",
+      "expected_output": "xx",
+      "hints": [
+        "`let t = s.clone();`",
+        "`println!(\"{}{}\", s, t);`"
+      ],
+      "solution": "fn main() {\n    let s = String::from(\"x\");\n    let t = s.clone();\n    println!(\"{}{}\", s, t);\n}\n"
+    },
+    {
+      "id": "ownership_03",
+      "title": "Copy integers",
+      "description": "Bind `a` to `3`, copy into `b` by assignment, increment `b` by one, print `a` and `b` separated by a space.",
+      "starter_code": "fn main() {\n    let a = 3;\n    // let b = ...\n}\n",
+      "expected_output": "3 4",
+      "hints": [
+        "`let mut b = a;` copies `i32`",
+        "`b += 1;`"
+      ],
+      "solution": "fn main() {\n    let a = 3;\n    let mut b = a;\n    b += 1;\n    println!(\"{} {}\", a, b);\n}\n"
+    }
+  ],
+  "exercise_count": 3
+}

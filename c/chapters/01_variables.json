@@ -1,0 +1,94 @@
+{
+  "id": "variables",
+  "title": "Variables & Types",
+  "description": "Declarations, types, literals, and constants in C",
+  "theory": "## Variables in C\n\nLocals are stack objects or pointers; strings are **`const char *`** literals. `printf` formatting must match the exercise’s expected stdout exactly.\n",
+  "exercises": [
+    {
+      "id": "variables_01",
+      "title": "Declare a binding",
+      "description": "Declare `age` as `int` with value `25` and print it with `printf` (no trailing newline in the output).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* int age = ...; printf(...); */\n    return 0;\n}\n",
+      "expected_output": "25",
+      "hints": [
+        "`int age = 25;`",
+        "`printf(\"%d\", age);` without `\\n` if the expected output has no newline"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int age = 25;\n    printf(\"%d\", age);\n    return 0;\n}\n"
+    },
+    {
+      "id": "variables_02",
+      "title": "Multiple bindings",
+      "description": "Print exactly `C 1.85` (no newline): the word C, a space, then the literal digits `1.85` (avoid `%.f` locale quirks by printing the fractional part literally).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* const char *name = ...; print name then \" 1.85\" */\n    return 0;\n}\n",
+      "expected_output": "Rust 1.85",
+      "hints": [
+        "`const char *name = \"Rust\";`",
+        "`printf(\"%s 1.85\", name);` keeps the decimal point stable across locales"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *name = \"Rust\";\n    printf(\"%s 1.85\", name);\n    return 0;\n}\n"
+    },
+    {
+      "id": "variables_03",
+      "title": "Numeric cast",
+      "description": "Set `int x = 100`, assign to `double y`, and print `y` so the output looks like `100` with no fractional part (no newline).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int x = 100;\n    /* double y = x; printf ... */\n    return 0;\n}\n",
+      "expected_output": "100",
+      "hints": [
+        "`double y = (double)x;`",
+        "`printf(\"%.0f\", y);`"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int x = 100;\n    double y = (double)x;\n    printf(\"%.0f\", y);\n    return 0;\n}\n"
+    },
+    {
+      "id": "variables_04",
+      "title": "Printing default-like values",
+      "description": "Print integer zero, floating zero (show as `0` without decimals), two spaces, then the literal word `false` — matching the layout `0 0  false` (no newline).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* printf with 0, 0.0, and the string false with two spaces before \"false\" */\n    return 0;\n}\n",
+      "expected_output": "0 0  false",
+      "hints": [
+        "`printf(\"%d %.0f  %s\", 0, 0.0, \"false\");`"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    printf(\"%d %.0f  %s\", 0, 0.0, \"false\");\n    return 0;\n}\n"
+    },
+    {
+      "id": "variables_05",
+      "title": "Constants",
+      "description": "Use `#define` so `MAX_SCORE` is `100` and `MIN_SCORE` is `0`. Print both separated by a single space (no newline).",
+      "starter_code": "#include <stdio.h>\n\n/* #define MAX_SCORE ... */\n\nint main(void) {\n    return 0;\n}\n",
+      "expected_output": "100 0",
+      "hints": [
+        "`#define MAX_SCORE 100`",
+        "`#define MIN_SCORE 0` before `main`",
+        "`printf(\"%d %d\", MAX_SCORE, MIN_SCORE);`"
+      ],
+      "solution": "#include <stdio.h>\n\n#define MAX_SCORE 100\n#define MIN_SCORE 0\n\nint main(void) {\n    printf(\"%d %d\", MAX_SCORE, MIN_SCORE);\n    return 0;\n}\n"
+    },
+    {
+      "id": "variables_07",
+      "title": "Grouped values",
+      "description": "Bind `host` to `\"localhost\"`, `port` to `8080`, and represent `debug` as true (use an `int` 0/1 or `_Bool`). Print: `localhost 8080 true` with spaces (no newline). C prints the lowercase word `true`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* const char *host = ...; int port = ...; int debug = 1; */\n    return 0;\n}\n",
+      "expected_output": "localhost 8080 true",
+      "hints": [
+        "`const char *host = \"localhost\";`",
+        "`int port = 8080;`",
+        "`printf(\"%s %d %s\", host, port, \"true\");` when debug is on"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *host = \"localhost\";\n    int port = 8080;\n    int debug = 1;\n    printf(\"%s %d %s\", host, port, debug ? \"true\" : \"false\");\n    return 0;\n}\n"
+    },
+    {
+      "id": "variables_06",
+      "title": "Swap with a temporary",
+      "description": "Set `a` and `b` to `5` and `10`, swap using a third variable, then print `a` and `b` separated by a space (no newline).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int a = 5;\n    int b = 10;\n    /* swap */\n    return 0;\n}\n",
+      "expected_output": "10 5",
+      "hints": [
+        "`int t = a; a = b; b = t;`",
+        "`printf(\"%d %d\", a, b);`"
+      ],
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int a = 5;\n    int b = 10;\n    int t = a;\n    a = b;\n    b = t;\n    printf(\"%d %d\", a, b);\n    return 0;\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

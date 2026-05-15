@@ -1,0 +1,4 @@
+/target
+/.check-solutions-target
+/.check-solutions-crate
+**/__pycache__/

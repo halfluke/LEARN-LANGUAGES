@@ -1,0 +1,91 @@
+{
+  "id": "controlflow",
+  "title": "Control Flow",
+  "description": "If statements, loops, and switch cases in Go",
+  "theory": "## Control Flow in Go\n\nGo has three main control flow constructs: if statements, for loops, and switch statements.\n\n### If Statements\n\nThe if statement in Go doesn't require parentheses around the condition:\n```go\nif age >= 18 {\n    fmt.Println(\"Adult\")\n} else {\n    fmt.Println(\"Minor\")\n}\n```\n\nYou can also have `else if` for multiple conditions:\n```go\nif score >= 90 {\n    fmt.Println(\"A\")\n} else if score >= 80 {\n    fmt.Println(\"B\")\n} else {\n    fmt.Println(\"C\")\n}\n```\n\n\n### For Loops\n\nGo only has one looping construct - `for`. There are three forms:\n\n1. **Classic for**: `for i := 0; i < 10; i++ { }`\n2. **While-style**: `for condition { }` (no init or post)\n3. **Infinite loop**: `for { }` (use break to exit)\n\n\n```go\nfor i := 1; i <= 5; i++ {\n    fmt.Println(i)\n}\n```\n\n### For-Range\n\nThe for-range loop iterates over slices, arrays, maps, strings, and channels:\n```go\nfruits := []string{\"apple\", \"banana\", \"cherry\"}\nfor index, fruit := range fruits {\n    fmt.Println(index, fruit)\n}\n```\n\n\n### Switch Statements\n\nGo's switch is more flexible than other languages:\n- Cases don't need breaks (they break automatically)\n- Use `fallthrough` to continue to the next case\n- Cases can be expressions\n\n```go\nday := 3\nswitch day {\ncase 1:\n    fmt.Println(\"Monday\")\ncase 2:\n    fmt.Println(\"Tuesday\")\ndefault:\n    fmt.Println(\"Other day\")\n}\n```\n\n### Break and Continue\n\n- `break` exits the loop entirely\n- `continue` skips to the next iteration\n\n```go\nfor i := 1; i <= 10; i++ {\n    if i % 2 == 0 {\n        continue // skip even numbers\n    }\n    fmt.Println(i)\n}\n```\n",
+  "exercises": [
+    {
+      "id": "controlflow_01",
+      "title": "If Statement",
+      "description": "Declare age := 20. If age >= 18, print Adult. Otherwise print Minor.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    age := 20\n    // Add if-else statement\n}",
+      "expected_output": "Adult",
+      "hints": [
+        "Use if age >= 18 { fmt.Println(\"Adult\") } else { fmt.Println(\"Minor\") }"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    age := 20\n    if age >= 18 {\n        fmt.Println(\"Adult\")\n    } else {\n        fmt.Println(\"Minor\")\n    }\n}"
+    },
+    {
+      "id": "controlflow_02",
+      "title": "For Loop",
+      "description": "Use a for loop to print numbers 1 through 5.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Use for loop to print 1 to 5\n}",
+      "expected_output": "1\n2\n3\n4\n5",
+      "hints": [
+        "Use for i := 1; i <= 5; i++ { fmt.Println(i) }"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    for i := 1; i <= 5; i++ {\n        fmt.Println(i)\n    }\n}"
+    },
+    {
+      "id": "controlflow_03",
+      "title": "Switch Statement",
+      "description": "Declare day := 2. Use a switch statement to print the day name: 1=Monday, 2=Tuesday, 3=Wednesday, default=Unknown.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    day := 2\n    // Add switch statement\n}",
+      "expected_output": "Tuesday",
+      "hints": [
+        "switch day { case 1: ... default: ... }",
+        "No break statement needed in Go cases"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    day := 2\n    switch day {\n    case 1:\n        fmt.Println(\"Monday\")\n    case 2:\n        fmt.Println(\"Tuesday\")\n    case 3:\n        fmt.Println(\"Wednesday\")\n    default:\n        fmt.Println(\"Unknown\")\n    }\n}"
+    },
+    {
+      "id": "controlflow_04",
+      "title": "For-Range Loop",
+      "description": "Create a slice colors := []string{\"red\", \"green\", \"blue\"}. Use for-range to print each color on its own line.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    colors := []string{\"red\", \"green\", \"blue\"}\n    // Use for-range to iterate\n}",
+      "expected_output": "red\ngreen\nblue",
+      "hints": [
+        "for index, color := range colors { }",
+        "Use fmt.Println(color)"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    colors := []string{\"red\", \"green\", \"blue\"}\n    for _, color := range colors {\n        fmt.Println(color)\n    }\n}"
+    },
+    {
+      "id": "controlflow_05",
+      "title": "Else If Chain",
+      "description": "Declare score := 85. Print the grade: 90+ = A, 80+ = B, 70+ = C, 60+ = D, below 60 = F.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    score := 85\n    // Use if-else if-else chain\n}",
+      "expected_output": "B",
+      "hints": [
+        "Use if score >= 90 { A } else if score >= 80 { B } ...",
+        "Check from highest to lowest"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    score := 85\n    if score >= 90 {\n        fmt.Println(\"A\")\n    } else if score >= 80 {\n        fmt.Println(\"B\")\n    } else if score >= 70 {\n        fmt.Println(\"C\")\n    } else if score >= 60 {\n        fmt.Println(\"D\")\n    } else {\n        fmt.Println(\"F\")\n    }\n}"
+    },
+    {
+      "id": "controlflow_07",
+      "title": "For Loop with Break",
+      "description": "Use a for loop to count from 1 upward. When i reaches 5, break out of the loop. Print each number before the break.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Infinite for loop with break at 5\n}",
+      "expected_output": "1\n2\n3\n4",
+      "hints": [
+        "Use for { } for an infinite loop",
+        "if i >= 5 { break } exits the loop",
+        "Increment i inside the loop"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    i := 1\n    for {\n        if i >= 5 {\n            break\n        }\n        fmt.Println(i)\n        i++\n    }\n}"
+    },
+    {
+      "id": "controlflow_06",
+      "title": "Continue Statement",
+      "description": "Use a for loop to print numbers 1 to 10, but skip printing even numbers using continue.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Loop 1 to 10, skip even numbers\n}",
+      "expected_output": "1\n3\n5\n7\n9",
+      "hints": [
+        "if i % 2 == 0 { continue } skips even numbers",
+        "Check i % 2 != 0 or i % 2 == 1 to print odd numbers"
+      ],
+      "solution": "package main\n\n\nimport \"fmt\"\n\nfunc main() {\n    for i := 1; i <= 10; i++ {\n        if i%2 == 0 {\n            continue\n        }\n        fmt.Println(i)\n    }\n}"
+    }
+  ]
+}

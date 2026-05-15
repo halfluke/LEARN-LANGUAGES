@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "learn-csharp-tui"
+version = "0.1.0"
+description = "Interactive terminal course for C# (LEARN-C#), JSON chapters + dotnet run."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "textual>=0.62.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+learn-csharp-tui = "learn_cs_tui.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["learn_cs_tui*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

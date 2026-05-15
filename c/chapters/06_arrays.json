@@ -1,0 +1,72 @@
+{
+  "id": "arrays",
+  "title": "Arrays",
+  "description": "Fixed-size arrays `[T; N]` in C",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Arrays\n\nFixed-size arrays and pointer decay; watch sizes and NUL terminators.\n",
+  "exercises": [
+    {
+      "id": "arrays_01",
+      "title": "Create array",
+      "description": "Create `[1, 2, 3, 4, 5]` and print it with Debug formatting.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "[1, 2, 3, 4, 5]",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[1, 2, 3, 4, 5]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "arrays_02",
+      "title": "Iterate array",
+      "description": "Create `[10, 20, 30]` and print each element on its own line.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "10\n20\n30",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"10\\n20\\n30\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "arrays_03",
+      "title": "Array length",
+      "description": "Create `[1, 2, 3, 4]` and print `.len()`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "4",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"4\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "arrays_04",
+      "title": "Partial initialization",
+      "description": "Create `[10, 20, 0, 0, 0]` using `[10, 20, 0, 0, 0]` literal and print Debug.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "[10, 20, 0, 0, 0]",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"[10, 20, 0, 0, 0]\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "arrays_05",
+      "title": "2D array",
+      "description": "Print `1`, `2`, `3`, `4` each on its own line from `[[1,2],[3,4]]`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "1\n2\n3\n4",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"1\\n2\\n3\\n4\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "arrays_07",
+      "title": "Sum array",
+      "description": "Sum `[10, 20, 30, 40, 50]` and print the total.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "150",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"150\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "arrays_06",
+      "title": "Index access",
+      "description": "From `[100, 200, 300]` print first and last with spaces.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "100 300",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"100 300\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

@@ -1,0 +1,78 @@
+{
+  "id": "slices",
+  "title": "Slices",
+  "description": "Dynamic slices in Go - like arrays but growable",
+  "theory": "## Slices in Go\n\nSlices are dynamic, growable sequences that wrap arrays. They're what you'll use most of the time instead of arrays.\n\n### Creating Slices\n\n```go\n// Literal syntax\nnums := []int{1, 2, 3}\n\n// make - specify length and optionally capacity\nnums := make([]int, 3)      // len=3, cap=3, initialized to zeros\nnums := make([]int, 0, 10)  // len=0, cap=10\n\n// Create slice from array or another slice\nslice := arr[1:4]           // elements at index 1, 2, 3\n```\n\n### Slice Properties\n\n- **len(slice)**: number of elements\n- **cap(slice)**: capacity (how much can grow before reallocating)\n- Slices share underlying memory with their source\n\n```go\nnums := make([]int, 3, 10)   // len=3, cap=10\nfmt.Println(len(nums), cap(nums)) // 3 10\n```\n\n### Append\n\nThe append function adds elements and grows the slice if needed:\n\n```go\nnums := []int{1, 2}\nnums = append(nums, 3)      // nums = [1, 2, 3]\nnums = append(nums, 4, 5, 6) // nums = [1, 2, 3, 4, 5, 6]\n```\n\n### Slice Internals (Important!)\n\nA slice is a struct with three fields:\n- pointer to underlying array\n- length\n- capacity\n\nWhen you assign a slice, both reference the same underlying array!\n\n```go\noriginal := []int{1, 2, 3, 4}\ncopy := original[1:3] // copy points to same array, len=2, cap=3\n```\n\n### Copy\n\nUse copy to create an independent slice:\n```go\noriginal := []int{1, 2, 3}\ncopy := make([]int, len(original))\ncopy(copy, original) // copy now independent\n```\n\n### Slicing\n\n\n```go\nslice := []int{1, 2, 3, 4, 5}\nslice[1:3]   // [2, 3]\nslice[:2]    // [1, 2]\nslice[3:]    // [4, 5]\n```\n",
+  "exercises": [
+    {
+      "id": "slices_01",
+      "title": "Create Slice",
+      "description": "Create a slice with make for 3 ints. Assign values 1,2,3. Print using fmt.Println.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Make slice of length 3\n    \n    // Assign values\n    \n    // Print\n}",
+      "expected_output": "[1 2 3]",
+      "hints": ["Use make([]int, 3)", "slice[0] = 1, etc."],
+      "solution": "package main\n\nimport \"fmt\"\nfunc main() {\n    s := make([]int, 3)\n    s[0], s[1], s[2] = 1, 2, 3\n    fmt.Println(s)\n}"
+    },
+    {
+      "id": "slices_02",
+      "title": "Append to Slice",
+      "description": "Create slice nums := []int{1, 2}. Append 3, 4, 5. Print result.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    nums := []int{1, 2}\n    // Append 3, 4, 5\n    \n    // Print\n}",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": ["Use append(nums, 3, 4, 5...)"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    nums := []int{1, 2}\n    nums = append(nums, 3, 4, 5)\n    fmt.Println(nums)\n}"
+    },
+    {
+      "id": "slices_03",
+      "title": "Slice Length and Capacity",
+      "description": "Create slice s := make([]int, 3, 10). Print its len and cap.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := make([]int, 3, 10)\n    // Print len and cap\n}",
+      "expected_output": "3 10",
+      "hints": ["Use len(s) and cap(s)", "fmt.Println(len(s), cap(s))"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := make([]int, 3, 10)\n    fmt.Println(len(s), cap(s))\n}"
+    },
+    {
+      "id": "slices_04",
+      "title": "Slice Literals",
+      "description": "Create slice fruits := []string{\"apple\", \"banana\", \"cherry\"}. Print its length.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fruits := []string{\"apple\", \"banana\", \"cherry\"}\n    // Print length\n}",
+      "expected_output": "3",
+      "hints": ["Use len(fruits)"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fruits := []string{\"apple\", \"banana\", \"cherry\"}\n    fmt.Println(len(fruits))\n}"
+    },
+    {
+      "id": "slices_05",
+      "title": "Slicing a Slice",
+      "description": "Create slice n := []int{1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    n := []int{1, 2, 3, 4, 5}\n    // Get slice [2,3,4]\n    \n    // Print\n}",
+      "expected_output": "[2 3 4]",
+      "hints": ["Use n[1:4] to get elements from index 1 to 3", "slice[start:end] is exclusive on end"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    n := []int{1, 2, 3, 4, 5}\n    sliced := n[1:4]\n    fmt.Println(sliced)\n}"
+    },
+    {
+      "id": "slices_07",
+      "title": "Append Slices",
+      "description": "Create two slices: a := []int{1, 2} and b := []int{3, 4, 5}. Append all elements of b to a and print the result.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    a := []int{1, 2}\n    b := []int{3, 4, 5}\n    // Append all of b to a\n    \n    // Print a\n}",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": [
+        "Use append(a, b...) to append all elements of slice b to a",
+        "The ... expands the slice into individual arguments"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    a := []int{1, 2}\n    b := []int{3, 4, 5}\n    a = append(a, b...)\n    fmt.Println(a)\n}"
+    },
+    {
+      "id": "slices_06",
+      "title": "Copy Slice",
+      "description": "Create slice original := []int{1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    original := []int{1, 2, 3}\n    // Make copy and append 4\n    \n    // Print original and copy\n}",
+      "expected_output": "[1 2 3]\n[1 2 3 4]",
+      "hints": [
+        "copy := make([]int, len(original))",
+        "copy(copy, original)",
+        "Then append to copy"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    original := []int{1, 2, 3}\n    \n    copySlice := make([]int, len(original))\n    copy(copySlice, original)\n    \n    copySlice = append(copySlice, 4)\n    \n    fmt.Println(original)\n    fmt.Println(copySlice)\n}"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "errors",
+  "title": "Error Handling",
+  "description": "Go's error handling patterns",
+  "theory": "## Error Handling in Go\n\nGo doesn't have try-catch. Instead, errors are values returned as the last return value.\n\n### Basic Error Pattern\n\n```go\nfunc divide(a, b float64) (float64, error) {\n    if b == 0 {\n        return 0, errors.New(\"division by zero\")\n    }\n    return a / b, nil\n}\n\nresult, err := divide(10, 2)\nif err != nil {\n    fmt.Println(\"Error:\", err)\n    return\n}\nfmt.Println(\"Result:\", result)\n```\n\n### Creating Errors\n\n\n```go\nimport \"errors\"\n\n// Simple error with a message\nerr := errors.New(\"something went wrong\")\n\n// Error with formatting (using fmt.Errorf)\nerr := fmt.Errorf(\"invalid value %q: %w\", value, underlyingErr)\n```\n\n### Custom Error Types\n\n```go\ntype NotFoundError struct {\n    Key string\n}\n\nfunc (e NotFoundError) Error() string {\n    return \"not found: \" + e.Key\n}\n```\n\n### Error Checking\n\n```go\n// Check if error equals a specific error\nif err == SomeSpecificError { }\n\n// Check for error type (type assertion)\nvar notFoundErr *NotFoundError\nif errors.As(err, &notFoundErr) {\n    fmt.Println(notFoundErr.Key)\n}\n\n// Check if error wraps another (errors.Is)\nif errors.Is(err, ErrNotFound) { }\n```\n\n### Error Wrapping\n\n\nWrap errors to preserve context:\n```go\nfunc readFile(name string) error {\n    data, err := os.ReadFile(name)\n    if err != nil {\n        return fmt.Errorf(\"reading %s: %w\", name, err)\n    }\n    return nil\n}\n```\n\n### The error Interface\n\nOnly requires one method:\n```go\ntype error interface {\n    Error() string\n}\n```\n\n### Key Principles\n\n1. Always check errors\n2. Return errors, don't panic (usually)\n3. Wrap errors to add context\n4. Custom error types for specific needs\n",
+  "exercises": [
+    {
+      "id": "errors_01",
+      "title": "Return Error",
+      "description": "Define divide(a, b float64) (float64, error). Return error if b==0. Call with divide(10, 0) and handle error.",
+      "starter_code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nfunc divide(a, b float64) (float64, error) {\n    // Return error if b == 0\n    \n    // Otherwise return result\n    return a / b, nil\n}\n\nfunc main() {\n    result, err := divide(10, 0)\n    if err != nil {\n        fmt.Println(\"Error:\", err)\n        return\n    }\n    fmt.Println(\"Result:\", result)\n}",
+      "expected_output": "Error: division by zero",
+      "hints": ["if b == 0 { return 0, errors.New(\"division by zero\") }"],
+      "solution": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nfunc divide(a, b float64) (float64, error) {\n    if b == 0 {\n        return 0, errors.New(\"division by zero\")\n    }\n    return a / b, nil\n}\n\nfunc main() {\n    result, err := divide(10, 0)\n    if err != nil {\n        fmt.Println(\"Error:\", err)\n        return\n    }\n    fmt.Println(\"Result:\", result)\n}"
+    },
+    {
+      "id": "errors_02",
+      "title": "Error Types",
+      "description": "Define custom error type NotFoundError with Unwrap(). Check errors.Is() to handle.",
+      "starter_code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\ntype NotFoundError struct {\n    Key string\n}\n\nfunc (e NotFoundError) Error() string {\n    return \"not found: \" + e.Key\n}\n\nfunc findUser(name string) error {\n    if name != \"alice\" {\n        return NotFoundError{Key: name}\n    }\n    return nil\n}\n\nfunc main() {\n    err := findUser(\"bob\")\n    if errors.Is(err, NotFoundError{}) {\n        fmt.Println(\"User not found\")\n    }\n}",
+      "expected_output": "User not found",
+      "hints": ["Need to implement Unwrap() for errors.Is to work"],
+      "solution": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\ntype NotFoundError struct {\n    Key string\n}\n\nfunc (e NotFoundError) Error() string {\n    return \"not found: \" + e.Key\n}\n\nfunc (e NotFoundError) Unwrap() error {\n    return nil\n}\n\nfunc findUser(name string) error {\n    if name != \"alice\" {\n        return NotFoundError{Key: name}\n    }\n    return nil\n}\n\nfunc main() {\n    err := findUser(\"bob\")\n    if errors.Is(err, NotFoundError{}) {\n        fmt.Println(\"User not found\")\n    }\n}"
+    },
+    {
+      "id": "errors_03",
+      "title": "fmt.Errorf Wrapping",
+      "description": "Create a function wrapError() that uses fmt.Errorf to wrap an error with context.",
+      "starter_code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nfunc wrapError() error {\n    base := errors.New(\"base error\")\n    // Use fmt.Errorf to wrap base with \"wrapped:\" message\n    return fmt.Errorf(\"wrapped: %w\", base)\n}\n\nfunc main() {\n    err := wrapError()\n    fmt.Println(err)\n}",
+      "expected_output": "wrapped: base error",
+      "hints": ["Use %w to wrap the error"],
+      "solution": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nfunc wrapError() error {\n    base := errors.New(\"base error\")\n    return fmt.Errorf(\"wrapped: %w\", base)\n}\n\nfunc main() {\n    err := wrapError()\n    fmt.Println(err)\n}"
+    },
+    {
+      "id": "errors_04",
+      "title": "errors.As Type Assertion",
+      "description": "Create a custom error type ValidationError with a Field string. Use errors.As to extract it.",
+      "starter_code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\ntype ValidationError struct {\n    Field string\n    Msg   string\n}\n\nfunc (e ValidationError) Error() string {\n    return e.Msg\n}\n\nfunc validate() error {\n    // Return ValidationError\n    return ValidationError{Field: \"email\", Msg: \"invalid email\"}\n}\n\nfunc main() {\n    err := validate()\n    var ve ValidationError\n    if errors.As(err, &ve) {\n        fmt.Println(ve.Field)\n    }\n}",
+      "expected_output": "email",
+      "hints": ["errors.As(err, &ve) extracts the error into ve"],
+      "solution": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\ntype ValidationError struct {\n    Field string\n    Msg   string\n}\n\nfunc (e ValidationError) Error() string {\n    return e.Msg\n}\n\nfunc validate() error {\n    return ValidationError{Field: \"email\", Msg: \"invalid email\"}\n}\n\nfunc main() {\n    err := validate()\n    var ve ValidationError\n    if errors.As(err, &ve) {\n        fmt.Println(ve.Field)\n    }\n}"
+    },
+    {
+      "id": "errors_05",
+      "title": "Nil Error",
+      "description": "Create a function that returns nil error on success, then check for nil in main.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc safeDivide(a, b int) (int, error) {\n    if b == 0 {\n        return 0, fmt.Errorf(\"cannot divide by zero\")\n    }\n    // Return nil for error on success\n    return a / b, nil\n}\n\nfunc main() {\n    result, err := safeDivide(10, 2)\n    if err != nil {\n        fmt.Println(\"Error:\", err)\n        return\n    }\n    // This should print result\n    fmt.Println(result)\n}",
+      "expected_output": "5",
+      "hints": ["return a / b, nil"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc safeDivide(a, b int) (int, error) {\n    if b == 0 {\n        return 0, fmt.Errorf(\"cannot divide by zero\")\n    }\n    return a / b, nil\n}\n\nfunc main() {\n    result, err := safeDivide(10, 2)\n    if err != nil {\n        fmt.Println(\"Error:\", err)\n        return\n    }\n    fmt.Println(result)\n}"
+    },
+    {
+      "id": "errors_07",
+      "title": "Multi-Level Error Wrapping",
+      "description": "Create a function readFile that wraps an errors.New(\"disk full\") with context. Then in main, unwrap and check if it wraps the original error using errors.Is.",
+      "starter_code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nvar errDiskFull = errors.New(\"disk full\")\n\nfunc readFile(name string) error {\n    // Wrap errDiskFull with context using fmt.Errorf\n    return fmt.Errorf(\"reading %s: %w\", name, errDiskFull)\n}\n\nfunc main() {\n    err := readFile(\"data.txt\")\n    fmt.Println(err)\n    \n    // Check if err wraps errDiskFull\n    if errors.Is(err, errDiskFull) {\n        fmt.Println(\"Disk is full\")\n    }\n}",
+      "expected_output": "reading data.txt: disk full\nDisk is full",
+      "hints": [
+        "Use %w verb in fmt.Errorf to wrap the underlying error",
+        "errors.Is(err, target) checks if err wraps or equals target"
+      ],
+      "solution": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nvar errDiskFull = errors.New(\"disk full\")\n\nfunc readFile(name string) error {\n    return fmt.Errorf(\"reading %s: %w\", name, errDiskFull)\n}\n\nfunc main() {\n    err := readFile(\"data.txt\")\n    fmt.Println(err)\n    \n    if errors.Is(err, errDiskFull) {\n        fmt.Println(\"Disk is full\")\n    }\n}"
+    },
+    {
+      "id": "errors_06",
+      "title": "Sentinel Errors",
+      "description": "Define a sentinel error variable ErrNotFound = errors.New(\"not found\"). Return it from a function and check with errors.Is.",
+      "starter_code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\n// Define sentinel error ErrNotFound\n\nfunc getItem(id int) (string, error) {\n    if id < 0 {\n        // Return ErrNotFound\n        return \"\", nil\n    }\n    return \"item\", nil\n}\n\nfunc main() {\n    _, err := getItem(-1)\n    // Check if err is ErrNotFound\n}",
+      "expected_output": "not found",
+      "hints": ["var ErrNotFound = errors.New(\"not found\")", "return \"\", ErrNotFound", "if errors.Is(err, ErrNotFound)"],
+      "solution": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\nvar ErrNotFound = errors.New(\"not found\")\n\nfunc getItem(id int) (string, error) {\n    if id < 0 {\n        return \"\", ErrNotFound\n    }\n    return \"item\", nil\n}\n\nfunc main() {\n    _, err := getItem(-1)\n    if errors.Is(err, ErrNotFound) {\n        fmt.Println(\"not found\")\n    }\n}"
+    }
+  ]
+}

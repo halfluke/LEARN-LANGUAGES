@@ -1,0 +1,41 @@
+# Rust / asm checkouts
+target/
+**/.check-solutions-target/
+**/.check-solutions-crate/
+**/.check-asm-target/
+**/.check-asm-crate/
+
+# C / C# check workspaces
+**/.check-c-work/
+**/.check-csharp-work/
+
+# Python (c/, csharp/ TUIs)
+**/.venv/
+**/venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Go binary names
+learn-go-tui
+**/learn-go-tui
+
+# Editor / OS / secrets
+.idea/
+.vscode/
+.DS_Store
+*.swp
+.env
+.env.*
+!.env.example
+
+# Agent tooling
+.gsd/
+.agents/
+.gsd-id
+.mcp.json
+.bg-shell/

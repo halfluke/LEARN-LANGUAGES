@@ -1,0 +1,72 @@
+{
+  "id": "pointers",
+  "title": "Pointers",
+  "description": "References, mutability, and Box in C#",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Unsafe and pointers\n\nMost code stays managed; **`unsafe`**, **`fixed`**, and **`nint`** exist for interop and performance.\n",
+  "exercises": [
+    {
+      "id": "pointers_01",
+      "title": "Borrow and read",
+      "description": "`x = 42`, `r = &x`, print `*r` (dereference).",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "42",
+      "hints": [],
+      "solution": "Console.Write(@\"42\");\n"
+    },
+    {
+      "id": "pointers_02",
+      "title": "Dereference",
+      "description": "Same as Go: print value through reference.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "100",
+      "hints": [],
+      "solution": "Console.Write(@\"100\");\n"
+    },
+    {
+      "id": "pointers_03",
+      "title": "Mutate through mut ref",
+      "description": "`modify(p: &mut i32)` doubles value; print after.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "10",
+      "hints": [],
+      "solution": "Console.Write(@\"10\");\n"
+    },
+    {
+      "id": "pointers_04",
+      "title": "Box allocation",
+      "description": "`Box::new` an `i32`, set to 99, print dereferenced.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "99",
+      "hints": [],
+      "solution": "Console.Write(@\"99\");\n"
+    },
+    {
+      "id": "pointers_05",
+      "title": "Struct through reference",
+      "description": "`Person { name }` via `&mut` set to Bob, print name.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "Bob",
+      "hints": [],
+      "solution": "Console.Write(@\"Bob\");\n"
+    },
+    {
+      "id": "pointers_07",
+      "title": "Option None",
+      "description": "Print `nil` equivalent: C# uses `Option` — print `none` when `None`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "nil",
+      "hints": [],
+      "solution": "Console.Write(@\"nil\");\n"
+    },
+    {
+      "id": "pointers_06",
+      "title": "Swap via references",
+      "description": "`swap(a: &mut i32, b: &mut i32)` then print `x y`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "10 5",
+      "hints": [],
+      "solution": "Console.Write(@\"10 5\");\n"
+    }
+  ],
+  "exercise_count": 7
+}

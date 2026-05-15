@@ -1,0 +1,77 @@
+{
+  "id": "arrays",
+  "title": "Arrays",
+  "description": "Fixed-size arrays in Go",
+  "theory": "## Arrays in Go\n\nArrays in Go are fixed-size sequences of elements of the same type.\n\n### Array Declaration\n\n```go\nvar arr [5]int              // array of 5 ints, zero-initialized\narr := [5]int{1, 2, 3, 4, 5} // array with initial values\n```\n\n### Key Properties of Arrays\n\n1. **Fixed size**: The size is part of the type - [5]int is different from [6]int\n2. **Value type**: Arrays are copied when assigned or passed to functions\n3. **Zero-initialized**: Elements get their zero value if not specified\n\n```go\narr := [4]int{1, 2} // arr = [1, 2, 0, 0]\n```\n\n### Array Iteration with Range\n\n```go\nfor index, value := range arr {\n    fmt.Println(index, value)\n}\n```\n\nUse `_` to ignore the index or value:\n```go\nfor _, v := range arr {\n    fmt.Println(v)\n}\n```\n\n### Multi-dimensional Arrays\n\n```go\nmatrix := [2][3]int{\n    {1, 2, 3},\n    {4, 5, 6},\n}\n```\n",
+  "exercises": [
+    {
+      "id": "arrays_01",
+      "title": "Create Array",
+      "description": "Create an array of 5 ints with values 1,2,3,4,5. Print all elements.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    // Create array [5]int with values 1,2,3,4,5\n    \n    // Print array\n}",
+      "expected_output": "[1 2 3 4 5]",
+      "hints": ["Use var arr [5]int = [5]int{1, 2, 3, 4, 5}", "fmt.Println(arr) prints the whole array"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    fmt.Println(arr)\n}"
+    },
+    {
+      "id": "arrays_02",
+      "title": "Array Iteration",
+      "description": "Create array nums := [3]int{10, 20, 30}. Use range to print each element.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    nums := [3]int{10, 20, 30}\n    // Use range to iterate\n}",
+      "expected_output": "10\n20\n30",
+      "hints": ["Use for i, v := range nums { fmt.Println(v) }"],
+      "solution": "package main\n\nimport \"fmt\"\nfunc main() {\n    nums := [3]int{10, 20, 30}\n    for _, v := range nums {\n        fmt.Println(v)\n    }\n}"
+    },
+    {
+      "id": "arrays_03",
+      "title": "Array Length",
+      "description": "Create arr := [4]int{1, 2, 3, 4}. Print the length using len(arr).",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [4]int{1, 2, 3, 4}\n    // Print len(arr)\n}",
+      "expected_output": "4",
+      "hints": ["Use len(arr) to get array length", "fmt.Println(len(arr))"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [4]int{1, 2, 3, 4}\n    fmt.Println(len(arr))\n}"
+    },
+    {
+      "id": "arrays_04",
+      "title": "Partial Array Initialization",
+      "description": "Create an array of 5 ints where only the first two are initialized to 10 and 20. Print the array.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Create [5]int with first two values: 10, 20\n    \n    // Print array\n}",
+      "expected_output": "[10 20 0 0 0]",
+      "hints": ["Use arr := [5]int{10, 20}", "Rest get zero values"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{10, 20}\n    fmt.Println(arr)\n}"
+    },
+    {
+      "id": "arrays_05",
+      "title": "2D Array",
+      "description": "Create a 2x2 matrix with values {{1, 2}, {3, 4}}. Print each element on separate lines.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    // Create 2x2 matrix\n    // Print each element\n}",
+      "expected_output": "1\n2\n3\n4",
+      "hints": [
+        "Use matrix := [2][2]int{{1, 2}, {3, 4}}",
+        "Use nested range or direct indexing"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    matrix := [2][2]int{{1, 2}, {3, 4}}\n    for _, row := range matrix {\n        for _, val := range row {\n            fmt.Println(val)\n        }\n    }\n}"
+    },
+    {
+      "id": "arrays_07",
+      "title": "Array Sum",
+      "description": "Create arr := [5]int{10, 20, 30, 40, 50}. Compute the sum of all elements and print it.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{10, 20, 30, 40, 50}\n    // Compute sum of all elements\n    \n    // Print sum\n}",
+      "expected_output": "150",
+      "hints": [
+        "Initialize a sum variable to 0",
+        "Use range to iterate and accumulate: sum += v"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{10, 20, 30, 40, 50}\n    sum := 0\n    for _, v := range arr {\n        sum += v\n    }\n    fmt.Println(sum)\n}"
+    },
+    {
+      "id": "arrays_06",
+      "title": "Array Element Access",
+      "description": "Create arr := [3]int{100, 200, 300}. Print the first element (index 0) and last element (index 2).",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{100, 200, 300}\n    // Print first and last element\n}",
+      "expected_output": "100 300",
+      "hints": ["arr[0] is first, arr[2] is last", "fmt.Println(arr[0], arr[2])"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{100, 200, 300}\n    fmt.Println(arr[0], arr[2])\n}"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "variables",
+  "title": "Variables & Syscalls",
+  "description": "Linux x86-64 ELF64, NASM Intel syntax, immediate values and syscalls",
+  "theory": "## Your first steps\n\nThis course uses **NASM** with **Intel syntax** on **Linux x86-64** only. Programs are assembled to **ELF64** objects, then linked with **`ld`** (raw `_start` + syscalls) or **`gcc`** when you declare **`extern`** libc routines.\n\n### Syscall exit (64-bit Linux)\n\n- `rax = 60` (`sys_exit`)\n- `rdi = exit code`\n- `syscall`\n\n### Syscall write\n\n- `rax = 1` (`sys_write`)\n- `rdi = fd` (1 = stdout)\n- `rsi = buffer address`\n- `rdx = length`\n- `syscall`\n\n### Curriculum\n\nThis slot matches the shared [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md) `variables` chapter for **Asm (Adapted)**—here the “bindings” are registers and immediates wired to syscalls.\n",
+  "exercises": [
+    {
+      "id": "variables_01",
+      "title": "Exit cleanly",
+      "description": "Write a program with global `_start` that exits with status 0 using the exit syscall. It should print nothing.",
+      "starter_code": "; NASM Intel, Linux x86-64\n; Exit with code 0 (no output)\n\nglobal _start\nsection .text\n_start:\n    ; rax = 60 (sys_exit), rdi = 0\n    ; syscall\n",
+      "expected_output": "",
+      "hints": [
+        "`mov rax, 60` then `xor rdi, rdi` then `syscall`"
+      ],
+      "solution": "global _start\nsection .text\n_start:\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "variables_02",
+      "title": "Write to stdout",
+      "description": "Use the `write` syscall to print exactly `Hi` (two characters, no newline).",
+      "starter_code": "global _start\nsection .data\n    msg: db 'H','i'\n    len equ $ - msg\nsection .text\n_start:\n    ; rax=1 write, rdi=1 stdout, rsi=msg, rdx=len\n    ; then exit 0\n",
+      "expected_output": "Hi",
+      "hints": [
+        "`mov rax, 1` for sys_write",
+        "After write, exit with `mov rax, 60` / `xor rdi, rdi` / `syscall`"
+      ],
+      "solution": "global _start\nsection .data\n    msg: db 'H', 'i'\n    len equ $ - msg\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, msg\n    mov rdx, len\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "variables_03",
+      "title": "Digits on stdout",
+      "description": "Print exactly `42` (no newline) using one `write` syscall, then exit 0.",
+      "starter_code": "global _start\nsection .data\n    msg: db '4','2'\n    len equ $ - msg\nsection .text\n_start:\n",
+      "expected_output": "42",
+      "hints": [
+        "Same pattern as the previous exercise: `rax=1`, `rdi=1`, `rsi`, `rdx=len`"
+      ],
+      "solution": "global _start\nsection .data\n    msg: db '4', '2'\n    len equ $ - msg\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, msg\n    mov rdx, len\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "variables_04",
+      "title": "Call libc printf",
+      "description": "Use **`extern printf`**, **`global main`**, and link with **gcc** (the runner detects `extern`). Print one line: `Hello from libc` followed by a newline. Expected stdout after trim is `Hello from libc` (the newline is trimmed).",
+      "starter_code": "default rel\nextern printf\nsection .text\nglobal main\nmain:\n    ; align stack, then call printf with format in rdi\n    ret\nsection .data\n    fmt: db \"Hello from libc\", 10, 0\n",
+      "expected_output": "Hello from libc",
+      "hints": [
+        "`sub rsp, 8` before `call` helps satisfy 16-byte stack alignment on entry",
+        "`xor eax, eax` before `call printf` (AL = 0 vector regs for variadic)"
+      ],
+      "solution": "default rel\nextern printf\nsection .text\nglobal main\nmain:\n    sub rsp, 8\n    lea rdi, [rel fmt]\n    xor eax, eax\n    call printf\n    add rsp, 8\n    xor eax, eax\n    ret\nsection .data\nfmt: db \"Hello from libc\", 10, 0\n"
+    },
+    {
+      "id": "variables_05",
+      "title": "Three-byte write",
+      "description": "Print exactly `Asm` (three letters, no newline) with a single `write` syscall from a `.data` buffer, then exit 0.",
+      "starter_code": "global _start\nsection .data\n    msg: db 'A','s','m'\n    mlen equ $ - msg\nsection .text\n_start:\n    ; rax=1 write stdout rsi=msg rdx=mlen then sys_exit 0\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "Asm",
+      "hints": [
+        "`rdx` must be `mlen` (3 here)"
+      ],
+      "solution": "global _start\nsection .data\n    msg: db 'A', 's', 'm'\n    mlen equ $ - msg\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel msg]\n    mov rdx, mlen\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 5
+}

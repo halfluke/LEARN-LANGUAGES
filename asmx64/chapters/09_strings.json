@@ -1,0 +1,53 @@
+{
+  "id": "strings",
+  "title": "Strings & bytes",
+  "description": "NUL-terminated C strings vs explicit length",
+  "theory": "## Two representations\n\n- **Counted:** keep length in a register (syscall `write`).\n- **NUL-terminated:** end with `db '...', 0` when interoperating with libc (`printf`).\n\nThis chapter stays syscall-first.\n",
+  "exercises": [
+    {
+      "id": "strings_01",
+      "title": "Quoted word",
+      "description": "Print exactly `go` (two letters, no newline) from a `.data` label, then exit 0.",
+      "starter_code": "global _start\nsection .data\n    w: db 'g','o'\n    wlen equ $ - w\nsection .text\n_start:\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "go",
+      "hints": [
+        "`write` with `rdx = wlen`"
+      ],
+      "solution": "global _start\nsection .data\n    w: db 'g', 'o'\n    wlen equ $ - w\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel w]\n    mov rdx, wlen\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "strings_02",
+      "title": "Two writes",
+      "description": "Print `ab` by issuing **two** `write` syscalls (first prints `a`, second prints `b`), no newline, then exit 0.",
+      "starter_code": "global _start\nsection .data\n    a: db 'a'\n    b: db 'b'\nsection .text\n_start:\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "ab",
+      "hints": [
+        "Each syscall uses `rdx=1`"
+      ],
+      "solution": "global _start\nsection .data\n    a: db 'a'\n    b: db 'b'\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel a]\n    mov rdx, 1\n    syscall\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel b]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "strings_03",
+      "title": "NUL-terminated but not printed",
+      "description": "Define `db 'Z',0` in `.data`. Print only the `Z` (length **1**, not including the NUL), then exit 0.",
+      "starter_code": "global _start\nsection .data\n    z: db 'Z', 0\nsection .text\n_start:\n    ; write 1 byte from address z\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "Z",
+      "hints": [
+        "The NUL exists for interoperability; `rdx` must still be `1` here"
+      ],
+      "solution": "global _start\nsection .data\n    z: db 'Z', 0\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel z]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "strings_04",
+      "title": "Counted string length",
+      "description": "Define `db 'h','i',0` in `.data`. Use **`len equ $ - msg - 1`** style: put the bytes under label `msg` including the trailing `0`, then compute the length **excluding** the NUL (`$ - msg - 1`). Print exactly `hi` with one `write`, then exit 0.",
+      "starter_code": "global _start\nsection .data\n    msg: db 'h','i',0\n    ; len equ $ - msg - 1\nsection .text\n_start:\n    ; write stdout, rsi=msg, rdx=len\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "hi",
+      "hints": [
+        "`len equ $ - msg - 1` subtracts the terminating `0` byte"
+      ],
+      "solution": "global _start\nsection .data\n    msg: db 'h', 'i', 0\n    len equ $ - msg - 1\nsection .text\n_start:\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel msg]\n    mov rdx, len\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

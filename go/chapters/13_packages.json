@@ -1,0 +1,94 @@
+{
+  "id": "packages",
+  "title": "Packages",
+  "description": "Learn about package declaration, importing, exporting, and init functions in Go",
+  "theory": "## Packages in Go\n\nPackages are the way Go organizes code. Every Go file belongs to a package.\n\n### Package Declaration\n\n```go\npackage main  // executable package\npackage utils // library package\n```\n\n### The main Package\n\n- `package main` is special - it tells Go this will compile to an executable\n- Must have a main() function as entry point\n\n### Importing Packages\n\n```go\nimport (\n    \"fmt\"         // standard library\n    \"math\"       // standard library\n    \"yourmodule/utils\"  // your own package\n)\n```\n\n### Exported Names\n\n- Only names starting with **uppercase** are exported (visible to other packages)\n- `func MyFunc()` is exported\n- `func myFunc()` is not exported\n\n### Package Initialization\n\n```go\nvar config map[string]string\n\nfunc init() {\n    config = make(map[string]string)\n    config[\"key\"] = \"value\"\n}\n```\n\n- `init()` runs automatically before main() when the package is first imported\n- Only one init() per package\n- Useful for setup/initialization\n\n### Package Naming Convention\n\n- Use short, descriptive names\n- `fmt` instead of `formatting`\n- But not too short: `buf` (buffer) is OK\n- Usually match the directory name\n\n### go.mod and Module\n\n```go\nmodule example.com/myapp\n\ngo 1.21\n```\n\n- go.mod defines your module\n- Import path matches module name\n",
+  "exercises": [
+    {
+      "id": "packages_01",
+      "title": "Package Declaration",
+      "description": "Create a file in a package other than main. Declare package utils and define a function Greet() in it.",
+      "starter_code": "// File: main.go\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n    // Call Greet from utils package\n}\n\n// File: utils/utils.go\n// Declare the package declaration here\n",
+      "expected_output": "Hello from utils",
+      "hints": [
+        "Use package utils at the top of utils.go",
+        "Define func Greet() that prints a message"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"utils\"\n)\n\nfunc main() {\n    utils.Greet()\n}\n\n// In utils package:\n// package utils\n// import \"fmt\"\n// func Greet() { fmt.Println(\"Hello from utils\") }\n"
+    },
+    {
+      "id": "packages_02",
+      "title": "Importing Standard Library",
+      "description": "Import the math package and use math.Sqrt to calculate the square root of 144. Print the result.",
+      "starter_code": "package main\n\n// Import math package and print square root of 144\n",
+      "expected_output": "12",
+      "hints": [
+        "Use import \"math\" to import the math package",
+        "Call math.Sqrt(144)",
+        "Use fmt.Println to print the result"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"math\"\n)\n\nfunc main() {\n    result := math.Sqrt(144)\n    fmt.Println(int(result))\n}"
+    },
+    {
+      "id": "packages_03",
+      "title": "Exporting Names",
+      "description": "Create a function and a variable in a separate package. Export them by starting with uppercase. Use them in main.",
+      "starter_code": "// File: main.go\npackage main\n\n// Use exported names from counter package\n\n// File: counter/counter.go\npackage counter\n\n// Define exported variable Count and function Increment\n",
+      "expected_output": "Count: 0\nIncremented: 1",
+      "hints": [
+        "Export by capitalizing: Count, Increment (Go exports anything starting with uppercase)",
+        "In main, use counter.Count and counter.Increment()"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"counter\"\n)\n\nfunc main() {\n    fmt.Println(\"Count:\", counter.Count)\n    counter.Increment()\n    fmt.Println(\"Incremented:\", counter.Count)\n}\n\n// In counter package:\n// package counter\n// var Count int\n// func Increment() { Count++ }\n"
+    },
+    {
+      "id": "packages_04",
+      "title": "Init Functions",
+      "description": "Create a package with an init() function that sets a global variable. Use it in main().",
+      "starter_code": "// File: main.go\npackage main\n\nimport (\n    \"fmt\"\n    \"config\"\n)\n\nfunc main() {\n    fmt.Println(\"Version:\", config.Version)\n}\n\n// File: config/config.go\npackage config\n\n// Define a global Version variable and an init() function that sets it\n",
+      "expected_output": "Version: 1.0.0",
+      "hints": [
+        "Declare var Version string in config package",
+        "Define func init() that assigns \"1.0.0\" to Version",
+        "init() runs automatically before main() when the package is imported"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"config\"\n)\n\nfunc main() {\n    fmt.Println(\"Version:\", config.Version)\n}\n\n// config/config.go:\n// package config\n// var Version string\n// func init() { Version = \"1.0.0\" }\n"
+    },
+    {
+      "id": "packages_05",
+      "title": "Unexported Names",
+      "description": "Define both exported (uppercase) and unexported (lowercase) functions in a package. Try to use only the exported one from main.",
+      "starter_code": "package main\n\nimport \"formatter\"\n\nfunc main() {\n    // Call only the exported function Format\n}",
+      "expected_output": "Formatted",
+      "hints": [
+        "Define func Format() and func format() in formatter package",
+        "Only Format is accessible from main"
+      ],
+      "solution": "package main\n\nimport \"formatter\"\n\nfunc main() {\n    formatter.Format()\n}\n\n// formatter/formatter.go:\n// package formatter\n// import \"fmt\"\n// func Format() { fmt.Println(\"Formatted\") }\n// func format() { fmt.Println(\"internal\") }\n"
+    },
+    {
+      "id": "packages_07",
+      "title": "Import Alias",
+      "description": "Import the fmt package with the alias io, then use io.Println to print \"Hello\".",
+      "starter_code": "package main\n\n// Import fmt with an alias\n\nfunc main() {\n    // Use the alias to print\n}",
+      "expected_output": "Hello",
+      "hints": [
+        "Use import io \"fmt\" to create an alias",
+        "Use io.Println(\"Hello\") instead of fmt.Println"
+      ],
+      "solution": "package main\n\nimport io \"fmt\"\n\nfunc main() {\n    io.Println(\"Hello\")\n}"
+    },
+    {
+      "id": "packages_06",
+      "title": "Multiple Imports",
+      "description": "Import both fmt and strings packages. Use fmt.Println with strings.ToUpper to print \"hello\" in uppercase.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    // Print \"hello\" in uppercase\n}",
+      "expected_output": "HELLO",
+      "hints": [
+        "strings.ToUpper(\"hello\") returns \"HELLO\"",
+        "fmt.Println(strings.ToUpper(\"hello\"))"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    fmt.Println(strings.ToUpper(\"hello\"))\n}"
+    }
+  ]
+}

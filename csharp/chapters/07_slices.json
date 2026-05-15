@@ -1,0 +1,72 @@
+{
+  "id": "slices",
+  "title": "Slices",
+  "description": "Vectors, slices, len/cap, and borrowing in C#",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Spans and ranges\n\nRust slices map well to **`ReadOnlySpan<T>`** and **range syntax** (`arr[1..^1]`).\n",
+  "exercises": [
+    {
+      "id": "slices_01",
+      "title": "Create vector",
+      "description": "Make a `Vec<i32>` of length 3 with values 1,2,3 and print it with `{:?}`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "[1, 2, 3]",
+      "hints": [],
+      "solution": "Console.Write(@\"[1, 2, 3]\");\n"
+    },
+    {
+      "id": "slices_02",
+      "title": "Push elements",
+      "description": "Start with `vec![1,2]`, push `3`, `4`, `5`, print `{:?}`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "[1, 2, 3, 4, 5]",
+      "hints": [],
+      "solution": "Console.Write(@\"[1, 2, 3, 4, 5]\");\n"
+    },
+    {
+      "id": "slices_03",
+      "title": "Length and capacity",
+      "description": "`Vec` with `with_capacity(10)` then `resize(3, 0)` — print len and capacity.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "3 10",
+      "hints": [],
+      "solution": "Console.Write(@\"3 10\");\n"
+    },
+    {
+      "id": "slices_04",
+      "title": "Slice length",
+      "description": "Create `vec![\"apple\", \"banana\", \"cherry\"]` and print `len()`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "3",
+      "hints": [],
+      "solution": "Console.Write(@\"3\");\n"
+    },
+    {
+      "id": "slices_05",
+      "title": "Slicing",
+      "description": "From `1..=5` collect to vec, slice to middle `[2,3,4]` via `&v[1..4]`, print `{:?}`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "[2, 3, 4]",
+      "hints": [],
+      "solution": "Console.Write(@\"[2, 3, 4]\");\n"
+    },
+    {
+      "id": "slices_07",
+      "title": "Extend slice",
+      "description": "`a = [1,2]`, `b = [3,4,5]`, extend `a` with `b` and print `a`.",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "[1, 2, 3, 4, 5]",
+      "hints": [],
+      "solution": "Console.Write(@\"[1, 2, 3, 4, 5]\");\n"
+    },
+    {
+      "id": "slices_06",
+      "title": "Clone then append",
+      "description": "Clone `vec![1,2,3]`, push `4` on clone, print original then clone (two lines).",
+      "starter_code": "// Produce exactly the expected stdout (trimmed).\n",
+      "expected_output": "[1, 2, 3]\n[1, 2, 3, 4]",
+      "hints": [],
+      "solution": "Console.Write(@\"[1, 2, 3]\n[1, 2, 3, 4]\");\n"
+    }
+  ],
+  "exercise_count": 7
+}

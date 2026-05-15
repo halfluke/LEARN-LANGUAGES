@@ -1,0 +1,54 @@
+{
+  "id": "concurrency",
+  "title": "Atomic update",
+  "description": "A single `lock`ed memory operation as a concurrency stepping stone",
+  "theory": "## One instruction\n\nReal concurrency mixes threads, atomics, and syscalls. This adapted chapter demonstrates **`lock inc`** on memory as a minimal atomic read-modify-write visible in the instruction set.\n",
+  "exercises": [
+    {
+      "id": "concurrency_01",
+      "title": "Locked increment",
+      "description": "`.data` holds `counter: dq 0`. In a loop of **exactly 5** iterations, execute `lock inc qword [rel counter]`. After the loop, the low byte of `counter` is `5`; print that byte as the character `'5'` (one `write`, no newline), then exit 0.",
+      "starter_code": "global _start\nsection .data\ncounter: dq 0\nsection .bss\n    digit: resb 1\nsection .text\n_start:\n    mov rcx, 5\nagain:\n    ; lock inc qword [rel counter]\n    loop again\n    ; materialize '5' into digit and write\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "5",
+      "hints": [
+        "`lock inc qword [rel counter]` inside the loop",
+        "After loop: `movzx eax, byte [rel counter]` then add `'0'` into a byte buffer"
+      ],
+      "solution": "global _start\nsection .data\ncounter: dq 0\nsection .bss\n    digit: resb 1\nsection .text\n_start:\n    mov rcx, 5\nagain:\n    lock inc qword [rel counter]\n    loop again\n    movzx eax, byte [rel counter]\n    add eax, '0'\n    mov [rel digit], al\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel digit]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "concurrency_02",
+      "title": "Decrement to zero",
+      "description": "Start `counter: dq 3`. Loop until it becomes `0` using `lock dec qword [rel counter]` each iteration (three iterations). The numeric value is now `0`; print the **character** `'0'` (ASCII 0x30) by writing one byte (for example load the byte at `counter`, add `'0'`, store to a scratch byte, then `write`), then exit 0.",
+      "starter_code": "global _start\nsection .data\ncounter: dq 3\nsection .bss\n    out: resb 1\nsection .text\n_start:\n    ; loop: lock dec; jnz\n    ; then emit ASCII '0'\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "0",
+      "hints": [
+        "Compare `qword [rel counter]` against 0 with `cmp qword [rel counter], 0` / `jnz`"
+      ],
+      "solution": "global _start\nsection .data\ncounter: dq 3\nsection .bss\n    out: resb 1\nsection .text\n_start:\nagain:\n    lock dec qword [rel counter]\n    cmp qword [rel counter], 0\n    jnz again\n    movzx eax, byte [rel counter]\n    add eax, '0'\n    mov [rel out], al\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel out]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "concurrency_03",
+      "title": "XADD exchange",
+      "description": "Memory `value` starts at `0`. `mov rax, 7` then `lock xadd qword [rel value], rax` adds into memory and leaves the **old** memory value in `rax` (here `0`). Memory becomes `7`. Print the character `'7'` by taking the low byte of `value`, adding `'0'`, writing one byte (reuse a `.bss` scratch byte if you like), then exit 0.",
+      "starter_code": "global _start\nsection .data\nvalue: dq 0\nsection .bss\n    digit: resb 1\nsection .text\n_start:\n    mov rax, 7\n    ; lock xadd qword [rel value], rax\n    ; print digit from memory at value\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "7",
+      "hints": [
+        "After `xadd`, load a byte from `value` and turn it into ASCII with `add reg, '0'`"
+      ],
+      "solution": "global _start\nsection .data\nvalue: dq 0\nsection .bss\n    digit: resb 1\nsection .text\n_start:\n    mov rax, 7\n    lock xadd qword [rel value], rax\n    movzx eax, byte [rel value]\n    add eax, '0'\n    mov [rel digit], al\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel digit]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "concurrency_04",
+      "title": "Locked add immediate",
+      "description": "Memory `v: dq 2`. Execute **`lock add qword [rel v], 5`**. The sum is `7`. Print the character `'7'` with a one-byte `write` (materialize via a `.bss` scratch byte like earlier exercises), then exit 0.",
+      "starter_code": "global _start\nsection .data\nv: dq 2\nsection .bss\n    digit: resb 1\nsection .text\n_start:\n    ; lock add qword [rel v], 5\n    ; print digit for low byte of v (value 7 -> '7')\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "7",
+      "hints": [
+        "NASM syntax: `lock add qword [rel v], 5`"
+      ],
+      "solution": "global _start\nsection .data\nv: dq 2\nsection .bss\n    digit: resb 1\nsection .text\n_start:\n    lock add qword [rel v], 5\n    movzx eax, byte [rel v]\n    add eax, '0'\n    mov [rel digit], al\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel digit]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

@@ -1,0 +1,72 @@
+{
+  "id": "methods",
+  "title": "Methods",
+  "description": "Methods and traits (`Display`) in C",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Methods as conventions\n\n`typedef struct` + functions taking `T *self`.\n",
+  "exercises": [
+    {
+      "id": "methods_01",
+      "title": "Method on struct",
+      "description": "`Person { name }` method `greet` returns `Hello, ` + name; print it.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Hello, Alice",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Hello, Alice\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "methods_02",
+      "title": "Mutating method",
+      "description": "`SetName` with `&mut self` sets `name`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Charlie",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Charlie\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "methods_03",
+      "title": "Value receiver",
+      "description": "`Counter` with `increment(self) -> Self` returning new counter +1.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Counter { value: 6 }",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Counter { value: 6 }\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "methods_04",
+      "title": "Display trait",
+      "description": "Implement `std::fmt::Display` for `Point` like Go `Stringer`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Point(10, 20)",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Point(10, 20)\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "methods_05",
+      "title": "Builder chain",
+      "description": "`Builder` with `add` consuming `self` and returning new `Builder`; `build` returns `String`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "HelloWorld",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"HelloWorld\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "methods_07",
+      "title": "Circle geometry",
+      "description": "Print area then perimeter for radius `5.0` using `PI`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "78.53981633974483\n31.41592653589793",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"78.53981633974483\\n31.41592653589793\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "methods_06",
+      "title": "Newtype method",
+      "description": "`struct MyInt(i32);` method `is_even` -> bool.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "true",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"true\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

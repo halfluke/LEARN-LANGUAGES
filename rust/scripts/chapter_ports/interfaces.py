@@ -1,0 +1,88 @@
+"""Port: interfaces — traits (Rust) vs Go interfaces."""
+
+from __future__ import annotations
+
+import copy
+
+
+def build(go: dict) -> dict:
+    theory = """## Traits in Rust
+
+Traits describe shared behavior, similar in role to Go interfaces. Implement with `impl Trait for Type`.
+
+Trait objects `dyn Trait` use dynamic dispatch; generics use static dispatch (monomorphization).
+"""
+
+    exercises = [
+        {
+            "id": "interfaces_01",
+            "title": "Trait for struct",
+            "description": "`trait Shape { fn area(&self)->f64 }` for `Rectangle { w,h }` — print area of 3×4.",
+            "starter_code": "struct Rectangle {\n    w: f64,\n    h: f64,\n}\n\ntrait Shape {\n    fn area(&self) -> f64;\n}\n\nfn main() {\n}\n",
+            "expected_output": "12",
+            "hints": ["`w * h`"],
+            "solution": "struct Rectangle {\n    w: f64,\n    h: f64,\n}\n\ntrait Shape {\n    fn area(&self) -> f64;\n}\n\nimpl Shape for Rectangle {\n    fn area(&self) -> f64 {\n        self.w * self.h\n    }\n}\n\nfn main() {\n    let r = Rectangle { w: 3.0, h: 4.0 };\n    let s: &dyn Shape = &r;\n    println!(\"{}\", s.area());\n}\n",
+        },
+        {
+            "id": "interfaces_02",
+            "title": "std::io::Write",
+            "description": "Implement `Write` for a `Logger` that prints the byte length and the UTF-8 payload on one line, like `5 hello` (same idea as Go’s `fmt.Print(n, \" \", string(b))`).",
+            "starter_code": "use std::io::{self, Write};\n\nstruct Logger;\n\n// impl Write for Logger\n\nfn main() {\n}\n",
+            "expected_output": "5 hello",
+            "hints": ["`write` returns `Ok(buf.len())`", "use `std::str::from_utf8`"],
+            "solution": "use std::io::{self, Write};\n\nstruct Logger;\n\nimpl Write for Logger {\n    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {\n        let s = std::str::from_utf8(buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;\n        println!(\"{} {}\", buf.len(), s);\n        Ok(buf.len())\n    }\n\n    fn flush(&mut self) -> io::Result<()> {\n        Ok(())\n    }\n}\n\nfn main() {\n    let mut w = Logger;\n    w.write_all(b\"hello\").unwrap();\n}\n",
+        },
+        {
+            "id": "interfaces_03",
+            "title": "Two shapes",
+            "description": "Circle and rectangle implement `Shape`; print larger area for r=5 and 3×4.",
+            "starter_code": "trait Shape {\n    fn area(&self) -> f64;\n}\n\nstruct Circle {\n    radius: f64,\n}\n\nstruct Rectangle {\n    w: f64,\n    h: f64,\n}\n\nfn main() {}\n",
+            "expected_output": "78.53981633974483",
+            "hints": ["`std::f64::consts::PI`"],
+            "solution": "trait Shape {\n    fn area(&self) -> f64;\n}\n\nstruct Circle {\n    radius: f64,\n}\n\nstruct Rectangle {\n    w: f64,\n    h: f64,\n}\n\nimpl Shape for Circle {\n    fn area(&self) -> f64 {\n        std::f64::consts::PI * self.radius * self.radius\n    }\n}\n\nimpl Shape for Rectangle {\n    fn area(&self) -> f64 {\n        self.w * self.h\n    }\n}\n\nfn main() {\n    let c = Circle { radius: 5.0 };\n    let r = Rectangle { w: 3.0, h: 4.0 };\n    let a1 = c.area();\n    let a2 = r.area();\n    println!(\"{}\", a1.max(a2));\n}\n",
+        },
+        {
+            "id": "interfaces_04",
+            "title": "Trait object accessor",
+            "description": "`trait Describable { fn name(&self) -> &str; }` implemented by `Person`; print name via `dyn Describable`.",
+            "starter_code": "trait Describable {\n    fn name(&self) -> &str;\n}\n\nstruct Person {\n    name: String,\n}\n\nfn main() {}\n",
+            "expected_output": "Alice",
+            "hints": ["`impl Describable for Person`"],
+            "solution": "trait Describable {\n    fn name(&self) -> &str;\n}\n\nstruct Person {\n    name: String,\n}\n\nimpl Describable for Person {\n    fn name(&self) -> &str {\n        &self.name\n    }\n}\n\nfn main() {\n    let p = Person {\n        name: \"Alice\".into(),\n    };\n    let d: &dyn Describable = &p;\n    println!(\"{}\", d.name());\n}\n",
+        },
+        {
+            "id": "interfaces_05",
+            "title": "enum dispatch",
+            "description": "Rust prefers enums over `interface{{}}`; model `int` / `string` arms and print like the Go type switch.",
+            "starter_code": "enum Any {\n    Int(i32),\n    Str(&'static str),\n}\n\nfn describe(a: Any) {\n}\n\nfn main() {\n    describe(Any::Int(42));\n    describe(Any::Str(\"hello\"));\n}\n",
+            "expected_output": "int: 42\nstring: hello",
+            "hints": ["`match a { Any::Int(v) => ...`"],
+            "solution": "enum Any {\n    Int(i32),\n    Str(&'static str),\n}\n\nfn describe(a: Any) {\n    match a {\n        Any::Int(v) => println!(\"int: {}\", v),\n        Any::Str(v) => println!(\"string: {}\", v),\n    }\n}\n\nfn main() {\n    describe(Any::Int(42));\n    describe(Any::Str(\"hello\"));\n}\n",
+        },
+        {
+            "id": "interfaces_07",
+            "title": "Vec of trait objects",
+            "description": "`Vec<Box<dyn Speaker>>` with dog/cat returning Woaf/Mew.",
+            "starter_code": "trait Speaker {\n    fn speak(&self) -> &'static str;\n}\n\nstruct Dog;\nstruct Cat;\n\nfn main() {}\n",
+            "expected_output": "Woaf\nMew",
+            "hints": ["`Box::new(Dog)`"],
+            "solution": "trait Speaker {\n    fn speak(&self) -> &'static str;\n}\n\nstruct Dog;\nstruct Cat;\n\nimpl Speaker for Dog {\n    fn speak(&self) -> &'static str {\n        \"Woaf\"\n    }\n}\n\nimpl Speaker for Cat {\n    fn speak(&self) -> &'static str {\n        \"Mew\"\n    }\n}\n\nfn main() {\n    let speakers: Vec<Box<dyn Speaker>> = vec![Box::new(Dog), Box::new(Cat)];\n    for s in speakers {\n        println!(\"{}\", s.speak());\n    }\n}\n",
+        },
+        {
+            "id": "interfaces_06",
+            "title": "enum of variants",
+            "description": "Same as Go empty-interface slice: use `enum Item` with `Int`, `Str`, `Float` and `match`.",
+            "starter_code": "enum Item {\n    Int(i32),\n    Str(&'static str),\n    Float(f64),\n}\n\nfn main() {\n    let items = vec![Item::Int(42), Item::Str(\"hello\"), Item::Float(3.14)];\n}\n",
+            "expected_output": "int: 42\nstring: hello\nfloat64: 3.14",
+            "hints": ["`{:.2}` matches Go’s default `%f` style here"],
+            "solution": "enum Item {\n    Int(i32),\n    Str(&'static str),\n    Float(f64),\n}\n\nfn main() {\n    let items = vec![Item::Int(42), Item::Str(\"hello\"), Item::Float(3.14)];\n    for it in items {\n        match it {\n            Item::Int(v) => println!(\"int: {}\", v),\n            Item::Str(v) => println!(\"string: {}\", v),\n            Item::Float(v) => println!(\"float64: {:.2}\", v),\n        }\n    }\n}\n",
+        },
+    ]
+
+    out = copy.deepcopy(go)
+    out["title"] = "Traits"
+    out["description"] = "Traits and polymorphism in Rust"
+    out["theory"] = theory
+    out["exercises"] = exercises
+    out["exercise_count"] = len(exercises)
+    return out

@@ -1,0 +1,4 @@
+/target
+/.check-asm-target
+/.check-asm-crate
+**/__pycache__/

@@ -1,0 +1,45 @@
+{
+  "id": "lifetimes",
+  "title": "Lifetimes (basics)",
+  "description": "Why lifetimes exist: tying references to valid memory.",
+  "theory": "## Lifetimes\n\nA **lifetime** is a compile-time region for which a reference is valid. Rust often **elides** lifetimes in simple `fn` signatures; explicit lifetimes appear when the compiler cannot infer a single safe relationship.\n\n### `'static`\n\nString literals have type `&'static str`.\n\n### Shared input lifetimes\n\nWhen a function returns one of two `&str` inputs, both inputs and the return often share one named lifetime.\n",
+  "exercises": [
+    {
+      "id": "lifetimes_01",
+      "title": "Static string",
+      "description": "Print a `&'static str` literal `rust` (no newline).",
+      "starter_code": "fn main() {\n    // let s: &'static str = ...\n}\n",
+      "expected_output": "rust",
+      "hints": [
+        "`let s: &'static str = \"rust\";`",
+        "`println!(\"{}\", s);` without newline if expected has none"
+      ],
+      "solution": "fn main() {\n    let s: &'static str = \"rust\";\n    print!(\"{}\", s);\n}\n"
+    },
+    {
+      "id": "lifetimes_02",
+      "title": "Pick the longer &str",
+      "description": "Implement `longest` that returns the longer of two `&str` slices (ties prefer the first). Print `longest(\"aa\", \"b\")` with no newline.",
+      "starter_code": "fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {\n    unimplemented!()\n}\n\nfn main() {\n    // print!(\"{}\", longest(\"aa\", \"b\"));\n}\n",
+      "expected_output": "aa",
+      "hints": [
+        "Compare `x.len()` and `y.len()`",
+        "If equal, return `x`"
+      ],
+      "solution": "fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {\n    if x.len() >= y.len() {\n        x\n    } else {\n        y\n    }\n}\n\nfn main() {\n    print!(\"{}\", longest(\"aa\", \"b\"));\n}\n"
+    },
+    {
+      "id": "lifetimes_03",
+      "title": "Borrowed slice of array",
+      "description": "Create `[i32; 3] = [1,2,3]`, take a slice reference covering all elements, print the sum using `iter().sum::<i32>()` with no newline.",
+      "starter_code": "fn main() {\n    let a = [1, 2, 3];\n    // let s: &[i32] = ...\n}\n",
+      "expected_output": "6",
+      "hints": [
+        "`let s: &[i32] = &a[..];`",
+        "`print!(\"{}\", s.iter().sum::<i32>());`"
+      ],
+      "solution": "fn main() {\n    let a = [1, 2, 3];\n    let s: &[i32] = &a[..];\n    print!(\"{}\", s.iter().sum::<i32>());\n}\n"
+    }
+  ],
+  "exercise_count": 3
+}

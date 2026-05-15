@@ -1,0 +1,53 @@
+{
+  "id": "pointers",
+  "title": "Pointers & memory",
+  "description": "Loads, stores, and indirection in 64-bit mode",
+  "theory": "## Addresses\n\nUse `lea` for addresses without touching memory; use `mov` with brackets to **dereference**. Keep pointer size at **64 bits** unless you intentionally work in 32-bit domains.\n",
+  "exercises": [
+    {
+      "id": "pointers_01",
+      "title": "Dereference byte",
+      "description": "`.data` defines `x: db 'Q'` and `p: dq x` (pointer to `x`). Load `p` into `rax`, then print the byte at `[rax]` (`Q`, no newline), exit 0.",
+      "starter_code": "global _start\nsection .data\nx: db 'Q'\np: dq x\nsection .text\n_start:\n    ; mov rax, [rel p] then write one byte at [rax]\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "Q",
+      "hints": [
+        "`mov rax, qword [rel p]` then `mov rsi, rax` for `write`"
+      ],
+      "solution": "global _start\nsection .data\nx: db 'Q'\np: dq x\nsection .text\n_start:\n    mov rax, qword [rel p]\n    mov r8, rax\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, r8\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "pointers_02",
+      "title": "Store through pointer",
+      "description": "Reserve one byte in `.bss` at `slot`. Let `ptr` in `.data` be `dq slot`. Store `'Z'` into `slot` **through** `ptr` (two-step: load ptr to reg, `mov byte [reg], 'Z'`). Print `slot` with one-byte `write`, exit 0.",
+      "starter_code": "global _start\nsection .bss\nslot: resb 1\nsection .data\nptr: dq slot\nsection .text\n_start:\n    ; mov rax, [rel ptr]; mov byte [rax], 'Z'\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "Z",
+      "hints": [
+        "`mov rax, qword [rel ptr]`"
+      ],
+      "solution": "global _start\nsection .bss\nslot: resb 1\nsection .data\nptr: dq slot\nsection .text\n_start:\n    mov rax, qword [rel ptr]\n    mov byte [rax], 'Z'\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel slot]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "pointers_03",
+      "title": "Pointer arithmetic",
+      "description": "Array `db 'M','N','O'`. Let `base` hold its address (`dq arr`). Load pointer, add **2** to point at `'O'`, print that single byte, exit 0.",
+      "starter_code": "global _start\nsection .data\narr: db 'M','N','O'\nbase: dq arr\nsection .text\n_start:\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "O",
+      "hints": [
+        "`mov rax, [rel base]; add rax, 2`"
+      ],
+      "solution": "global _start\nsection .data\narr: db 'M', 'N', 'O'\nbase: dq arr\nsection .text\n_start:\n    mov rax, qword [rel base]\n    add rax, 2\n    mov r8, rax\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, r8\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    },
+    {
+      "id": "pointers_04",
+      "title": "Base + index byte",
+      "description": "Array `db 'J','K','L'` at `arr`. Put `lea rbx, [rel arr]` in `rbx`, then load the middle byte with `movzx eax, byte [rbx+1]`. Store that ASCII byte into one-byte `.bss` `out`, `write` `out`, exit 0. Expected stdout (trimmed) is `K`.",
+      "starter_code": "global _start\nsection .data\narr: db 'J','K','L'\nsection .bss\nout: resb 1\nsection .text\n_start:\n    ; lea rbx, [rel arr]; movzx eax, byte [rbx+1]; mov [out], al; write\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n",
+      "expected_output": "K",
+      "hints": [
+        "`movzx` widens the byte so you can use a 32-bit `add` later if needed — here storing `al` is enough"
+      ],
+      "solution": "global _start\nsection .data\narr: db 'J', 'K', 'L'\nsection .bss\nout: resb 1\nsection .text\n_start:\n    lea rbx, [rel arr]\n    movzx eax, byte [rbx+1]\n    mov [rel out], al\n    mov rax, 1\n    mov rdi, 1\n    lea rsi, [rel out]\n    mov rdx, 1\n    syscall\n    mov rax, 60\n    xor rdi, rdi\n    syscall\n"
+    }
+  ],
+  "exercise_count": 4
+}

@@ -1,0 +1,83 @@
+{
+  "id": "interfaces",
+  "title": "Interfaces",
+  "description": "Polymorphism through interfaces in Go",
+  "theory": "## Interfaces in Go\n\nInterfaces define behavior without implementing it. Types \"implement\" an interface by providing its methods.\n\n### Defining an Interface\n\n```go\ntype Shape interface {\n    Area() float64\n    Perimeter() float64\n}\n```\n\n### Implementing an Interface\n\n```go\ntype Rectangle struct {\n    Width, Height float64\n}\n\n// This makes Rectangle implement Shape\nfunc (r Rectangle) Area() float64 {\n    return r.Width * r.Height\n}\n\nfunc (r Rectangle) Perimeter() float64 {\n    return 2 * (r.Width + r.Height)\n}\n```\n\n### Using Interfaces\n\n```go\nrect := Rectangle{Width: 3, Height: 4}\nvar s Shape = rect\nfmt.Println(s.Area()) // 12\n```\n\n### Empty Interface\n\n```go\nvar anything interface{} // can hold any value\nanything = 42\nanything = \"hello\"\nanything = []int{1, 2, 3}\n```\n\n### Type Assertions\n\n```go\nvar s Shape = Rectangle{3, 4}\n\n// Check if s is actually a Rectangle\nrect, ok := s.(Rectangle)\nif ok {\n    fmt.Println(rect.Width)\n}\n```\n\n### Type Switches\n\n```go\nfunc describe(i interface{}) {\n    switch v := i.(type) {\n    case int:\n        fmt.Println(\"int:\", v)\n    case string:\n        fmt.Println(\"string:\", v)\n    default:\n        fmt.Println(\"unknown\")\n    }\n}\n```\n\n### Interface is Contract\n\n- Methods must have the exact signatures\n- No explicit \"implements\" keyword - implicit implementation\n- Interfaces should be small and focused\n\n### Common Interface Patterns\n\n\n```go\n// Reader interface (from io package)\ntype Reader interface {\n    Read(p []byte) (n int, err error)\n}\n\n// Writer interface\ntype Writer interface {\n    Write(p []byte) (n int, err error)\n}\n\n// Error interface\ntype Error interface {\n    Error() string\n}\n```\n",
+  "exercises": [
+    {
+      "id": "interfaces_01",
+      "title": "Define Interface",
+      "description": "Define interface Shape with Area() float64 method. Implement for Rectangle. Create rect := Rectangle{Width: 3, Height: 4}. Print Area().",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Rectangle struct {\n    Width  float64\n    Height float64\n}\n// Define Shape interface\n\n// Implement Shape for Rectangle\n\nfunc main() {\n    rect := Rectangle{Width: 3, Height: 4}\n    // Create Shape and call Area\n}",
+      "expected_output": "12",
+      "hints": ["func (r Rectangle) Area() float64 { return r.Width * r.Height }", "var s Shape = rect", "fmt.Println(s.Area())"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Rectangle struct {\n    Width  float64\n    Height float64\n}\n\ntype Shape interface {\n    Area() float64\n}\n\nfunc (r Rectangle) Area() float64 {\n    return r.Width * r.Height\n}\n\nfunc main() {\n    rect := Rectangle{Width: 3, Height: 4}\n    var s Shape = rect\n    fmt.Println(s.Area())\n}"
+    },
+    {
+      "id": "interfaces_02",
+      "title": "Interface Satisfaction",
+      "description": "Define Writer interface with Write([]byte) int. Implement for Logger with fmt.Fprintln. Create Logger and call Write.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Logger struct {}\n\n// Implement Writer interface\n\nfunc main() {\n    logger := Logger{}\n    var w Writer = logger\n    w.Write([]byte(\"hello\"))\n}",
+      "expected_output": "5 hello",
+      "hints": ["func (l Logger) Write(b []byte) int { fmt.Fprintln(os.Stdout, string(b)); return len(b) }"],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"os\"\n)\n\ntype Writer interface {\n    Write([]byte) int\n}\n\ntype Logger struct {}\n\nfunc (l Logger) Write(b []byte) int {\n    fmt.Fprintln(os.Stdout, string(b))\n    return len(b)\n}\n\nfunc main() {\n    logger := Logger{}\n    var w Writer = logger\n    n := w.Write([]byte(\"hello\"))\n    fmt.Print(n, \" \")\n    fmt.Println(string([]byte(\"hello\")))\n}"
+    },
+    {
+      "id": "interfaces_03",
+      "title": "Multiple Implementations",
+      "description": "Define Shape interface with Area() float64. Implement for both Circle (with Radius) and Rectangle. Create Circle{5} and Rectangle{3,4}, call Area on both, print the larger area.",
+      "starter_code": "package main\nimport \"fmt\"\n\ntype Circle struct {\n    Radius float64\n}\n\ntype Rectangle struct {\n    Width  float64\n    Height float64\n}\n\n// Define Shape interface\n// Implement for Circle and Rectangle\n\nfunc main() {\n    c := Circle{5}\n    r := Rectangle{3, 4}\n    // Call Area on both and print larger\n}",
+      "expected_output": "78.53981633974483",
+      "hints": [
+        "Circle Area: 3.14159 * r.Radius * r.Radius",
+        "Circle area: ~78.5, Rectangle: 12"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"math\"\n)\n\ntype Shape interface {\n    Area() float64\n}\n\ntype Circle struct {\n    Radius float64\n}\n\ntype Rectangle struct {\n    Width  float64\n    Height float64\n}\n\nfunc (c Circle) Area() float64 {\n    return math.Pi * c.Radius * c.Radius\n}\n\nfunc (r Rectangle) Area() float64 {\n    return r.Width * r.Height\n}\n\nfunc main() {\n    c := Circle{Radius: 5}\n    r := Rectangle{Width: 3, Height: 4}\n    \n    var s1 Shape = c\n    var s2 Shape = r\n    \n    if s1.Area() > s2.Area() {\n        fmt.Println(s1.Area())\n    } else {\n        fmt.Println(s2.Area())\n    }\n}"
+    },
+    {
+      "id": "interfaces_04",
+      "title": "Type Assertion",
+      "description": "Define Describable interface with Describe() string. Implement for Person{name}. Create interface var, use type assertion to get Person and print name.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\ntype Describable interface {\n    Describe() string\n}\n\nfunc (p Person) Describe() string {\n    return \"Person: \" + p.Name\n}\n\nfunc main() {\n    var d Describable = Person{\"Alice\"}\n    // Type assert to Person\n    // Print Name\n}",
+      "expected_output": "Alice",
+      "hints": ["p := d.(Person)", "Then p.Name"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\ntype Describable interface {\n    Describe() string\n}\n\nfunc (p Person) Describe() string {\n    return \"Person: \" + p.Name\n}\n\nfunc main() {\n    var d Describable = Person{\"Alice\"}\n    p := d.(Person)\n    fmt.Println(p.Name)\n}"
+    },
+    {
+      "id": "interfaces_05",
+      "title": "Type Switch",
+      "description": "Create a function describeAny(x interface{}) that uses type switch to print \"int: <value>\" for int, \"string: <value>\" for string, \"unknown\" for other types. Test with both an int and a string.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc describeAny(x interface{}) {\n    // Use type switch\n}\n\nfunc main() {\n    describeAny(42)\n    describeAny(\"hello\")\n}",
+      "expected_output": "int: 42\nstring: hello",
+      "hints": [
+        "switch v := x.(type) { case int: ... case string: ... }"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc describeAny(x interface{}) {\n    switch v := x.(type) {\n    case int:\n        fmt.Printf(\"int: %d\\n\", v)\n    case string:\n        fmt.Printf(\"string: %s\\n\", v)\n    default:\n        fmt.Println(\"unknown\")\n    }\n}\n\nfunc main() {\n    describeAny(42)\n    describeAny(\"hello\")\n}"
+    },
+    {
+      "id": "interfaces_07",
+      "title": "Interface with Slice",
+      "description": "Define interface Speaker with Speak() string. Implement for Dog (returns \"Woaf\") and Cat (returns \"Mew\"). Create a slice of Speaker with one Dog and one Cat, then call Speak on each.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Speaker interface {\n    Speak() string\n}\n\ntype Dog struct{}\ntype Cat struct{}\n\n// Implement Speak for Dog and Cat\n\nfunc main() {\n    speakers := []Speaker{Dog{}, Cat{}}\n    // Call Speak on each and print\n}",
+      "expected_output": "Woaf\nMew",
+      "hints": [
+        "func (d Dog) Speak() string { return \"Woaf\" }",
+        "func (c Cat) Speak() string { return \"Mew\" }",
+        "Iterate the slice and call .Speak()"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Speaker interface {\n    Speak() string\n}\n\ntype Dog struct{}\ntype Cat struct{}\n\nfunc (d Dog) Speak() string { return \"Woaf\" }\nfunc (c Cat) Speak() string { return \"Mew\" }\n\nfunc main() {\n    speakers := []Speaker{Dog{}, Cat{}}\n    for _, s := range speakers {\n        fmt.Println(s.Speak())\n    }\n}"
+    },
+    {
+      "id": "interfaces_06",
+      "title": "Empty Interface",
+      "description": "Create a slice of empty interface{} containing: the int 42, the string \"hello\", and the float 3.14. Print each one's concrete type using a type switch.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    items := []interface{}{\n        42,\n        \"hello\",\n        3.14,\n    }\n    \n    // Loop and use type switch to print type and value\n}",
+      "expected_output": "int: 42\nstring: hello\nfloat64: 3.14",
+      "hints": [
+        "Loop with for _, item := range items",
+        "Use type switch inside"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    items := []interface{}{\n        42,\n        \"hello\",\n        3.14,\n    }\n    \n    for _, item := range items {\n        switch v := item.(type) {\n        case int:\n            fmt.Printf(\"int: %d\\n\", v)\n        case string:\n            fmt.Printf(\"string: %s\\n\", v)\n        case float64:\n            fmt.Printf(\"float64: %f\\n\", v)\n        }\n    }\n}"
+    }
+  ]
+}

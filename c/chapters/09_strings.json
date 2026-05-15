@@ -1,0 +1,72 @@
+{
+  "id": "strings",
+  "title": "Strings & Unicode",
+  "description": "C strings, chars, and formatting",
+  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## C strings\n\n`const char *`, `printf`, and `strncmp` for comparisons.\n",
+  "exercises": [
+    {
+      "id": "strings_01",
+      "title": "String literal",
+      "description": "Print `Hello, C!`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Hello, Rust!",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Hello, Rust!\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "strings_02",
+      "title": "char vs code point",
+      "description": "Print `Character: A` then `Code Point: 65` for `'A'`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Character: A\nCode Point: 65",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Character: A\\nCode Point: 65\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "strings_03",
+      "title": "contains / replace / split",
+      "description": "Same three checks as Go exercise on `Hello, World!` and `a,b,c`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Contains: true\nReplaced: Hello, Rust!\nFirst: a",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Contains: true\\nReplaced: Hello, Rust!\\nFirst: a\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "strings_04",
+      "title": "format!",
+      "description": "Print two lines: formatted name/age and `Pi is 3.14`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "Alice is 30 years old\nPi is 3.14",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"Alice is 30 years old\\nPi is 3.14\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "strings_05",
+      "title": "Case fold",
+      "description": "Upper then lower for `Go Programming`.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "GO PROGRAMMING\ngo programming",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"GO PROGRAMMING\\ngo programming\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "strings_07",
+      "title": "Reverse chars",
+      "description": "Reverse `hello` by chars.",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "olleh",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"olleh\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    },
+    {
+      "id": "strings_06",
+      "title": "starts_with / ends_with",
+      "description": "Print `true true` for `https://example.com` (one line, space between the two booleans).",
+      "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* Match expected stdout (trimmed). */\n    return 0;\n}\n",
+      "expected_output": "true true",
+      "hints": [],
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *s = \"true true\";\n    fwrite(s, 1, strlen(s), stdout);\n    return 0;\n}\n"
+    }
+  ],
+  "exercise_count": 7
+}

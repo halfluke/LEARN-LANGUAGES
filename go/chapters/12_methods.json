@@ -1,0 +1,92 @@
+{
+  "id": "methods",
+  "title": "Methods",
+  "description": "Learn how to define methods on types in Go, including pointer and value receivers",
+  "theory": "## Methods in Go\n\nMethods are functions associated with a type. They allow you to attach behavior to your types.\n\n### Defining a Method\n\n```go\ntype Person struct {\n    Name string\n}\n\n// Value receiver - receives a copy\nfunc (p Person) Greet() string {\n    return \"Hello, \" + p.Name\n}\n```\n\n### Value vs Pointer Receivers\n\n**Value Receiver**: Gets a copy of the value\n```go\nfunc (p Person) SetName(name string) {} // gets copy, can't modify original\n```\n\n**Pointer Receiver**: Gets a pointer to the value\n```go\nfunc (p *Person) SetName(name string) {\n    p.Name = name  // modifies original\n}\n```\n\n### When to Use Each\n\n- **Pointer receiver** when:\n  - Method needs to modify the receiver\n  - Receiver is large (to avoid copying)\n  \n- **Value receiver** when:\n  - Method doesn't modify the receiver\n  - You want immutability\n\n### Method Sets\n\nA type's method set includes:\n- Value methods for both T and *T\n- Pointer methods for *T only\n\n```go\ntype Counter struct {\n    Value int\n}\n\nfunc (c Counter) Increment() {  // works on Counter and *Counter\n    c.Value++\n}\n\nfunc (c *Counter) Double() {    // works only on *Counter\n    c.Value *= 2\n}\n```\n\n### Interfaces and Methods\n\nTypes implement interfaces by having the required methods:\n\n```go\ntype Stringer interface {\n    String() string\n}\n\ntype Point struct {\n    X, Y int\n}\n\nfunc (p Point) String() string {\n    return fmt.Sprintf(\"Point(%d, %d)\", p.X, p.Y)\n}\n```\n\nfmt.Println automatically calls String() method if available.\n",
+  "exercises": [
+    {
+      "id": "methods_01",
+      "title": "Define a Method",
+      "description": "Define a method on a struct type 'Person' with a 'Name' field that returns a greeting string.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\n// Define a Greet method on Person that returns \"Hello, \" + Name\n\nfunc main() {\n    p := Person{Name: \"Alice\"}\n    // Call p.Greet() and print the result\n}",
+      "expected_output": "Hello, Alice",
+      "hints": [
+        "Use func (p Person) Greet() string { return ... } to define the method",
+        "Access the field with p.Name"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\nfunc (p Person) Greet() string {\n    return \"Hello, \" + p.Name\n}\n\nfunc main() {\n    p := Person{Name: \"Alice\"}\n    fmt.Println(p.Greet())\n}"
+    },
+    {
+      "id": "methods_02",
+      "title": "Pointer Receiver",
+      "description": "Define a method with a pointer receiver that modifies the receiver's state. Create a 'SetName' method on Person.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\n// Define a SetName method with pointer receiver\n\nfunc main() {\n    p := Person{Name: \"Bob\"}\n    // Call p.SetName(\"Charlie\") and print p.Name\n}",
+      "expected_output": "Charlie",
+      "hints": [
+        "Use func (p *Person) SetName(name string) to define a pointer receiver method",
+        "Set p.Name = name inside the method"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n    Name string\n}\n\nfunc (p *Person) SetName(name string) {\n    p.Name = name\n}\n\nfunc main() {\n    p := Person{Name: \"Bob\"}\n    p.SetName(\"Charlie\")\n    fmt.Println(p.Name)\n}"
+    },
+    {
+      "id": "methods_03",
+      "title": "Value Receiver",
+      "description": "Define a method with a value receiver that returns a new value without modifying the original.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Counter struct {\n    Value int\n}\n\n// Define an Increment method with value receiver that returns a new Counter\n\nfunc main() {\n    c := Counter{Value: 5}\n    // Call c.Increment() and print the result\n}",
+      "expected_output": "{6}",
+      "hints": [
+        "Use func (c Counter) Increment() Counter to define a value receiver method",
+        "Return c with Value + 1"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Counter struct {\n    Value int\n}\n\nfunc (c Counter) Increment() Counter {\n    return Counter{Value: c.Value + 1}\n}\n\nfunc main() {\n    c := Counter{Value: 5}\n    fmt.Println(c.Increment())\n}"
+    },
+    {
+      "id": "methods_04",
+      "title": "Interface Satisfaction",
+      "description": "Define a 'Stringer' interface with a String() method, then satisfy it with a type.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\n// Define a Stringer interface with a String() string method\n\ntype Point struct {\n    X, Y int\n}\n\n// Make Point satisfy the Stringer interface\n\nfunc main() {\n    p := Point{X: 10, Y: 20}\n    // Print p (should call String() method)\n}",
+      "expected_output": "Point(10, 20)",
+      "hints": [
+        "Define interface Stringer with func String() string",
+        "Implement func (p Point) String() string { return ... } on Point"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Stringer interface {\n    String() string\n}\n\ntype Point struct {\n    X, Y int\n}\n\nfunc (p Point) String() string {\n    return fmt.Sprintf(\"Point(%d, %d)\", p.X, p.Y)\n}\n\nfunc main() {\n    p := Point{X: 10, Y: 20}\n    fmt.Println(p)\n}"
+    },
+    {
+      "id": "methods_05",
+      "title": "Method Chaining",
+      "description": "Define a Builder type with Methods Add(str) Builder and Build() string. Add returns the Builder for chaining. Test by chaining Add(\"Hello\").Add(\"World\").Build().",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Builder struct {\n    result string\n}\n\n// Add method returns Builder for chaining\n\n// Build method returns result string\n\nfunc main() {\n    b := Builder{}\n    // Chain Add(\"Hello\").Add(\"World\").Build() and print\n}",
+      "expected_output": "HelloWorld",
+      "hints": [
+        "func (b Builder) Add(s string) Builder { b.result += s; return b }",
+        "func (b Builder) Build() string { return b.result }"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype Builder struct {\n    result string\n}\n\nfunc (b Builder) Add(s string) Builder {\n    b.result += s\n    return b\n}\n\nfunc (b Builder) Build() string {\n    return b.result\n}\n\nfunc main() {\n    b := Builder{}\n    result := b.Add(\"Hello\").Add(\"World\").Build()\n    fmt.Println(result)\n}"
+    },
+    {
+      "id": "methods_07",
+      "title": "Multiple Methods on Same Type",
+      "description": "Define a Circle type with Radius float64. Add two methods: Area() float64 and Perimeter() float64. Create a circle with radius 5.0, compute both, and print them.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype Circle struct {\n    Radius float64\n}\n\n// Define Area method - returns pi * r * r\n\n// Define Perimeter method - returns 2 * pi * r\n\nfunc main() {\n    c := Circle{Radius: 5.0}\n    // Print Area and Perimeter\n}",
+      "expected_output": "78.53981633974483\n31.41592653589793",
+      "hints": [
+        "Use math.Pi for pi",
+        "func (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }",
+        "func (c Circle) Perimeter() float64 { return 2 * math.Pi * c.Radius }"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\nimport \"math\"\n\ntype Circle struct {\n    Radius float64\n}\n\nfunc (c Circle) Area() float64 {\n    return math.Pi * c.Radius * c.Radius\n}\n\nfunc (c Circle) Perimeter() float64 {\n    return 2 * math.Pi * c.Radius\n}\n\nfunc main() {\n    c := Circle{Radius: 5.0}\n    fmt.Println(c.Area())\n    fmt.Println(c.Perimeter())\n}"
+    },
+    {
+      "id": "methods_06",
+      "title": "Method on Primitive Type",
+      "description": "Create a type MyInt int. Define a method IsEven() bool on MyInt that returns true if the value is even. Test with MyInt(42).",
+      "starter_code": "package main\n\nimport \"fmt\"\n\ntype MyInt int\n\n// Define IsEven() bool on MyInt\n\nfunc main() {\n    n := MyInt(42)\n    // Call IsEven() and print result\n}",
+      "expected_output": "true",
+      "hints": [
+        "func (m MyInt) IsEven() bool { return m%2 == 0 }"
+      ],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype MyInt int\n\nfunc (m MyInt) IsEven() bool {\n    return m%2 == 0\n}\n\nfunc main() {\n    n := MyInt(42)\n    fmt.Println(n.IsEven())\n}"
+    }
+  ]
+}

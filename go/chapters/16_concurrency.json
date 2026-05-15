@@ -1,0 +1,76 @@
+{
+  "id": "concurrency",
+  "title": "Concurrency",
+  "description": "Goroutines and channels in Go",
+  "theory": "## Concurrency in Go\n\nGo has built-in support for concurrency with goroutines and channels.\n\n### Goroutines\n\nA goroutine is a lightweight thread managed by the Go runtime:\n\n```go\ngo f()  // runs f concurrently\n```\n\nThey start with minimal stack space and grow as needed.\n\n### Channels\n\nChannels are typed conduits for communication between goroutines:\n\n```go\nch := make(chan int)    // unbuffered channel\nch := make(chan int, 3) // buffered channel with capacity 3\n```\n\n### Send and Receive\n\n```go\nch <- value    // send value to channel\nvalue := <-ch  // receive from channel\n```\n\n### Blocking\n\n- Sending blocks until receiver is ready\n- Receiving blocks until sender is ready\n\n### Buffered Channels\n\nBuffer lets send/receive proceed without blocking up to buffer size:\n```go\nch := make(chan int, 2)\nch <- 1  // doesn't block\nch <- 2  // doesn't block\n```\n\n### Channel Directions\n\n```go\nfunc worker(in <-chan int, out chan<- int) {\n    for n := range in {\n        out <- n * 2\n    }\n}\n```\n\n### Select\n\nSelect lets you wait on multiple channel operations:\n\n```go\nselect {\ncase n := <-ch1:\n    fmt.Println(\"from ch1:\", n)\ncase n := <-ch2:\n    fmt.Println(\"from ch2:\", n)\ncase <-time.After(time.Second):\n    fmt.Println(\"timeout\")\n}\n```\n\n### Close\n\nClose indicates no more values will be sent:\n```go\nclose(ch)\nfor n := range ch {\n    fmt.Println(n)\n}\n```\n\n### sync.WaitGroup\n\nUse to wait for multiple goroutines:\n```go\nvar wg sync.WaitGroup\nwg.Add(1)\ngo func() {\n    defer wg.Done()\n    // work\n}()\nwg.Wait()\n```\n",
+  "exercises": [
+    {
+      "id": "concurrency_01",
+      "title": "Goroutine",
+      "description": "Launch go sayHello(). Print main done. Use time.Sleep to let goroutine run.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc sayHello() {\n    fmt.Println(\"Hello!\")\n}\n\nfunc main() {\n    // Launch goroutine\n    \n    fmt.Println(\"main done\")\n}",
+      "expected_output": "main done\nHello!",
+      "hints": ["go sayHello()", "time.Sleep(100 * time.Millisecond)"],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc sayHello() {\n    fmt.Println(\"Hello!\")\n}\n\nfunc main() {\n    go sayHello()\n    time.Sleep(100 * time.Millisecond)\n    fmt.Println(\"main done\")\n}"
+    },
+    {
+      "id": "concurrency_02",
+      "title": "Channel",
+      "description": "Create ch := make(chan string). Send \"ping\" to ch in goroutine, receive and print.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan string)\n    \n    // Send to channel in goroutine\n    \n    // Receive and print\n    \n}",
+      "expected_output": "ping",
+      "hints": ["go func() { ch <- \"ping\" }()", "msg := <-ch; fmt.Println(msg)"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan string)\n    go func() { ch <- \"ping\" }()\n    msg := <-ch\n    fmt.Println(msg)\n}"
+    },
+    {
+      "id": "concurrency_03",
+      "title": "Buffered Channel",
+      "description": "Create a buffered channel with capacity 2. Send 10 and 20 without blocking. Then receive and print both.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int, 2)\n    \n    // Send 10 and 20\n    \n    // Receive and print both\n    \n}",
+      "expected_output": "10 20",
+      "hints": ["ch <- 10; ch <- 20; then <-ch; <-ch"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int, 2)\n    ch <- 10\n    ch <- 20\n    fmt.Println(<-ch, <-ch)\n}"
+    },
+    {
+      "id": "concurrency_04",
+      "title": "Select Statement",
+      "description": "Create two channels ch1 and ch2. Send to ch1 in goroutine after 10ms. Use select to receive whichever comes first.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    ch1 := make(chan string)\n    ch2 := make(chan string)\n    \n    // Send to ch1 after 10ms\n    \n    // Use select to receive\n    \n}",
+      "expected_output": "from ch1",
+      "hints": ["go func() { time.Sleep(10*time.Millisecond); ch1 <- \"from ch1\" }()", "select { case msg := <-ch1: ... }"],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    ch1 := make(chan string)\n    ch2 := make(chan string)\n    \n    go func() {\n        time.Sleep(10 * time.Millisecond)\n        ch1 <- \"from ch1\"\n    }()\n    \n    select {\n    case msg := <-ch1:\n        fmt.Println(msg)\n    case msg := <-ch2:\n        fmt.Println(msg)\n    }\n}"
+    },
+    {
+      "id": "concurrency_05",
+      "title": "Channel Close",
+      "description": "Create channel, send 1,2,3 then close. Use range to receive until closed.",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    \n    // Send 1, 2, 3\n    // Close channel\n    \n    // Use range to receive and print each\n    \n}",
+      "expected_output": "1\n2\n3",
+      "hints": ["for n := range ch prints until closed"],
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    \n    go func() {\n        ch <- 1\n        ch <- 2\n        ch <- 3\n        close(ch)\n    }()\n    \n    for n := range ch {\n        fmt.Println(n)\n    }\n}"
+    },
+    {
+      "id": "concurrency_07",
+      "title": "Fan-In Pattern",
+      "description": "Create two goroutines that each send a string to a shared channel. Use a third goroutine to fan-in (read) from the channel and print received values. Close the channel when both senders are done.",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    ch := make(chan string, 2)\n    var wg sync.WaitGroup\n    \n    // Launch two goroutines that send to ch\n    // Close ch when both are done\n    // Read from ch and print each value\n}",
+      "expected_output": "hello\nworld",
+      "hints": [
+        "Use wg.Add(2) for the two sender goroutines",
+        "defer wg.Done() in each goroutine",
+        "In a third goroutine, defer close(ch) after wg.Wait()",
+        "Range over ch to collect all values"
+      ],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    ch := make(chan string, 2)\n    var wg sync.WaitGroup\n    \n    wg.Add(2)\n    go func() {\n        defer wg.Done()\n        ch <- \"hello\"\n    }()\n    go func() {\n        defer wg.Done()\n        ch <- \"world\"\n    }()\n    \n    go func() {\n        wg.Wait()\n        close(ch)\n    }()\n    \n    for msg := range ch {\n        fmt.Println(msg)\n    }\n}"
+    },
+    {
+      "id": "concurrency_06",
+      "title": "WaitGroup",
+      "description": "Use sync.WaitGroup to launch 3 goroutines that each print their number, then wait for all to complete before printing \"done\".",
+      "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    var wg sync.WaitGroup\n    \n    // Launch 3 goroutines, each prints its number\n    // Use wg.Add and wg.Done\n    \n    // Wait and print done\n}",
+      "expected_output": "1\n2\n3\ndone",
+      "hints": ["wg.Add(1); defer wg.Done(); wg.Wait()"],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    var wg sync.WaitGroup\n    \n    for i := 1; i <= 3; i++ {\n        wg.Add(1)\n        go func(n int) {\n            defer wg.Done()\n            fmt.Println(n)\n        }(i)\n    }\n    \n    wg.Wait()\n    fmt.Println(\"done\")\n}"
+    }
+  ]
+}

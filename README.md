@@ -98,7 +98,7 @@ Each track’s **`README`** is authoritative. At a glance:
 | **Rust** | `rustc`, `cargo` (on `PATH`) | same + temp `rustc` / `cargo` per exercise rules | `EDITOR`; **`python3`** only for `scripts/check_solutions.py` |
 | **Go** | **Go 1.20+** (`go version` at startup) | `go run` on a temp `main.go` | `EDITOR`; **`python3`** for `scripts/check_solutions.py` |
 | **C** | **Python 3.10+**, Textual (`pip install -e …`) | **`cc`** or **`gcc`** (C11) | `EDITOR` |
-| **C#** | **Python 3.10+**, Textual | **.NET SDK** — TUI: `build` + `run --no-build`; checker: parallel `exec` (see **`csharp/README`**) | `EDITOR`; **`python3`** for `scripts/check_solutions.py` |
+| **C#** | **Python 3.10+**, Textual | **.NET SDK** — `dotnet build` + `dotnet run --no-build` (TUI and checker use the same path; see **`csharp/README`**) | `EDITOR`; **`python3`** for `scripts/check_solutions.py` |
 | **Python** | **Python 3.10+** (also runs learner code) | same interpreter | `EDITOR` |
 | **Java** | **Python 3.10+**, Textual | **JDK 17+** (`javac`, `java`) | `EDITOR` |
 | **asmx64** | **Rust** (`cargo` to build the TUI) | **nasm**, **ld**, **gcc** (Linux / WSL2) | **`python3`** for `scripts/check_solutions.py` |
@@ -163,14 +163,60 @@ Every course under **`rust/`**, **`go/`**, **`c/`**, … uses the same section o
 
 Chapter JSON lives in **`./chapters/`** under each language directory (sorted by filename). Edit those files in place for that track; there is no repo-root generator that copies chapters from another language.
 
-Each track’s **`scripts/check_solutions.py`** verifies bundled reference solutions. See that track’s **`README`** for flags and work directories.
+**Pedagogical quality** (real computation in solutions, scaffolds in starters, language-appropriate theory) is required; see **TUTORIAL_PLATFORM.md**.
 
-**Maintainers:** from the repo root after **`./scripts/setup-dev.sh`**, run the full matrix (pytest, `go test`, `cargo test`/build, JSON parse, parallel **`check_solutions`**) with:
+## Scripts reference
+
+Run Python utilities from the **repository root** (after **`./scripts/setup-dev.sh`** when they need pytest or track packages). Shell wrappers **`setup-learn.sh`** / **`setup-dev.sh`** call **`bootstrap.py`**; **`verify-all.sh`** runs the full maintainer matrix.
+
+### Setup and verification (repo root)
+
+| Script | What it does |
+|--------|----------------|
+| **`scripts/bootstrap.py`** | Creates **`.venv`**, then `pip install -e .` on the hub and each Textual track (`c`, `csharp`, `python`, `java`). **`--learn`**: runtime deps only. **`--dev`**: also installs pytest extras for track tests. |
+| **`scripts/setup-learn.sh`** | Learner shortcut: `python3 scripts/bootstrap.py --learn`. |
+| **`scripts/setup-dev.sh`** | Contributor shortcut: `python3 scripts/bootstrap.py --dev`. |
+| **`scripts/verify-all.sh`** | Full maintainer pass: `compileall`, hub import, per-track pytest, `go test`, `cargo test`/build, chapter JSON parse, **`verify_tui_alignment.py`**, Go/Rust/asm reference-solution alignment tests, then parallel **`check_solutions`** on all tracks. **`--skip-check-solutions`** skips the slowest step. |
+| **`scripts/verify_tui_alignment.py`** | Runs every bundled solution through each Textual track’s **learner** `execute_code` + `Validator` (same path as pressing **`r`**). Optional **`--track python`** (etc.). Rust/Go/asm use crate alignment tests instead (invoked from **`verify-all.sh`**). |
+
+### README and docs (repo root)
+
+| Script | What it does |
+|--------|----------------|
+| **`scripts/render_chapter_tables.py`** | Prints markdown **Course layout** tables (`#`, chapter title, exercise count) from **`chapters/*.json`**. Args: track names or all tracks. |
+| **`scripts/sync_readme_chapter_tables.py`** | Rewrites the **`## Course layout`** section in each track **`README.md`** using **`render_chapter_tables`**. Run after editing chapter JSON. |
+| **`scripts/capture_menu_screenshot.py`** | Renders the hub menu with Textual’s test harness and writes **`docs/assets/tui-screenshot.svg`**. |
+
+### Chapter content maintenance (repo root)
+
+One-off or batch authoring helpers; use **`--dry-run`** where supported before overwriting JSON.
+
+| Script | What it does |
+|--------|----------------|
+| **`scripts/apply_chapter_theory.py`** | Merges expanded theory from **`scripts/theory/`** into **`chapters/*.json`**, and strips maintainer-only curriculum boilerplate. |
+| **`scripts/apply_exercise_hints.py`** | Copies hints from **`scripts/hints/<track>.json`** into matching exercises (tracks: python, java, csharp, c, rust). |
+| **`scripts/fix_rust_cross_refs.py`** | Rewrites Rust chapter JSON to remove Go-ported wording and replace thin theory with Rust-specific copy. |
+| **`scripts/fix_ported_chapter_metadata.py`** | Fixes chapter-level **title** / **description** on Python, Java, C#, and C after a Go port. |
+| **`scripts/fix_ported_exercise_text.py`** | Rewrites exercise **title** / **description** text on those same tracks (Go idioms → track-idiomatic wording). |
+
+**`scripts/theory/`** is not run directly: **`content.py`** aggregates per-track theory modules (`c.py`, `csharp.py`, `python_track.py`, `java_track.py`, `rust_expansions.py`, `go_expansions.py`, `asmx64.py`); **`_strip.py`** removes boilerplate. Used only by **`apply_chapter_theory.py`**.
+
+### Per-track `scripts/check_solutions.py`
+
+Each language directory has its own checker. All compare bundled **`solution`** fields to **`expected_output`** (or **`PASS`** where the track uses tests). Respects **`LEARN_<TRACK>_CHAPTERS`** when set. Flags vary by track (`--chapter`, `--jobs`, etc.) — see that track’s **`README`**.
+
+| Track | Grades solutions by |
+|-------|---------------------|
+| **python** | Running learner Python (`learn_python_tui.executor`) |
+| **java** | `javac` + `java` |
+| **c** | `cc` / `gcc` |
+| **csharp** | `dotnet build` + `dotnet run --no-build` (same as TUI) |
+| **rust** | `rustc` / `cargo test` / `cargo run` (mirrors TUI routing) |
+| **go** | `go run` or `go test` (multi-file `---` / `// File:` buffers) |
+| **asmx64** | NASM + `ld` + run (Linux ELF64) |
+
+**Maintainers:** after **`./scripts/setup-dev.sh`**:
 
 ```bash
 ./scripts/verify-all.sh
 ```
-
-Use **`./scripts/verify-all.sh --skip-check-solutions`** for a faster pass without grading every reference solution. The script resolves **`PYTHON`** to an absolute path (default: **`.venv/bin/python`**) so parallel track runs never break on `cd`.
-
-**Pedagogical quality** (real computation in solutions, scaffolds in starters, language-appropriate theory) is required; see **TUTORIAL_PLATFORM.md**.

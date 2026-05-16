@@ -1,4 +1,4 @@
-"""Run learner C# in a temporary SDK-style console project (dotnet build + run)."""
+"""Run learner C# in a temporary SDK-style console project (dotnet build + exec)."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import os
 import shutil
 import subprocess
 import tempfile
-import time
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -22,6 +22,9 @@ class ExecutionResult:
 # First run may restore NuGet packages; keep generous bounds like LEARN-RUST cargo path.
 BUILD_TIMEOUT = 180
 RUN_TIMEOUT = 60
+
+_BUILT_ONCE: set[str] = set()
+_BUILT_ONCE_LOCK = threading.Lock()
 
 
 def check_dotnet_available() -> None:
@@ -45,6 +48,8 @@ def check_dotnet_available() -> None:
 def _dotnet_env() -> dict[str, str]:
     env = os.environ.copy()
     env.setdefault("DOTNET_NOLOGO", "1")
+    env.setdefault("DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "1")
+    env.setdefault("DOTNET_CLI_TELEMETRY_OPTOUT", "1")
     env.setdefault("TERM", env.get("TERM", "dumb"))
     return env
 
@@ -124,37 +129,27 @@ def build_project(project_dir: Path, *, csproj: Path | None = None) -> Execution
     """Compile the project after Program.cs was updated."""
     proj = project_dir.resolve()
     csproj = (csproj or ensure_console_project(proj)).resolve()
-    return _run_subprocess(
-        ["dotnet", "build", str(csproj), "--verbosity", "quiet"],
-        cwd=proj,
-        timeout=BUILD_TIMEOUT,
-    )
+    key = str(proj)
+    with _BUILT_ONCE_LOCK:
+        no_restore = key in _BUILT_ONCE
+    cmd = ["dotnet", "build", str(csproj), "--verbosity", "quiet"]
+    if no_restore:
+        cmd.append("--no-restore")
+    res = _run_subprocess(cmd, cwd=proj, timeout=BUILD_TIMEOUT)
+    if res.exit_code == 0 and not res.timed_out:
+        with _BUILT_ONCE_LOCK:
+            _BUILT_ONCE.add(key)
+    return res
 
 
 def run_built_project(project_dir: Path, *, csproj: Path | None = None) -> ExecutionResult:
-    """Run a project that was already built (dotnet run --no-build, else dotnet exec)."""
+    """Run a built console app via ``dotnet exec`` on the output DLL."""
     proj = project_dir.resolve()
     csproj = (csproj or next(proj.glob("*.csproj"))).resolve()
-    res = _run_subprocess(
-        [
-            "dotnet",
-            "run",
-            "--project",
-            str(csproj),
-            "--no-build",
-            "--verbosity",
-            "quiet",
-        ],
-        cwd=proj,
-        timeout=RUN_TIMEOUT,
-    )
-    if res.exit_code == 0 or res.timed_out:
-        return res
-    # Some SDK layouts still want exec of the DLL after build.
     try:
         dll = _main_dll(proj, csproj)
-    except FileNotFoundError:
-        return res
+    except FileNotFoundError as e:
+        return ExecutionResult(stdout="", stderr=str(e), exit_code=1, timed_out=False)
     return _run_subprocess(
         ["dotnet", "exec", str(dll.resolve())],
         cwd=proj,
@@ -171,8 +166,8 @@ def execute_code(
     """Run *code* in a console project.
 
     When *incremental* is true and *work_dir* is set, reuse the project: write Program.cs,
-    ``dotnet build``, then ``dotnet run --no-build`` (faster than a full ``dotnet run`` per edit).
-  """
+    ``dotnet build`` (``--no-restore`` after the first successful build), then ``dotnet exec``.
+    """
     cleanup = work_dir is None
     if work_dir is None:
         project_dir = Path(tempfile.mkdtemp(prefix="learn-csharp-run-"))
@@ -214,5 +209,5 @@ def execute_code(
 
 
 def execute_code_in_dir(code: str, project_dir: Path) -> ExecutionResult:
-    """For check_solutions: reuse one project directory with incremental build+run."""
+    """For check_solutions: reuse one project directory with incremental build+exec."""
     return execute_code(code, work_dir=project_dir, incremental=True)

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Verify every exercise *solution* in chapters/*.json builds with `dotnet` and matches expected_output.
 
-Reuses one SDK console project under LEARN_CSHARP_CHECK_WORK: each solution overwrites Program.cs,
-then ``dotnet build`` + ``dotnet run --no-build`` (see learn_cs_tui.executor).
+Uses one SDK project per worker under LEARN_CSHARP_CHECK_WORK: overwrite Program.cs,
+``dotnet build`` (``--no-restore`` after first build), ``dotnet exec`` on the DLL.
 
 Usage:
   python3 scripts/check_solutions.py
   python3 scripts/check_solutions.py --chapter variables
+  python3 scripts/check_solutions.py --jobs 2
   python3 scripts/check_solutions.py --list-failures-only
 
 Env:
@@ -19,22 +20,30 @@ import argparse
 import json
 import os
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CHAPTERS = ROOT / "chapters"
 DEFAULT_CHECK_WORK = ROOT / ".check-csharp-work"
+DEFAULT_JOBS = 2
 
 sys.path.insert(0, str(ROOT))
 
 from learn_cs_tui.executor import check_dotnet_available, execute_code_in_dir  # noqa: E402
 
 
-def check_one(
-    solution: str,
-    expected: str,
-    work: Path,
-) -> tuple[bool, str]:
+@dataclass(frozen=True)
+class _Exercise:
+    chapter_id: str
+    exercise_id: str
+    solution: str
+    expected: str
+
+
+def check_one(solution: str, expected: str, work: Path) -> tuple[bool, str]:
     exp = (expected or "").strip()
     res = execute_code_in_dir(solution.strip(), work)
     if res.timed_out:
@@ -48,15 +57,74 @@ def check_one(
     return False, f"stdout mismatch:\n  expected: {exp!r}\n  got:      {got!r}"
 
 
+def _worker_batch(batch: list[_Exercise], work_base: Path, worker_id: int) -> list[tuple[str, str, bool, str]]:
+    work = work_base if worker_id < 0 else work_base / f"worker-{worker_id}"
+    return [
+        (ex.chapter_id, ex.exercise_id, *check_one(ex.solution, ex.expected, work))
+        for ex in batch
+    ]
+
+
+def _partition(items: list[_Exercise], jobs: int) -> list[list[_Exercise]]:
+    buckets: list[list[_Exercise]] = [[] for _ in range(jobs)]
+    for i, item in enumerate(items):
+        buckets[i % jobs].append(item)
+    return [b for b in buckets if b]
+
+
+def _count_skipped(chapter_filter: str | None) -> int:
+    skipped = 0
+    for path in sorted(CHAPTERS.glob("*.json")):
+        ch = json.loads(path.read_text(encoding="utf-8"))
+        if chapter_filter and ch["id"] != chapter_filter:
+            continue
+        for ex in ch.get("exercises", []):
+            if not (ex.get("solution") or "").strip():
+                skipped += 1
+    return skipped
+
+
+def _collect_exercises(chapter_filter: str | None) -> list[_Exercise]:
+    out: list[_Exercise] = []
+    for path in sorted(CHAPTERS.glob("*.json")):
+        ch = json.loads(path.read_text(encoding="utf-8"))
+        cid = ch["id"]
+        if chapter_filter and cid != chapter_filter:
+            continue
+        for ex in ch.get("exercises", []):
+            sol = (ex.get("solution") or "").strip()
+            if not sol:
+                continue
+            out.append(
+                _Exercise(
+                    chapter_id=cid,
+                    exercise_id=ex["id"],
+                    solution=sol,
+                    expected=ex.get("expected_output") or "",
+                )
+            )
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--chapter", help="only check this chapter id (e.g. variables)")
+    ap.add_argument(
+        "--jobs",
+        type=int,
+        default=DEFAULT_JOBS,
+        help=f"parallel workers (default {DEFAULT_JOBS}; use 1 for sequential)",
+    )
     ap.add_argument(
         "--list-failures-only",
         action="store_true",
         help="print only failing chapter/exercise lines",
     )
     args = ap.parse_args()
+
+    if args.jobs < 1:
+        print("--jobs must be >= 1", file=sys.stderr)
+        return 1
 
     try:
         check_dotnet_available()
@@ -73,37 +141,42 @@ def main() -> int:
         print("missing chapters dir:", CHAPTERS, file=sys.stderr)
         return 1
 
-    paths = sorted(CHAPTERS.glob("*.json"))
+    exercises = _collect_exercises(args.chapter)
+    skipped = _count_skipped(args.chapter)
+    checked = len(exercises)
     failures: list[tuple[str, str, str]] = []
-    skipped = 0
-    checked = 0
+    t0 = time.monotonic()
 
-    for path in paths:
-        ch = json.loads(path.read_text(encoding="utf-8"))
-        cid = ch["id"]
-        if args.chapter and cid != args.chapter:
-            continue
-        for ex in ch.get("exercises", []):
-            eid = ex["id"]
-            sol = (ex.get("solution") or "").strip()
-            if not sol:
-                skipped += 1
-                continue
-            checked += 1
-            ok, detail = check_one(sol, ex.get("expected_output") or "", work)
-            if not ok:
-                failures.append((cid, eid, detail))
-                if not args.list_failures_only:
-                    print(f"FAIL {cid}::{eid}\n{detail}\n", file=sys.stderr)
+    if args.jobs == 1:
+        results = _worker_batch(exercises, work, -1)
+    else:
+        parts = _partition(exercises, args.jobs)
+        results = []
+        with ThreadPoolExecutor(max_workers=len(parts)) as pool:
+            futs = {
+                pool.submit(_worker_batch, part, work, wid): wid
+                for wid, part in enumerate(parts)
+            }
+            for fut in as_completed(futs):
+                results.extend(fut.result())
+
+    elapsed = time.monotonic() - t0
+
+    for cid, eid, ok, detail in results:
+        if not ok:
+            failures.append((cid, eid, detail))
+            if not args.list_failures_only:
+                print(f"FAIL {cid}::{eid}\n{detail}\n", file=sys.stderr)
 
     if args.list_failures_only:
         for cid, eid, _ in failures:
             print(f"{cid}::{eid}")
 
-    print(
-        f"checked={checked} skipped_empty_solution={skipped} failed={len(failures)}",
-        file=sys.stderr if failures else sys.stdout,
+    summary = (
+        f"checked={checked} skipped_empty_solution={skipped} failed={len(failures)} "
+        f"jobs={args.jobs} seconds={elapsed:.1f}"
     )
+    print(summary, file=sys.stderr if failures else sys.stdout)
     return 1 if failures else 0
 
 

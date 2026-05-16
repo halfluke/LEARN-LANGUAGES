@@ -58,7 +58,7 @@ export LEARN_CSHARP_CHAPTERS=/absolute/path/to/chapters
 python3 scripts/check_solutions.py
 ```
 
-Default **`./.check-csharp-work`** (one reused SDK project: **`dotnet build`** then **`dotnet run --no-build`** per solution). Override: **`LEARN_CSHARP_CHECK_WORK`**.
+Default **`./.check-csharp-work`** ( **`--jobs 2`** workers, each with its own project: **`dotnet build --no-restore`** then **`dotnet exec`** ). Override: **`LEARN_CSHARP_CHECK_WORK`**. Use **`--jobs 1`** for sequential checks.
 
 Edit chapter JSON under **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
 

@@ -58,11 +58,7 @@ python3 scripts/check_solutions.py
 
 Default **`./.check-csharp-work`**. Override: **`LEARN_CSHARP_CHECK_WORK`**.
 
-(Regenerate C# chapters from the catalog: **`python3 scripts/regenerate_cs_c_parity.py`** at the repo root.)
-
-## Curriculum
-
-Chapter order / parity: **[../CURRICULUM.md](../CURRICULUM.md)**
+Edit chapter JSON under **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
 
 ## Security
 

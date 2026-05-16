@@ -132,6 +132,6 @@ There are **17** chapters under **`chapters/*.json`**, loaded in filename order,
 
 ## Maintainer notes (optional)
 
-- **Regenerate chapter JSON** from port scripts: `python3 scripts/forge_chapters.py` (see script header for inputs and paths).
+- **Edit chapter JSON** under **`chapters/`** (authoritative for this track). Align ids and pedagogy with **`../CURRICULUM.md`**.
 - **Verify all reference solutions:** `python3 scripts/check_solutions.py` (run from **`rust/`**; uses **`.check-solutions-crate`** / **`.check-solutions-target`**; see script for flags).
-- **Shared docs** (schema, parity): **`../CURRICULUM.md`**, **`../TUTORIAL_PLATFORM.md`** relative to **`rust/`** in this monorepo.
+- **Shared docs** (schema, curriculum): **`../CURRICULUM.md`**, **`../TUTORIAL_PLATFORM.md`** relative to **`rust/`** in this monorepo.

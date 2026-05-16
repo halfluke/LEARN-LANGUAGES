@@ -1,6 +1,6 @@
 # LEARN-LANGUAGES
 
-Monorepo of interactive terminal courses that share one **chapter JSON schema**, a single **[CURRICULUM.md](CURRICULUM.md)** outline, and **[TUTORIAL_PLATFORM.md](TUTORIAL_PLATFORM.md)** rules (grading, hints, parity).
+Monorepo of interactive terminal courses that share one **chapter JSON schema**, a single **[CURRICULUM.md](CURRICULUM.md)** outline, and **[TUTORIAL_PLATFORM.md](TUTORIAL_PLATFORM.md)** rules (grading, hints, authoring quality).
 
 Clone once; each track lives in its own subdirectory with its own TUI/toolchain.
 
@@ -23,8 +23,10 @@ Clone once; each track lives in its own subdirectory with its own TUI/toolchain.
 
 Workspace file: **[`learn-languages.code-workspace`](learn-languages.code-workspace)**.
 
-## Authoring and regeneration
+## Authoring
 
-Chapter JSON lives in **`./chapters/`** under each language directory (sorted by filename). Cross-track parity for some languages uses scripts under **`scripts/`** at the repo root (for example `scripts/regenerate_cs_c_parity.py`, `scripts/regenerate_py_java_parity.py`); track-specific tooling also lives under each track’s **`scripts/`**. Each track **`README`** lists verifier commands (`check_solutions`, etc.).
+Chapter JSON lives in **`./chapters/`** under each language directory (sorted by filename). Edit those files in place for that track; there is no repo-root generator that copies chapters from another language.
 
-**Pedagogical parity** (solutions derive real computation, starters are scaffolds, not echoed stdout-only strings) is required for merged chapters; see **CURRICULUM.md**.
+Each track’s **`scripts/check_solutions.py`** verifies bundled reference solutions. See that track’s **`README`** for flags and work directories.
+
+**Pedagogical quality** (real computation in solutions, scaffolds in starters, language-appropriate theory) is required; see **CURRICULUM.md**.

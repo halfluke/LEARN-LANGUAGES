@@ -4,7 +4,7 @@
 
 This document captures the **architecture and decisions** for the **LEARN-*** terminal courses: JSON chapters, local compile/run, and stdout-first grading.
 
-**Curriculum source of truth:** chapter **themes**, **ordering**, **per-language coverage**, and **pedagogical parity** (solutions, theory/descriptions, starters) live in **[CURRICULUM.md](CURRICULUM.md)**. Historical “mirror LEARN-GO exercise-for-exercise” parity is **not** normative; each language course owns its pedagogy while sharing this **schema** and **platform mechanics**.
+**Curriculum source of truth:** chapter **themes**, **ordering**, **per-language coverage**, and **pedagogical quality** (solutions, theory/descriptions, starters) live in **[CURRICULUM.md](CURRICULUM.md)**. Each language course owns its **`chapters/*.json`** while sharing this **schema** and **platform mechanics**.
 
 **Scope:** JSON-driven chapters, local compile/run, stdout comparison, optional `cargo`/multi-file patterns (Rust), `dotnet` (C#), `cc`/`gcc` (C), `nasm`/`ld`/`gcc` (asm). Paths below often cite **LEARN-RUST** as the first implementation reference.
 
@@ -13,7 +13,7 @@ This document captures the **architecture and decisions** for the **LEARN-*** te
 ## 1. Product goal
 
 - **Language-first outcomes** guided by **[CURRICULUM.md](CURRICULUM.md)** (Rust-led outline; other languages **Full / Adapted / N/A** per chapter).
-- **Chapter content** must satisfy **[CURRICULUM.md](CURRICULUM.md) pedagogical parity**: solutions derive output via real APIs; theory/descriptions use target-language idioms; starters scaffold the intended path (no stdout-only placeholders).
+- **Chapter content** must satisfy **[CURRICULUM.md](CURRICULUM.md) pedagogical quality**: solutions derive output via real APIs; theory/descriptions use target-language idioms; starters scaffold the intended path (no stdout-only placeholders).
 - **Hints** are **language-specific**; they should teach the target language, not the checker.
 - **Solutions** must compile and produce **`expected_output`** (trimmed) under the same rules the TUI uses (see §5–§6), including documented exceptions (e.g. Rust `PASS` + `cargo test`). Passing **`check_solutions`** alone does not excuse anti-patterns listed in the curriculum.
 
@@ -26,15 +26,15 @@ Bundled content lives in **`chapters/<chapter_id>.json`**. Each chapter has:
 | Field | Role |
 |--------|------|
 | `id` | Stable id (e.g. `variables`, `json`) — align with **[CURRICULUM.md](CURRICULUM.md)** canonical ids. |
-| `title`, `description`, `theory` | UI copy; theory is Markdown-ish text. Must follow **[CURRICULUM.md](CURRICULUM.md) pedagogical parity** (language-appropriate, aligned with starter/solution). |
+| `title`, `description`, `theory` | UI copy; theory is Markdown-ish text. Must follow **[CURRICULUM.md](CURRICULUM.md) pedagogical quality** (language-appropriate, aligned with starter/solution). |
 | `exercises` | Array of exercises. |
-| `exercise_count` | Optional; forge sets it to `len(exercises)`. |
+| `exercise_count` | Optional; may mirror `len(exercises)`. |
 
 Each **exercise**:
 
 | Field | Role |
 |--------|------|
-| `id` | Stable id (e.g. `json_01`) — stable within the course; align with **CURRICULUM.md** when sharing cross-language exercise numbering. |
+| `id` | Stable id (e.g. `json_01`) — stable **within** that track’s course. |
 | `title`, `description` | Shown in UI. |
 | `starter_code` | Initial editor buffer (single “file” unless you extend the app). Scaffolds the real task per **CURRICULUM.md** (not “match stdout” stubs). |
 | `expected_output` | Compared to **trimmed stdout** after a successful run (see exceptions below). |
@@ -45,15 +45,12 @@ Each **exercise**:
 
 ---
 
-## 3. Regenerating / porting chapters
+## 3. Authoring chapters
 
-- **Legacy path (optional):** `LEARN-RUST/scripts/forge_chapters.py` can still consume upstream JSON as a **convenience** when porting; **CURRICULUM.md** is the normative target shape (prefixed filenames, language-specific depth).
-- **Transform:** Python modules under **`LEARN-RUST/scripts/chapter_ports/`** export **`BUILDERS`** when the forge pipeline is used.
-- **Output:** `LEARN-RUST/chapters/<prefixed_name>.json` (see **CURRICULUM.md** for ordering).
+- **Authoritative content** for each track is **`chapters/*.json`** in that language directory (prefixed filenames per **CURRICULUM.md**).
+- **Edit in place** — theory, starters, solutions, and `expected_output` for that language only. Do not bulk-copy from another track’s JSON.
 
-**Workflow:** align chapter JSON with **CURRICULUM.md** → run **`python3 scripts/check_solutions.py`** (see §7).
-
-**Python:** chapter port files must be valid Python strings (do **not** use Rust-style `r#"..."#` raw delimiters in Python — they are invalid).
+**Workflow:** align with **CURRICULUM.md** for that track’s coverage column → run that track’s **`python3 scripts/check_solutions.py`** (see §7).
 
 ---
 
@@ -120,7 +117,7 @@ Implemented in **`LEARN-RUST/src/executor.rs`** / **`LEARN-RUST/src/validator.rs
 - **Performance:** Reuses **one** crate under **`.check-solutions-crate`** and **`CARGO_TARGET_DIR`** under **`.check-solutions-target`** (overridable via `LEARN_RUST_CHECK_CRATE` / `LEARN_RUST_CHECK_TARGET`).
 - **Gitignore:** those dirs + **`target/`** + **`**/__pycache__/`**.
 
-Run after forging or editing JSON:
+Run after editing chapter JSON:
 
 ```bash
 python3 scripts/check_solutions.py
@@ -139,7 +136,7 @@ python3 scripts/check_solutions.py
 
 - **Multi-root:** add folders (LEARN-GO, LEARN-RUST, **LEARN-LANGUAGES**, …) and **save** a **`.code-workspace`** file to reopen the same set of roots.
 - **Reopening the workspace file does not embed chat history.** Treat **this file** + per-repo **rules** as the durable “why we did X.”
-- For new languages: **`@LEARN-LANGUAGES/TUTORIAL_PLATFORM.md`** plus **`@`** reference files (`LEARN-RUST/src/executor.rs`, `forge_chapters.py`, etc.) in the first prompt.
+- For new languages: **`@LEARN-LANGUAGES/TUTORIAL_PLATFORM.md`** plus **`@`** reference files (`LEARN-RUST/src/executor.rs`, `LEARN-RUST/scripts/check_solutions.py`, a sample `chapters/*.json`, etc.) in the first prompt.
 
 ---
 
@@ -154,7 +151,7 @@ Same **JSON schema** can drive another TUI; swap **`executor`** for:
 | **C** | `cc` / `clang` + binary | UB can “pass” stdout checks; sanitizers optional. |
 | **x86-64 asm** | assembler + linker | ABI, syntax dialect, linking; grading often needs a harness, not only stdout. |
 
-The **forge** pattern (canonical structured input + **language-specific builder** → generated JSON) still applies when you want automation, but the **canonical curriculum** lives in **CURRICULUM.md**—not necessarily any single existing repo.
+Each language course maintains its own **`chapters/*.json`**. **CURRICULUM.md** defines the shared chapter map and coverage matrix; it does not require identical exercises across tracks.
 
 ---
 
@@ -164,7 +161,7 @@ The **forge** pattern (canonical structured input + **language-specific builder*
 |------|----------------------------|
 | Run / compile | `src/executor.rs`, `src/validator.rs` |
 | Chapter load | `src/chapter.rs` |
-| Forge | `scripts/forge_chapters.py`, `scripts/chapter_ports/*.py` |
+| Chapter content | `chapters/*.json` |
 | Solution CI | `scripts/check_solutions.py` |
 | User-facing | `README.md` |
 

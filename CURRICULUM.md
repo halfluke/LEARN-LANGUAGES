@@ -1,8 +1,8 @@
-# LEARN-* shared curriculum (Rust-led)
+# LEARN-* shared curriculum
 
 **Normative source:** this document defines **chapter themes**, **canonical chapter ids**, and **per-language coverage**. The JSON schema remains in [TUTORIAL_PLATFORM.md](TUTORIAL_PLATFORM.md).
 
-**Non-normative:** historical “match LEARN-GO exercise-for-exercise” parity. Language repos may differ in **exercise count** and **wording** as long as outcomes for their column are met.
+Each language track owns **`chapters/*.json`** under its directory. Tracks may differ in **exercise count**, **exercise ids**, and **wording** as long as they meet the outcomes for their column in the coverage matrix below.
 
 ## Canonical chapter order (filenames)
 
@@ -56,11 +56,13 @@ Legend: **Full** = first-class chapter in that language. **Adapted** = same slot
 | json | Full | Full | Full | Adapted | Full | Adapted | N/A |
 | time | Full | Full | Full | Adapted | Full | Full | N/A |
 
-## Pedagogical parity (normative)
+## Pedagogical quality (normative)
 
-**Pedagogical parity** means: for each shared exercise **`id`**, a learner who reads the chapter and completes the exercise practices the **same skill** as in the reference track (Rust-led themes), using **that language’s normal tools**—not another language’s vocabulary, and not merely reproducing golden stdout.
+Chapter JSON in every LEARN-* track must teach **that language** on its own terms—not a mechanical port of another track’s wording or solutions.
 
-This applies to **solution code**, **descriptions / theory**, and **starters**. It is required for **merged** chapter JSON in every LEARN-* repo, alongside mechanical checks (`scripts/check_solutions.py`, language test harnesses).
+For each exercise, a learner who reads the chapter and completes the task should practice a **real skill** for that chapter slot (see the coverage matrix), using **that language’s normal tools**, not merely reproducing golden stdout.
+
+This applies to **solution code**, **descriptions / theory**, and **starters**, alongside mechanical checks (`scripts/check_solutions.py` in each track, plus any language-specific tests).
 
 ### Solution code
 
@@ -74,7 +76,7 @@ Solutions must **derive** `expected_output` by running the mechanism the exercis
 
 **Adapted** chapters still require real code: e.g. C `json` may use `snprintf` and hand parsing instead of `serde`, but must still **build or parse** JSON-shaped text; C `time` must use **`time.h`** (or documented equivalents), not echo a fixed timestamp string.
 
-**Asm** solutions use NASM + syscalls/libc as documented; parity is “same skill, assembly-level mechanism,” not identical exercise count to Rust.
+**Asm** solutions use NASM + syscalls/libc as documented; the goal is assembly-level mechanism for the adapted topic, not identical exercise count to other tracks.
 
 ### Descriptions and theory
 
@@ -86,7 +88,7 @@ Chapter **`theory`** and per-exercise **`description`** / **`title`** must read 
 | For **Adapted** slots, state what is emphasized or simplified vs **Full** (e.g. “no time zones in v1”). | Instructions that say only “match expected stdout” or “print the answer”. |
 | Align with what **starters** and **solutions** actually do. | Theory that describes APIs the starter/solution never uses. |
 
-Shared exercise **`id`**s may keep **comparable outcomes** (same lines on stdout) while wording differs per language.
+Exercise **`id`**s must be **stable within a track** (progress and hints depend on them). Cross-track id alignment is **optional** and only useful when you intentionally compare courses.
 
 ### Starters (`starter_code`)
 
@@ -102,7 +104,7 @@ Hints remain **language-specific** and should point at real APIs, not at stdout 
 
 ### CI (continuous integration)
 
-Automated **`check_solutions`** (and language tests) verify **correctness** only. **Pedagogical parity** is a **content** requirement: reviewers and contributors enforce it when editing chapter JSON; optional lint scripts may be added later to catch obvious echo solutions.
+Automated **`check_solutions`** (and language tests) verify **correctness** only. **Pedagogical quality** is a **content** requirement: reviewers and contributors enforce it when editing chapter JSON; optional lint scripts may be added later to catch obvious echo solutions.
 
 A change that passes CI but violates this section is **not** curriculum-complete.
 
@@ -114,12 +116,12 @@ All LEARN-* v1 apps grade **trimmed stdout** (plus special cases documented per 
 
 Chapter and exercise **ids** may change during realignment. Older `progress.json` entries may no longer match; learners should expect **stale progress** until a migration tool exists. Do not block curriculum fixes on silent migration.
 
-## Porting workflow
+## Authoring workflow
 
-When adding or refreshing a language repo:
+When adding or refreshing a language track:
 
-1. Align **filename**, chapter **`id`**, and exercise **`id`**s with this document.
-2. Author **theory**, **descriptions**, **starters**, and **solutions** to meet **Pedagogical parity** above—not stdout-only placeholders.
-3. Run **`python3 scripts/check_solutions.py`** (and any language-specific tests) before merge.
+1. Add or edit **`chapters/<prefixed_stem>.json`** in that track’s directory. Align chapter **`id`** and **filename** with this document where the track includes that slot.
+2. Author **theory**, **descriptions**, **starters**, and **solutions** to meet **Pedagogical quality** above—not stdout-only placeholders.
+3. From that track’s directory, run **`python3 scripts/check_solutions.py`** (and any language-specific tests) before merge.
 
-Legacy chapters that still use echo solutions should be tracked and updated; do not add new exercises that rely on literal stdout copying.
+Do not add new exercises that rely on literal stdout copying. There is **no** cross-track code generator; bulk regeneration from Go or Rust has been removed.

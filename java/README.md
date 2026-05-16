@@ -64,24 +64,13 @@ python3 scripts/check_solutions.py --list-failures-only
 
 Default work dir: **`.check-java-work`**. Override: **`LEARN_JAVA_CHECK_WORK`**.
 
-Regenerate chapter JSON (**from repo root**, with parity catalog):
-
-```bash
-python3 scripts/parity/generate_native_bodies.py
-python3 scripts/regenerate_py_java_parity.py
-```
+Edit chapter JSON under **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
 
 ## Tests (dev install)
 
 ```bash
 python3 -m pytest tests/ -q
 ```
-
-## Docs
-
-| Topic | Location |
-|-------|----------|
-| Chapter order / parity | **[../CURRICULUM.md](../CURRICULUM.md)** |
 
 ## Security
 

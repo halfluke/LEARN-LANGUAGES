@@ -64,7 +64,7 @@ Default **`./.check-c-work`**. Override: **`LEARN_C_CHECK_WORK`**.
 
 ## Curriculum
 
-Order and pedagogical parity: **[../CURRICULUM.md](../CURRICULUM.md)**
+Edit **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
 
 ## Security
 

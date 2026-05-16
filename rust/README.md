@@ -54,15 +54,7 @@ cd path/to/LEARN-LANGUAGES/rust
 cargo run
 ```
 
-If you cloned only this subtree (sparse / submodule), still run **`cargo run`** from the directory that contains **`Cargo.toml`** and **`chapters/`**.
-
-Previous standalone repo instructions:
-
-```bash
-git clone https://github.com/halfluke/learn-rust.git
-cd learn-rust
-cargo run
-```
+If you use a sparse checkout, still run **`cargo run`** from the directory that contains **`Cargo.toml`** and **`chapters/`** (typically **`rust/`** inside **[LEARN-LANGUAGES](../README.md)**).
 
 Release build (faster binary, same requirement to run from repo root):
 

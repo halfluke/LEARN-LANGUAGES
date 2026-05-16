@@ -37,7 +37,7 @@ Startup probes, timeouts, and platform limits (e.g. asm is Linux-only v1) are do
 | **[CURRICULUM.md](CURRICULUM.md)** | Chapter order (`01_` … `19_`), ids, coverage matrix |
 | **[TUTORIAL_PLATFORM.md](TUTORIAL_PLATFORM.md)** | JSON schema, stdout checks, authoring rules |
 
-Workspace file: **[`learn-languages.code-workspace`](learn-languages.code-workspace)**.
+**VS Code / Cursor:** **File → Open Workspace from File…** and choose **[`learn-languages.code-workspace`](learn-languages.code-workspace)** at the repo root (folder path is **`.`**, portable across machines).
 
 ## Authoring
 

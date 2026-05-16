@@ -1,12 +1,12 @@
 # Tutorial platform (LEARN-* TUI model)
 
-**Location:** This file lives under **`LEARN-LANGUAGES/`** next to your **`LEARN-*`** repos (e.g. under `Downloads/`). It is **not** inside any language git tree so every tutorial project can reference **one canonical** copy—edit it here, then `@LEARN-LANGUAGES/TUTORIAL_PLATFORM.md` (or the full path) from any root in your workspace.
+**Location:** This file lives at the **LEARN-LANGUAGES** monorepo root (alongside **`rust/`**, **`go/`**, **`csharp/`**, …). Open the repo with **[`learn-languages.code-workspace`](learn-languages.code-workspace)** or your editor’s **Open Folder** on the clone root.
 
 This document captures the **architecture and decisions** for the **LEARN-*** terminal courses: JSON chapters, local compile/run, and stdout-first grading.
 
 **Curriculum source of truth:** chapter **themes**, **ordering**, **per-language coverage**, and **pedagogical quality** (solutions, theory/descriptions, starters) live in **[CURRICULUM.md](CURRICULUM.md)**. Each language course owns its **`chapters/*.json`** while sharing this **schema** and **platform mechanics**.
 
-**Scope:** JSON-driven chapters, local compile/run, stdout comparison, optional `cargo`/multi-file patterns (Rust), `dotnet` (C#), `cc`/`gcc` (C), `nasm`/`ld`/`gcc` (asm). Paths below often cite **LEARN-RUST** as the first implementation reference.
+**Scope:** JSON-driven chapters, local compile/run, stdout comparison, optional `cargo`/multi-file patterns (Rust), `dotnet` (C#), `cc`/`gcc` (C), `nasm`/`ld`/`gcc` (asm). Paths below often cite **`rust/`** as the first implementation reference.
 
 ---
 
@@ -62,7 +62,7 @@ Preserve **intentional non-sequential ids** inside a chapter when pedagogy requi
 
 ## 5. Execution model (Rust TUI)
 
-Implemented in **`LEARN-RUST/src/executor.rs`** / **`LEARN-RUST/src/validator.rs`**.
+Implemented in **`rust/src/executor.rs`** / **`rust/src/validator.rs`**.
 
 **Routing (first match wins):**
 
@@ -112,7 +112,7 @@ Implemented in **`LEARN-RUST/src/executor.rs`** / **`LEARN-RUST/src/validator.rs
 
 ## 7. Offline verification script
 
-- **Script:** `LEARN-RUST/scripts/check_solutions.py`
+- **Script:** `rust/scripts/check_solutions.py`
 - **Purpose:** Every non-empty **`solution`** compiles and matches **`expected_output`** using the **same classification** as the executor (`#[test]` / crate heuristics / `rustc`).
 - **Performance:** Reuses **one** crate under **`.check-solutions-crate`** and **`CARGO_TARGET_DIR`** under **`.check-solutions-target`** (overridable via `LEARN_RUST_CHECK_CRATE` / `LEARN_RUST_CHECK_TARGET`).
 - **Gitignore:** those dirs + **`target/`** + **`**/__pycache__/`**.
@@ -134,9 +134,9 @@ python3 scripts/check_solutions.py
 
 ## 9. Cursor / workspace (operational)
 
-- **Multi-root:** add folders (LEARN-GO, LEARN-RUST, **LEARN-LANGUAGES**, …) and **save** a **`.code-workspace`** file to reopen the same set of roots.
+- **Workspace:** use the tracked **[`learn-languages.code-workspace`](learn-languages.code-workspace)** (`"path": "."`) so paths stay portable across machines.
 - **Reopening the workspace file does not embed chat history.** Treat **this file** + per-repo **rules** as the durable “why we did X.”
-- For new languages: **`@LEARN-LANGUAGES/TUTORIAL_PLATFORM.md`** plus **`@`** reference files (`LEARN-RUST/src/executor.rs`, `LEARN-RUST/scripts/check_solutions.py`, a sample `chapters/*.json`, etc.) in the first prompt.
+- For new languages: **`@TUTORIAL_PLATFORM.md`** plus **`@`** reference files (`rust/src/executor.rs`, `rust/scripts/check_solutions.py`, a sample `chapters/*.json`, etc.) in the first prompt.
 
 ---
 
@@ -155,10 +155,10 @@ Each language course maintains its own **`chapters/*.json`**. **CURRICULUM.md** 
 
 ---
 
-## 11. Related files (reference: LEARN-RUST)
+## 11. Related files (reference: `rust/`)
 
-| Area | Path (under `LEARN-RUST/`) |
-|------|----------------------------|
+| Area | Path (under `rust/`) |
+|------|------------------------|
 | Run / compile | `src/executor.rs`, `src/validator.rs` |
 | Chapter load | `src/chapter.rs` |
 | Chapter content | `chapters/*.json` |

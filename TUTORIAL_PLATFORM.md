@@ -147,7 +147,7 @@ Same **JSON schema** can drive another TUI; swap **`executor`** for:
 | Language | Typical run | Friction |
 |----------|-------------|----------|
 | **Python** | `python3 file.py` | venv/deps; less compile-time catching. |
-| **C#** | `dotnet run` on small csproj | project file + TFMs; heavier cold start. |
+| **C#** | TUI: `dotnet build` + `dotnet run --no-build` on a session csproj; maintainer checker uses `dotnet exec` (see **`csharp/README`**) | project file + TFMs; heavier cold start. |
 | **C** | `cc` / `clang` + binary | UB can “pass” stdout checks; sanitizers optional. |
 | **x86-64 asm** | assembler + linker | ABI, syntax dialect, linking; grading often needs a harness, not only stdout. |
 

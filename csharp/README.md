@@ -15,9 +15,15 @@ Optional: **`EDITOR`** for **`e`** in the exercise editor.
 
 **Startup:** **`dotnet --version`**; failures print to stderr and exit **1**.
 
-**Grading:** your snippet becomes **`Program.cs`** in an SDK-style console project; the TUI uses **`dotnet build`** then **`dotnet run --no-build`** (first run may restore NuGet packages). Maintainer **`check_solutions.py`** uses the same build step but runs via **`dotnet exec`** for speed. Trimmed stdout must match **`expected_output`**.
+## How exercises are run (TUI)
 
-**Maintainers:** **`python3 scripts/check_solutions.py`** needs **Python 3.10+** and the same **.NET SDK**; it reuses one project under **`.check-csharp-work`** (override with **`LEARN_CSHARP_CHECK_WORK`**).
+When you press **`r`** on an exercise:
+
+1. Your code is written to **`Program.cs`** in a **session SDK console project** (created once per TUI run, reused for later exercises).
+2. The app runs **`dotnet build`** (NuGet restore happens on the first build; later builds use **`--no-restore`**).
+3. The app runs **`dotnet run --no-build`** on that project — the normal SDK host path learners expect, not a stripped-down shortcut.
+
+Trimmed **stdout** is compared to **`expected_output`**.
 
 ## Install (editable)
 
@@ -52,19 +58,32 @@ export LEARN_CSHARP_CHAPTERS=/absolute/path/to/chapters
 | Code | **`r`** run **`dotnet`**, **`e`** **`$EDITOR`**, **`b`** back |
 | Result | **`h`** hint · **`r`** re-run · **`b`** back |
 
-## Verify solutions
+## Maintainer: verify bundled solutions
+
+Requires **Python 3.10+** and the same **.NET SDK** as the TUI.
 
 ```bash
 python3 scripts/check_solutions.py
+python3 scripts/check_solutions.py --chapter methods
+python3 scripts/check_solutions.py --jobs 1
+python3 scripts/check_solutions.py --list-failures-only
 ```
 
-Default **`./.check-csharp-work`** ( **`--jobs 2`** workers, each with its own project: **`dotnet build --no-restore`** then **`dotnet exec`** ). Override: **`LEARN_CSHARP_CHECK_WORK`**. Use **`--jobs 1`** for sequential checks.
+The checker is **faster** than the TUI path on purpose; it is not identical subprocess wiring:
+
+| | TUI (learner) | `check_solutions.py` (maintainer) |
+|--|----------------|-----------------------------------|
+| Projects | One per session | **`--jobs 2`** by default → `worker-0/`, `worker-1/` under the work dir |
+| After build | **`dotnet run --no-build`** | **`dotnet exec`** on the built DLL |
+| Goal | Match real **`dotnet run`** behavior | Bulk-verify all reference solutions quickly |
+
+Work directory: **`./.check-csharp-work`** (override **`LEARN_CSHARP_CHECK_WORK`**). Safe to delete; it is gitignored.
 
 Edit chapter JSON under **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
 
 ## Security
 
-Creates a temp **`dotnet`** project and runs **`dotnet run`** locally with timeouts — treat chapter snippets like compiling any untrusted code.
+The TUI and checker **write your source to disk**, **compile** with **`dotnet`**, and **execute** the resulting program under timeouts. Treat chapter snippets like any local compile-and-run exercise.
 
 ## Tests
 

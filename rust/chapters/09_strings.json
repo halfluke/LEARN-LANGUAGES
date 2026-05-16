@@ -29,7 +29,7 @@
     {
       "id": "strings_03",
       "title": "contains / replace / split",
-      "description": "Same three checks as Go exercise on `Hello, World!` and `a,b,c`.",
+      "description": "On `Hello, World!` and `a,b,c`.",
       "starter_code": "fn main() {\n    let text = \"Hello, World!\";\n}\n",
       "expected_output": "Contains: true\nReplaced: Hello, Rust!\nFirst: a",
       "hints": [
@@ -54,14 +54,14 @@
     {
       "id": "strings_05",
       "title": "Case fold",
-      "description": "Upper then lower for `Go Programming`.",
-      "starter_code": "fn main() {\n    let s = \"Go Programming\";\n}\n",
-      "expected_output": "GO PROGRAMMING\ngo programming",
+      "description": "Upper then lower for `Rust Programming`.",
+      "starter_code": "fn main() {\n    let s = \"Rust Programming\";\n}\n",
+      "expected_output": "RUST PROGRAMMING\nrust programming",
       "hints": [
         "`to_uppercase()`",
         "`to_lowercase()`"
       ],
-      "solution": "fn main() {\n    let s = \"Go Programming\";\n    println!(\"{}\", s.to_uppercase());\n    println!(\"{}\", s.to_lowercase());\n}\n"
+      "solution": "fn main() {\n    let s = \"Rust Programming\";\n    println!(\"{}\", s.to_uppercase());\n    println!(\"{}\", s.to_lowercase());\n}\n"
     },
     {
       "id": "strings_07",

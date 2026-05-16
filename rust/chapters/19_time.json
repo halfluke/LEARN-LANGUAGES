@@ -17,7 +17,7 @@
     {
       "id": "time_02",
       "title": "Components in Tokyo",
-      "description": "Use `chrono_tz::Asia::Tokyo` and `with_ymd_and_hms` for 2023-03-15 14:30:00. Print year, month name, day, hour, minute, weekday (same labels as the Go exercise).",
+      "description": "Use `chrono_tz::Asia::Tokyo` and `with_ymd_and_hms` for 2023-03-15 14:30:00. Print year, month name, day, hour, minute, weekday (shown in `expected_output`).",
       "starter_code": "use chrono::prelude::*;\nuse chrono_tz::Asia::Tokyo;\n\nfn main() {\n}\n",
       "expected_output": "Year: 2023\nMonth: March\nDay: 15\nHour: 14\nMinute: 30\nWeekday: Wednesday",
       "hints": [
@@ -29,7 +29,7 @@
     {
       "id": "time_03",
       "title": "Durations",
-      "description": "Build a duration of 2 hours + 30 minutes and print it in Go-style `HhMmMs` (`2h30m0s`). Then print `500ms` for a half-second (format these two lines exactly).",
+      "description": "Build a duration of 2 hours + 30 minutes and print it as `2h30m0s` (hours/minutes/seconds) (`2h30m0s`). Then print `500ms` for a half-second (format these two lines exactly).",
       "starter_code": "use chrono::Duration;\n\nfn fmt_hms(d: Duration) -> String {\n    let secs = d.num_seconds();\n    let h = secs / 3600;\n    let m = (secs % 3600) / 60;\n    let s = secs % 60;\n    format!(\"{}h{}m{}s\", h, m, s)\n}\n\nfn main() {\n}\n",
       "expected_output": "2h30m0s\n500ms",
       "hints": [
@@ -75,7 +75,7 @@
     {
       "id": "time_07",
       "title": "Subtract instants",
-      "description": "Fixed `now` = 2024-12-25 UTC midnight, `then` = 2024-11-25 UTC midnight. Print the duration in Go-style hours (`720h0m0s`) then `Days: 30`.",
+      "description": "Fixed `now` = 2024-12-25 UTC midnight, `then` = 2024-11-25 UTC midnight. Print the duration as `720h0m0s` (`720h0m0s`) then `Days: 30`.",
       "starter_code": "use chrono::prelude::*;\n\nfn main() {\n}\n",
       "expected_output": "720h0m0s\nDays: 30",
       "hints": [
@@ -87,18 +87,18 @@
     {
       "id": "time_09",
       "title": "Before / after",
-      "description": "Compare Jan 1 2024 and Dec 31 2024 UTC with `lt`/`gt` (or `<`/`>`) and print the two lines from the Go exercise.",
+      "description": "Compare Jan 1 2024 and Dec 31 2024 UTC with `lt`/`gt` (or `<`/`>`) and print the two lines shown in `expected_output`.",
       "starter_code": "use chrono::prelude::*;\n\nfn main() {\n}\n",
       "expected_output": "January 1 is before December 31: true\nDecember 31 is after January 1: true",
       "hints": [
-        "`t1 < t2` is the same idea as Go’s `Before`"
+        "`t1 < t2` is the compare instants with `<` and `>`"
       ],
       "solution": "use chrono::prelude::*;\n\nfn main() {\n    let t1 = Utc.with_ymd_and_hms(2024, 1, 1, 0, 0, 0).unwrap();\n    let t2 = Utc.with_ymd_and_hms(2024, 12, 31, 0, 0, 0).unwrap();\n    println!(\"January 1 is before December 31: {}\", t1 < t2);\n    println!(\"December 31 is after January 1: {}\", t2 > t1);\n}\n"
     },
     {
       "id": "time_08",
       "title": "Fixed clock (no wall time)",
-      "description": "Go used `time.Now` + `Sleep`. Here: use `Utc.with_ymd_and_hms(2024, 6, 1, 10, 15, 30)`. Print the instant, then hour and minute, then the instant plus one second (`+ Duration::seconds(1)`) labeled `After +1s:` — deterministic output.",
+      "description": "Use a fixed instant (no wall clock): use `Utc.with_ymd_and_hms(2024, 6, 1, 10, 15, 30)`. Print the instant, then hour and minute, then the instant plus one second (`+ Duration::seconds(1)`) labeled `After +1s:` — deterministic output.",
       "starter_code": "use chrono::prelude::*;\n\nfn main() {\n}\n",
       "expected_output": "2024-06-01 10:15:30 UTC\nHour: 10\nMinute: 15\nAfter +1s: 2024-06-01 10:15:31 UTC",
       "hints": [
@@ -107,6 +107,6 @@
       "solution": "use chrono::prelude::*;\n\nfn main() {\n    let t = Utc.with_ymd_and_hms(2024, 6, 1, 10, 15, 30).unwrap();\n    println!(\"{}\", t);\n    println!(\"Hour: {}\", t.hour());\n    println!(\"Minute: {}\", t.minute());\n    let after = t + chrono::Duration::seconds(1);\n    println!(\"After +1s: {}\", after);\n}\n"
     }
   ],
-  "theory": "## Time in Rust\n\nThe **`chrono`** crate is the common choice for calendar dates, time zones, and durations (similar to Go’s `time` package).\n\n- `Utc.with_ymd_and_hms(...)` — build an instant in UTC  \n- **`chrono_tz`** — named zones like `Asia::Tokyo`  \n- `NaiveDateTime::parse_from_str` + `.and_utc()` — parse without offset then treat as UTC  \n- `signed_duration_since`, `checked_add_signed`, `num_days`, `num_hours` — arithmetic  \n\nGo’s `time.Now` + `Sleep` exercise is replaced here with a **fixed clock** so your output still matches the checker when you submit.\n",
+  "theory": "## Time in Rust\n\nThe **`chrono`** crate models calendar dates, time zones, and durations. Pair it with **`chrono_tz`** when you need named zones such as `Asia::Tokyo`.\n\n### Building instants\n\n- `Utc.with_ymd_and_hms(year, month, day, h, m, s)` — construct a UTC `DateTime`\n- `NaiveDateTime::parse_from_str` + `.and_utc()` — parse a naive timestamp, then attach UTC\n\n### Durations and arithmetic\n\n- `Duration::hours`, `minutes`, `seconds`, `milliseconds` — build lengths of time\n- `signed_duration_since`, `checked_add_signed` — subtract instants and add durations safely\n- `num_days`, `num_hours` — read components from a `Duration`\n\n### Deterministic exercises\n\nSeveral exercises use **fixed** instants instead of the system clock so your output matches the checker on every machine. In production you would call `Utc::now()`, but fixed times keep automated grading stable.\n",
   "exercise_count": 9
 }

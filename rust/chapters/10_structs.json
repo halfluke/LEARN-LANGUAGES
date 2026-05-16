@@ -29,13 +29,13 @@
     {
       "id": "structs_03",
       "title": "Partial struct literal",
-      "description": "`Book` with title, author, pages — set only title `Go Programming`, others default.",
+      "description": "`Book` with title, author, pages — set only title `Rust Programming`, others default.",
       "starter_code": "#[derive(Debug)]\nstruct Book {\n    title: String,\n    author: String,\n    pages: i32,\n}\n\nfn main() {\n}\n",
-      "expected_output": "Book { title: \"Go Programming\", author: \"\", pages: 0 }",
+      "expected_output": "Book { title: \"Rust Programming\", author: \"\", pages: 0 }",
       "hints": [
-        "`Book { title: \"Go Programming\".into(), ..Default::default() }` requires `Default` impl"
+        "`Book { title: \"Rust Programming\".into(), ..Default::default() }` requires `Default` impl"
       ],
-      "solution": "#[derive(Debug, Default)]\nstruct Book {\n    title: String,\n    author: String,\n    pages: i32,\n}\n\nfn main() {\n    let book = Book {\n        title: \"Go Programming\".into(),\n        ..Default::default()\n    };\n    println!(\"{:?}\", book);\n}\n"
+      "solution": "#[derive(Debug, Default)]\nstruct Book {\n    title: String,\n    author: String,\n    pages: i32,\n}\n\nfn main() {\n    let book = Book {\n        title: \"Rust Programming\".into(),\n        ..Default::default()\n    };\n    println!(\"{:?}\", book);\n}\n"
     },
     {
       "id": "structs_04",

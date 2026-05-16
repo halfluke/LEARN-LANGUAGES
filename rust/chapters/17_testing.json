@@ -56,7 +56,7 @@
       "starter_code": "pub fn validate(age: i32) -> Result<(), &'static str> {\n    if age < 0 {\n        return Err(\"age cannot be negative\");\n    }\n    if age > 150 {\n        return Err(\"age is too large\");\n    }\n    Ok(())\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn validate_negative_age_message() {\n        let err = validate(-5).unwrap_err();\n        // assert!(err.contains(\"negative\"));\n    }\n}\n\nfn main() {}\n",
       "expected_output": "PASS",
       "hints": [
-        "`&str` has `.contains` just like Go’s `strings.Contains` on the error string."
+        "`&str` has `.contains` with `.contains` on the error string on the error string."
       ],
       "solution": "pub fn validate(age: i32) -> Result<(), &'static str> {\n    if age < 0 {\n        return Err(\"age cannot be negative\");\n    }\n    if age > 150 {\n        return Err(\"age is too large\");\n    }\n    Ok(())\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn validate_negative_age_message() {\n        let err = validate(-5).unwrap_err();\n        assert!(err.contains(\"negative\"));\n    }\n}\n\nfn main() {}\n"
     }

@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TRACKS = ("python", "java", "csharp", "c")
+TRACKS = ("python", "java", "csharp", "c", "rust")
 
 
 def load_hints(track: str) -> dict[str, dict]:

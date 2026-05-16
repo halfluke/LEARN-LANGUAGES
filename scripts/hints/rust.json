@@ -1,0 +1,667 @@
+{
+  "variables_01": {
+    "hints": [
+      "Use `let age = 25;`",
+      "Use `println!(\"{}\", age);` or `println!(\"{age}\");` on Rust 2021+"
+    ]
+  },
+  "variables_02": {
+    "hints": [
+      "let name = \"Rust\";",
+      "let version: f64 = 1.85;",
+      "println!(\"{} {}\", name, version);"
+    ]
+  },
+  "variables_03": {
+    "hints": [
+      "`let y = x as f64;`",
+      "println!(\"{}\", y as i32); // or print y with {:.0}"
+    ]
+  },
+  "variables_04": {
+    "hints": [
+      "println!(\"{} {} {} {}\", 0i32, 0f64, \"\", false);"
+    ]
+  },
+  "variables_05": {
+    "hints": [
+      "`const MAX_SCORE: i32 = 100;`",
+      "`const MIN_SCORE: i32 = 0;`"
+    ]
+  },
+  "variables_07": {
+    "hints": [
+      "let (host, port, debug) = (\"localhost\", 8080, true);",
+      "Types inferred: &str, i32, bool"
+    ]
+  },
+  "variables_06": {
+    "hints": [
+      "`(a, b) = (b, a);` requires `mut` on bindings.",
+      "Or use `std::mem::swap(&mut a, &mut b);`"
+    ]
+  },
+  "ownership_01": {
+    "hints": [
+      "`let t = s;` moves ownership",
+      "`println!(\"{}\", t);`"
+    ]
+  },
+  "ownership_02": {
+    "hints": [
+      "`let t = s.clone();`",
+      "`println!(\"{}{}\", s, t);`"
+    ]
+  },
+  "ownership_03": {
+    "hints": [
+      "`let mut b = a;` copies `i32`",
+      "`b += 1;`"
+    ]
+  },
+  "controlflow_01": {
+    "hints": [
+      "`if age >= 18 { ... } else { ... }`"
+    ]
+  },
+  "controlflow_02": {
+    "hints": [
+      "`for i in 1..=5`"
+    ]
+  },
+  "controlflow_03": {
+    "hints": [
+      "`match day { 1 => ..., 2 => ..., _ => ... }`"
+    ]
+  },
+  "controlflow_04": {
+    "hints": [
+      "`for c in colors`"
+    ]
+  },
+  "controlflow_05": {
+    "hints": [
+      "chain `if / else if`"
+    ]
+  },
+  "controlflow_07": {
+    "hints": [
+      "`if i >= 5 { break; }`"
+    ]
+  },
+  "controlflow_06": {
+    "hints": [
+      "`if i % 2 == 0 { continue; }`"
+    ]
+  },
+  "functions_01": {
+    "hints": [
+      "Define `fn greet() { println!(...); }`"
+    ]
+  },
+  "functions_02": {
+    "hints": [
+      "`fn greet(name: &str)`",
+      "`println!(\"Hello, {}\", name);`"
+    ]
+  },
+  "functions_03": {
+    "hints": [
+      "`fn add(a: i32, b: i32) -> i32 { a + b }`"
+    ]
+  },
+  "functions_04": {
+    "hints": [
+      "`Err(\"division by zero\")`"
+    ]
+  },
+  "functions_05": {
+    "hints": [
+      "`for n in nums { s += n }`"
+    ]
+  },
+  "functions_07": {
+    "hints": [
+      "`Drop::drop` runs when `_end` goes out of scope after `working`."
+    ]
+  },
+  "functions_06": {
+    "hints": [
+      "`let mut sum = 0; move |x| { sum += x; sum }`"
+    ]
+  },
+  "lifetimes_01": {
+    "hints": [
+      "`let s: &'static str = \"rust\";`",
+      "`println!(\"{}\", s);` without newline if expected has none"
+    ]
+  },
+  "lifetimes_02": {
+    "hints": [
+      "Compare `x.len()` and `y.len()`",
+      "If equal, return `x`"
+    ]
+  },
+  "lifetimes_03": {
+    "hints": [
+      "`let s: &[i32] = &a[..];`",
+      "`print!(\"{}\", s.iter().sum::<i32>());`"
+    ]
+  },
+  "arrays_01": {
+    "hints": [
+      "`let arr = [1, 2, 3, 4, 5];`",
+      "`println!(\"{:?}\", arr);`"
+    ]
+  },
+  "arrays_02": {
+    "hints": [
+      "`for n in nums {`",
+      "`println!(\"{}\", n);`"
+    ]
+  },
+  "arrays_03": {
+    "hints": [
+      "`arr.len()`"
+    ]
+  },
+  "arrays_04": {
+    "hints": [
+      "Trailing zeros can be written explicitly."
+    ]
+  },
+  "arrays_05": {
+    "hints": [
+      "Nested `for` rows then values."
+    ]
+  },
+  "arrays_07": {
+    "hints": [
+      "`let mut s = 0;` then add in loop."
+    ]
+  },
+  "arrays_06": {
+    "hints": [
+      "`arr[0]` and `arr[2]`"
+    ]
+  },
+  "slices_01": {
+    "hints": [
+      "`let mut v = vec![0; 3];` then assign indices",
+      "Or `vec![1,2,3]`"
+    ]
+  },
+  "slices_02": {
+    "hints": [
+      "`v.push(3);` etc."
+    ]
+  },
+  "slices_03": {
+    "hints": [
+      "`v.len()`, `v.capacity()`"
+    ]
+  },
+  "slices_04": {
+    "hints": [
+      "`fruits.len()`"
+    ]
+  },
+  "slices_05": {
+    "hints": [
+      "`&v[1..4]`"
+    ]
+  },
+  "slices_07": {
+    "hints": [
+      "`a.extend(b);`"
+    ]
+  },
+  "slices_06": {
+    "hints": [
+      "`let mut c = original.clone();`"
+    ]
+  },
+  "maps_01": {
+    "hints": [
+      "`ages.insert(\"Alice\", 25);`"
+    ]
+  },
+  "maps_02": {
+    "hints": [
+      "`scores[\"Math\"]`"
+    ]
+  },
+  "maps_03": {
+    "hints": [
+      "`names.insert(\"1\", \"One\");`"
+    ]
+  },
+  "maps_04": {
+    "hints": [
+      "`data.remove(\"b\");`"
+    ]
+  },
+  "maps_05": {
+    "hints": [
+      "`inventory.get(\"bananas\")`"
+    ]
+  },
+  "maps_07": {
+    "hints": [
+      "`counts.len()`"
+    ]
+  },
+  "maps_06": {
+    "hints": [
+      "`for (k, v) in &grades`"
+    ]
+  },
+  "strings_01": {
+    "hints": [
+      "`println!(\"Hello, Rust!\");`"
+    ]
+  },
+  "strings_02": {
+    "hints": [
+      "`ch as u32`"
+    ]
+  },
+  "strings_03": {
+    "hints": [
+      "`contains`",
+      "`replace`",
+      "`split`"
+    ]
+  },
+  "strings_04": {
+    "hints": [
+      "`format!`",
+      "`{:.2}`"
+    ]
+  },
+  "strings_05": {
+    "hints": [
+      "`to_uppercase()`",
+      "`to_lowercase()`"
+    ]
+  },
+  "strings_07": {
+    "hints": [
+      "`chars().rev().collect::<String>()`"
+    ]
+  },
+  "strings_06": {
+    "hints": [
+      "`starts_with`",
+      "`ends_with`"
+    ]
+  },
+  "structs_01": {
+    "hints": [
+      "`Person { name: \"Alice\".into(), age: 30 }`"
+    ]
+  },
+  "structs_02": {
+    "hints": [
+      "`p.y = 20;`"
+    ]
+  },
+  "structs_03": {
+    "hints": [
+      "`Book { title: \"Rust Programming\".into(), ..Default::default() }` requires `Default` impl"
+    ]
+  },
+  "structs_04": {
+    "hints": [
+      "`emp.company`"
+    ]
+  },
+  "structs_05": {
+    "hints": [
+      "`Rectangle::default()`"
+    ]
+  },
+  "structs_07": {
+    "hints": [
+      "`#[derive(PartialEq, Eq)]`"
+    ]
+  },
+  "structs_06": {
+    "hints": [
+      "`c.value += 5;`"
+    ]
+  },
+  "interfaces_01": {
+    "hints": [
+      "`w * h`"
+    ]
+  },
+  "interfaces_02": {
+    "hints": [
+      "`write` returns `Ok(buf.len())`",
+      "use `std::str::from_utf8`"
+    ]
+  },
+  "interfaces_03": {
+    "hints": [
+      "`std::f64::consts::PI`"
+    ]
+  },
+  "interfaces_04": {
+    "hints": [
+      "`impl Describable for Person`"
+    ]
+  },
+  "interfaces_05": {
+    "hints": [
+      "`match a { Any::Int(v) => ...`"
+    ]
+  },
+  "interfaces_07": {
+    "hints": [
+      "`Box::new(Dog)`"
+    ]
+  },
+  "interfaces_06": {
+    "hints": [
+      "Use `println!(\"float64: {:.2}\", v)` for two decimal places"
+    ]
+  },
+  "methods_01": {
+    "hints": [
+      "`format!(\"Hello, {}\", self.name)`"
+    ]
+  },
+  "methods_02": {
+    "hints": [
+      "`self.name = n.to_string();`"
+    ]
+  },
+  "methods_03": {
+    "hints": [
+      "`#[derive(Debug)]`"
+    ]
+  },
+  "methods_04": {
+    "hints": [
+      "`write!(f, \"Point({}, {})\", self.x, self.y)`"
+    ]
+  },
+  "methods_05": {
+    "hints": [
+      "`fn add(mut self, t: &str) -> Self { self.s.push_str(t); self }`"
+    ]
+  },
+  "methods_07": {
+    "hints": [
+      "`std::f64::consts::PI`"
+    ]
+  },
+  "methods_06": {
+    "hints": [
+      "`self.0 % 2 == 0`"
+    ]
+  },
+  "packages_01": {
+    "hints": [
+      "`pub fn` inside nested mod"
+    ]
+  },
+  "packages_02": {
+    "hints": [
+      "`(144_f64).sqrt() as i32`"
+    ]
+  },
+  "packages_03": {
+    "hints": [
+      "`AtomicI32::new(0)`",
+      "`fetch_add(1, Ordering::SeqCst)`"
+    ]
+  },
+  "packages_04": {
+    "hints": [
+      "`static V: OnceLock<String> = OnceLock::new();`"
+    ]
+  },
+  "packages_05": {
+    "hints": [
+      "`pub fn format()`"
+    ]
+  },
+  "packages_07": {
+    "hints": [
+      "Use a `Vec<u8>` as an alias-named writer if you like."
+    ]
+  },
+  "packages_06": {
+    "hints": [
+      "`\"hello\".to_uppercase()`"
+    ]
+  },
+  "pointers_01": {
+    "hints": [
+      "`*r`"
+    ]
+  },
+  "pointers_02": {
+    "hints": [
+      "`let r = &value;`"
+    ]
+  },
+  "pointers_03": {
+    "hints": [
+      "`*p *= 2;`"
+    ]
+  },
+  "pointers_04": {
+    "hints": [
+      "`let mut b = Box::new(0);`"
+    ]
+  },
+  "pointers_05": {
+    "hints": [
+      "`p.name = \"Bob\".into();`"
+    ]
+  },
+  "pointers_07": {
+    "hints": [
+      "`match o { None => ...`"
+    ]
+  },
+  "pointers_06": {
+    "hints": [
+      "`std::mem::swap(a, b);`"
+    ]
+  },
+  "errors_01": {
+    "hints": [
+      "`Err(\"division by zero\")`"
+    ]
+  },
+  "errors_02": {
+    "hints": [
+      "`if name != \"alice\" { Err(\"not found\") }`"
+    ]
+  },
+  "errors_03": {
+    "hints": [
+      "`map_err`"
+    ]
+  },
+  "errors_04": {
+    "hints": [
+      "`Err(Box::new(ValidationError { field: \"email\".into() }))`",
+      "`err.downcast_ref::<ValidationError>()`"
+    ]
+  },
+  "errors_05": {
+    "hints": [
+      "`if let Ok(v) = ...`"
+    ]
+  },
+  "errors_07": {
+    "hints": [
+      "`contains(\"disk full\")`"
+    ]
+  },
+  "errors_06": {
+    "hints": [
+      "return `Err(ERR_NOT_FOUND)`"
+    ]
+  },
+  "concurrency_01": {
+    "hints": [
+      "`thread::spawn` then `sleep` then `join` so `Hello!` prints before `main done`."
+    ]
+  },
+  "concurrency_02": {
+    "hints": [
+      "`mpsc::channel()`"
+    ]
+  },
+  "concurrency_03": {
+    "hints": [
+      "`mpsc::sync_channel(2)`"
+    ]
+  },
+  "concurrency_04": {
+    "hints": [
+      "Spawn thread that sleeps 10ms then sends"
+    ]
+  },
+  "concurrency_05": {
+    "hints": [
+      "`while let Ok(n) = rx.recv()`"
+    ]
+  },
+  "concurrency_07": {
+    "hints": [
+      "`Arc<Mutex<Vec<_>>>` or receive into `Vec` then `sort`"
+    ]
+  },
+  "concurrency_06": {
+    "hints": [
+      "Push handles then join in order"
+    ]
+  },
+  "testing_01": {
+    "hints": [
+      "`assert_eq!(sum(2, 3), 5);`"
+    ]
+  },
+  "testing_02": {
+    "hints": [
+      "Push `(2, 3, 6)`, `(0, 5, 0)`, `(-1, 4, -4)`"
+    ]
+  },
+  "testing_03": {
+    "hints": [
+      "`assert_eq!(divide(10, 2), Ok(5));`",
+      "`assert!(divide(10, 0).is_err());`"
+    ]
+  },
+  "testing_05": {
+    "hints": [
+      "Keep the assertion inside the loop or once after — both compile; loop stresses the call site."
+    ]
+  },
+  "testing_04": {
+    "hints": [
+      "`&str` has `.contains` with `.contains` on the error string on the error string."
+    ]
+  },
+  "json_01": {
+    "hints": [
+      "`serde_json::to_string(&p).unwrap()`"
+    ]
+  },
+  "json_02": {
+    "hints": [
+      "`serde_json::from_str::<Person>(json_data).unwrap()`"
+    ]
+  },
+  "json_03": {
+    "hints": [
+      "Use `#[serde(rename = \"...\")]` on each field for snake_case JSON keys. snake_case names in JSON."
+    ]
+  },
+  "json_04": {
+    "hints": [
+      "`Config { server: Some(...), port: None, debug: None }`"
+    ]
+  },
+  "json_05": {
+    "hints": [
+      "`serde_json::to_string` then `from_str`"
+    ]
+  },
+  "json_06": {
+    "hints": [
+      "PascalCase field names match the expected PascalCase JSON keys."
+    ]
+  },
+  "json_07": {
+    "hints": [
+      "`serde_json::to_string(&vec![...]).unwrap()`"
+    ]
+  },
+  "json_09": {
+    "hints": [
+      "`serde_json::to_string(&entry.data).unwrap()`"
+    ]
+  },
+  "json_08": {
+    "hints": [
+      "`let people: Vec<Person> = serde_json::from_str(json_data).unwrap();`"
+    ]
+  },
+  "time_01": {
+    "hints": [
+      "`Utc.with_ymd_and_hms(2024, 1, 1, 12, 0, 0).unwrap()`"
+    ]
+  },
+  "time_02": {
+    "hints": [
+      "`t.format(\"%B\")` for month name",
+      "`t.format(\"%A\")` for weekday"
+    ]
+  },
+  "time_03": {
+    "hints": [
+      "`Duration::hours(2) + Duration::minutes(30)`",
+      "For ms: `Duration::milliseconds(500).num_milliseconds()`"
+    ]
+  },
+  "time_04": {
+    "hints": [
+      "`NaiveDateTime::parse_from_str(..., \"%Y-%m-%d %H:%M:%S\")`"
+    ]
+  },
+  "time_05": {
+    "hints": [
+      "`t.format(\"%m/%d/%Y\")`",
+      "For the second line, `%A, %B %e, %Y` then collapse double spaces from `%e` padding"
+    ]
+  },
+  "time_06": {
+    "hints": [
+      "`t + Duration::hours(3 * 24 + 5)`"
+    ]
+  },
+  "time_07": {
+    "hints": [
+      "`now.signed_duration_since(then)`",
+      "`diff.num_hours()` and `diff.num_days()`"
+    ]
+  },
+  "time_09": {
+    "hints": [
+      "`t1 < t2` is the compare instants with `<` and `>`"
+    ]
+  },
+  "time_08": {
+    "hints": [
+      "No `std::thread::sleep` — add a `chrono::Duration` instead"
+    ]
+  }
+}

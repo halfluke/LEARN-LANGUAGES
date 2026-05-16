@@ -2,7 +2,7 @@
   "id": "variables",
   "title": "Variables & Types",
   "description": "Bindings, mutability, types, casts, and constants in Rust",
-  "theory": "## Variables in Rust\n\nRust binds names with `let`. Bindings are **immutable by default**; use `let mut` when the value may change.\n\n### Bindings\n\n```rust\nlet name = \"Alice\";\nlet age: i32 = 25;\n```\n\n### Basic types\n\nCommon scalar types include `i32`, `i64`, `u32`, `f64`, `bool`, `char`, and `&str` / `String`.\n\n### Type ascription and inference\n\nTypes are often inferred; you can write them explicitly (`let x: f64 = 10.0;`).\n\n### Shadowing\n\nYou may redeclare with `let` to shadow a name (even changing type).\n\n### Constants\n\n```rust\nconst MAX_SCORE: i32 = 100;\n```\n\n### Tuples for multiple values\n\n```rust\nlet (a, b) = (5, 10);\n```\n\nUse the same exercise ids as the Go course for easy cross-reference.\n",
+  "theory": "## Variables in Rust\n\nRust binds names with `let`. Bindings are **immutable by default**; use `let mut` when the value may change.\n\n### Bindings\n\n```rust\nlet name = \"Alice\";\nlet age: i32 = 25;\n```\n\n### Basic types\n\nCommon scalar types include `i32`, `i64`, `u32`, `f64`, `bool`, `char`, and `&str` / `String`.\n\n### Type ascription and inference\n\nTypes are often inferred; you can write them explicitly (`let x: f64 = 10.0;`).\n\n### Shadowing\n\nYou may redeclare with `let` to shadow a name (even changing type).\n\n### Constants\n\n```rust\nconst MAX_SCORE: i32 = 100;\n```\n\n### Tuples for multiple values\n\n```rust\nlet (a, b) = (5, 10);\n```\n\nWork through the exercises below to practice binding, conversion, and Rust’s zero values.\n",
   "exercises": [
     {
       "id": "variables_01",
@@ -44,7 +44,7 @@
     {
       "id": "variables_04",
       "title": "Printing default values",
-      "description": "Print `i32` zero, `f64` zero, an empty string, and `false`, space-separated (mirrors Go’s zero-value demo).",
+      "description": "Print `i32` zero, `f64` zero, an empty string, and `false`, space-separated (each type’s default value).",
       "starter_code": "fn main() {\n    // println!(... 0i32, 0f64, \"\", false)\n}\n",
       "expected_output": "0 0  false",
       "hints": [

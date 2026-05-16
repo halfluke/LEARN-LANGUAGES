@@ -40,7 +40,7 @@
     {
       "id": "methods_04",
       "title": "Display trait",
-      "description": "Implement `std::fmt::Display` for `Point` like Go `Stringer`.",
+      "description": "Implement `std::fmt::Display` for `Point` using the `std::fmt::Display` trait.",
       "starter_code": "use std::fmt;\n\nstruct Point {\n    x: i32,\n    y: i32,\n}\n\n// impl fmt::Display for Point\n\nfn main() {\n    let p = Point { x: 10, y: 20 };\n    println!(\"{}\", p);\n}\n",
       "expected_output": "Point(10, 20)",
       "hints": [

@@ -18,7 +18,7 @@
     {
       "id": "pointers_02",
       "title": "Dereference",
-      "description": "Same as Go: print value through reference.",
+      "description": "Bind with `&value` and print `*r`.",
       "starter_code": "fn main() {\n    let value = 100;\n}\n",
       "expected_output": "100",
       "hints": [

@@ -32,14 +32,14 @@
       "starter_code": "use serde::Serialize;\n\n#[derive(Serialize)]\nstruct User {\n    // #[serde(rename = \"first_name\")]\n}\n\nfn main() {}\n",
       "expected_output": "{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}",
       "hints": [
-        "Mirror Go tags: snake_case names in JSON."
+        "Use `#[serde(rename = \"...\")]` on each field for snake_case JSON keys. snake_case names in JSON."
       ],
       "solution": "use serde::Serialize;\n\n#[derive(Serialize)]\nstruct User {\n    #[serde(rename = \"first_name\")]\n    first_name: String,\n    #[serde(rename = \"last_name\")]\n    last_name: String,\n    #[serde(rename = \"birth_year\")]\n    birth_year: i32,\n}\n\nfn main() {\n    let u = User {\n        first_name: \"John\".into(),\n        last_name: \"Doe\".into(),\n        birth_year: 1990,\n    };\n    println!(\"{}\", serde_json::to_string(&u).unwrap());\n}\n"
     },
     {
       "id": "json_04",
       "title": "skip_serializing_if / Option",
-      "description": "Model Go’s `,omitempty` with `Option` fields: only set `server: Some(\"api.example.com\")`, leave others `None`. Serialize so output is `{\"Server\":\"api.example.com\"}` (capital `Server` to match the Go exercise).",
+      "description": "Use `Option<T>` with `skip_serializing_if = \"Option::is_none\"` with `Option` fields: only set `server: Some(\"api.example.com\")`, leave others `None`. Serialize so output is `{\"Server\":\"api.example.com\"}` (capital `Server` in the expected JSON).",
       "starter_code": "use serde::Serialize;\n\n#[derive(Serialize)]\nstruct Config {\n    #[serde(rename = \"Server\", skip_serializing_if = \"Option::is_none\")]\n    server: Option<String>,\n    #[serde(rename = \"Port\", skip_serializing_if = \"Option::is_none\")]\n    port: Option<i32>,\n    #[serde(rename = \"Debug\", skip_serializing_if = \"Option::is_none\")]\n    debug: Option<bool>,\n}\n\nfn main() {}\n",
       "expected_output": "{\"Server\":\"api.example.com\"}",
       "hints": [
@@ -51,21 +51,21 @@
       "id": "json_05",
       "title": "Round trip",
       "description": "`Product { id, name, price }` with Serialize+Deserialize. Marshal `{1, Laptop, 999.99}`, unmarshal into a new value, print two lines exactly: `Original: {1 Laptop 999.99}` and `Recovered: {1 Laptop 999.99}` (use the same formatting for both).",
-      "starter_code": "use serde::{Deserialize, Serialize};\n\n#[derive(Clone, Serialize, Deserialize)]\nstruct Product {\n    id: i32,\n    name: String,\n    price: f64,\n}\n\nfn fmt_go_style(p: &Product) -> String {\n    format!(\"{{{} {} {:.2}}}\", p.id, p.name, p.price)\n}\n\nfn main() {}\n",
+      "starter_code": "use serde::{Deserialize, Serialize};\n\n#[derive(Clone, Serialize, Deserialize)]\nstruct Product {\n    id: i32,\n    name: String,\n    price: f64,\n}\n\nfn fmt_product(p: &Product) -> String {\n    format!(\"{{{} {} {:.2}}}\", p.id, p.name, p.price)\n}\n\nfn main() {}\n",
       "expected_output": "Original: {1 Laptop 999.99}\nRecovered: {1 Laptop 999.99}",
       "hints": [
         "`serde_json::to_string` then `from_str`"
       ],
-      "solution": "use serde::{Deserialize, Serialize};\n\n#[derive(Clone, Serialize, Deserialize)]\nstruct Product {\n    id: i32,\n    name: String,\n    price: f64,\n}\n\nfn fmt_go_style(p: &Product) -> String {\n    format!(\"{{{} {} {:.2}}}\", p.id, p.name, p.price)\n}\n\nfn main() {\n    let original = Product {\n        id: 1,\n        name: \"Laptop\".into(),\n        price: 999.99,\n    };\n    let data = serde_json::to_string(&original).unwrap();\n    let recovered: Product = serde_json::from_str(&data).unwrap();\n    println!(\"Original: {}\", fmt_go_style(&original));\n    println!(\"Recovered: {}\", fmt_go_style(&recovered));\n}\n"
+      "solution": "use serde::{Deserialize, Serialize};\n\n#[derive(Clone, Serialize, Deserialize)]\nstruct Product {\n    id: i32,\n    name: String,\n    price: f64,\n}\n\nfn fmt_product(p: &Product) -> String {\n    format!(\"{{{} {} {:.2}}}\", p.id, p.name, p.price)\n}\n\nfn main() {\n    let original = Product {\n        id: 1,\n        name: \"Laptop\".into(),\n        price: 999.99,\n    };\n    let data = serde_json::to_string(&original).unwrap();\n    let recovered: Product = serde_json::from_str(&data).unwrap();\n    println!(\"Original: {}\", fmt_product(&original));\n    println!(\"Recovered: {}\", fmt_product(&recovered));\n}\n"
     },
     {
       "id": "json_06",
       "title": "Nested structs",
-      "description": "`Address { street, city }` and `User { name, address }` with `Serialize`. Marshal and print JSON matching Go’s field names (`Street`, `City`, `Name`, `Address`).",
+      "description": "`Address { street, city }` and `User { name, address }` with `Serialize`. Marshal and print JSON with PascalCase JSON keys (`Street`, `City`, `Name`, `Address`) (`Street`, `City`, `Name`, `Address`).",
       "starter_code": "use serde::Serialize;\n\n#[derive(Serialize)]\nstruct Address {\n    Street: String,\n    City: String,\n}\n\n#[derive(Serialize)]\nstruct User {\n    Name: String,\n    Address: Address,\n}\n\nfn main() {}\n",
       "expected_output": "{\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}",
       "hints": [
-        "PascalCase field names match the Go JSON keys."
+        "PascalCase field names match the expected PascalCase JSON keys."
       ],
       "solution": "use serde::Serialize;\n\n#[derive(Serialize)]\nstruct Address {\n    Street: String,\n    City: String,\n}\n\n#[derive(Serialize)]\nstruct User {\n    Name: String,\n    Address: Address,\n}\n\nfn main() {\n    let user = User {\n        Name: \"Alice\".into(),\n        Address: Address {\n            Street: \"123 Main St\".into(),\n            City: \"Springfield\".into(),\n        },\n    };\n    println!(\"{}\", serde_json::to_string(&user).unwrap());\n}\n"
     },
@@ -94,7 +94,7 @@
     {
       "id": "json_08",
       "title": "Decode an array",
-      "description": "Parse a JSON array of people with `serde_json::from_str::<Vec<Person>>`, then print each line as `Name Age` (same output as the Go decoder loop).",
+      "description": "Parse a JSON array of people with `serde_json::from_str::<Vec<Person>>`, then print each line as `Name Age` (one `Name Age` line per person).",
       "starter_code": "use serde::Deserialize;\n\n#[derive(Deserialize)]\nstruct Person {\n    #[serde(rename = \"Name\")]\n    name: String,\n    #[serde(rename = \"Age\")]\n    age: i32,\n}\n\nfn main() {}\n",
       "expected_output": "Alice 30\nBob 25",
       "hints": [
@@ -103,6 +103,6 @@
       "solution": "use serde::Deserialize;\n\n#[derive(Deserialize)]\nstruct Person {\n    #[serde(rename = \"Name\")]\n    name: String,\n    #[serde(rename = \"Age\")]\n    age: i32,\n}\n\nfn main() {\n    let json_data = r#\"[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]\"#;\n    let people: Vec<Person> = serde_json::from_str(json_data).unwrap();\n    for p in people {\n        println!(\"{} {}\", p.name, p.age);\n    }\n}\n"
     }
   ],
-  "theory": "## JSON in Rust\n\nThe ecosystem standard is **`serde`** for serialization traits and **`serde_json`** for JSON.\n\n- `serde_json::to_string` / `to_vec` — encode to JSON text or bytes  \n- `serde_json::from_str` / `from_slice` — decode  \n- Field renaming and `skip_serializing_if` mirror Go struct tags (`json:\"name,omitempty\"`).\n\nStreaming decode of multiple values from one buffer uses `serde_json::Deserializer::from_str(...).into_iter::<T>()`.\n",
+  "theory": "## JSON in Rust\n\nThe ecosystem standard is **`serde`** for serialization traits and **`serde_json`** for JSON text.\n\n### Encode and decode\n\n- `serde_json::to_string` / `to_vec` — serialize to JSON text or bytes\n- `serde_json::from_str` / `from_slice` — deserialize from JSON\n\nDerive `Serialize` and `Deserialize` on your structs, or implement the traits manually for custom shapes.\n\n### Field attributes\n\nUse Serde’s field attributes to control JSON shape:\n\n- `#[serde(rename = \"field\")]` — emit a different key name\n- `#[serde(skip_serializing_if = \"Option::is_none\")]` — omit `None` fields (like “omit empty” in other ecosystems)\n\n### Streaming\n\nFor multiple JSON values in one buffer, `serde_json::Deserializer::from_str(...).into_iter::<T>()` decodes value by value without loading one giant document into memory first.\n",
   "exercise_count": 9
 }

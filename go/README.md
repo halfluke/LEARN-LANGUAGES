@@ -13,7 +13,7 @@ An interactive terminal-based Go learning platform with chapters, exercises, cod
 ## Requirements
 
 - **Go** toolchain on your **`PATH`** (the README targets **Go 1.20+**; use a current stable release from [go.dev/dl](https://go.dev/dl/)).
-- **Text editor** for exercises: set **`EDITOR`** if you like; otherwise the app tries **`vim`**, **`nano`**, **`code`**, and **`subl`** on your `PATH` (same idea as LEARN-RUST).
+- **Text editor** for exercises: set **`EDITOR`** if you like; otherwise the app tries **`nano`**, **`micro`**, **`vim`**, **`nvim`**, **`code`**, and **`subl`** on your `PATH` (same order as the other tracks).
 
 **Startup check:** Before the Bubble Tea UI starts, the binary runs **`go version`** (trying `go` on `PATH` and a few common install locations). If Go is not available, it prints an explanation to **stderr** and exits with a **non-zero status** (the TUI never starts). When Go is found, you may see one **success line on stderr** before the UI loads.
 

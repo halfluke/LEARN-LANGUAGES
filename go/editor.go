@@ -17,7 +17,7 @@ func NewEditor() (*Editor, error) {
 	editorPath := os.Getenv("EDITOR")
 	if editorPath == "" {
 		// Try common editors
-		editors := []string{"vim", "nano", "code", "subl"}
+		editors := []string{"nano", "micro", "vim", "nvim", "code", "subl"}
 		for _, ed := range editors {
 			if path, err := findEditor(ed); err == nil {
 				editorPath = path
@@ -27,7 +27,7 @@ func NewEditor() (*Editor, error) {
 	}
 
 	if editorPath == "" {
-		return nil, fmt.Errorf("no editor found. Set $EDITOR or use vim/nano/code")
+		return nil, fmt.Errorf("no editor found. Set $EDITOR or install nano/vim/code")
 	}
 
 	return &Editor{editorPath: editorPath}, nil
@@ -89,7 +89,7 @@ func HasEditor() bool {
 		return true
 	}
 
-	editors := []string{"vim", "nano", "code", "subl"}
+	editors := []string{"nano", "micro", "vim", "nvim", "code", "subl"}
 	for _, ed := range editors {
 		if _, err := findEditor(ed); err == nil {
 			return true

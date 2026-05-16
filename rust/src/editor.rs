@@ -12,7 +12,7 @@ impl Editor {
             return Ok(Editor { editor_path });
         }
 
-        for ed in ["vim", "nvim", "nano", "micro", "code", "subl"] {
+        for ed in ["nano", "micro", "vim", "nvim", "code", "subl"] {
             if which_available(ed) {
                 return Ok(Editor {
                     editor_path: ed.to_string(),
@@ -20,7 +20,7 @@ impl Editor {
             }
         }
 
-        Err("no editor found. Set $EDITOR or install vim/nano/code".into())
+        Err("no editor found. Set $EDITOR or install nano/vim/code".into())
     }
 
     pub fn launch_editor(&self, initial_code: &str) -> Result<String, String> {

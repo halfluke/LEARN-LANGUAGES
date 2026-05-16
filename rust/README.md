@@ -37,7 +37,7 @@ Exercises open in an external editor when you press **`e`**.
   export EDITOR=nvim   # or vim, nano, micro, etc.
   ```
 
-- If **`EDITOR`** is unset, the app looks for **`vim`**, **`nvim`**, **`nano`**, **`micro`**, **`code`**, or **`subl`** on your `PATH`.
+- If **`EDITOR`** is unset, the app looks for **`nano`**, **`micro`**, **`vim`**, **`nvim`**, **`code`**, or **`subl`** on your `PATH`.
 
 For **VS Code** from the terminal, use wait mode so the TUI resumes after you close the tab:
 

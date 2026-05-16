@@ -1,5 +1,7 @@
 # LEARN-LANGUAGES
 
+![LEARN-LANGUAGES TUI — chapter list (Python track; Rust/Go/C#/C/Java/asm use a similar layout)](docs/assets/tui-screenshot.svg)
+
 > **Testing status:** Chapter reference solutions have been checked with each track’s automated **`check_solutions`** (and related tooling where present). The courses have **not** been manually play-tested end-to-end yet—expect rough edges in UI copy, exercise ordering, or platform-specific behavior until a full human pass.
 
 Monorepo of interactive terminal courses that share one **chapter JSON schema**, a single **[CURRICULUM.md](CURRICULUM.md)** outline, and **[TUTORIAL_PLATFORM.md](TUTORIAL_PLATFORM.md)** rules (grading, hints, authoring quality).

@@ -322,7 +322,8 @@ Result: [yellow]h[/yellow] next hint on failure · [yellow]r[/yellow] re-run · 
         if self.route != "code" or self._exercise() is None:
             return
         try:
-            self.current_code = launch_editor(self.current_code)
+            with self.suspend():
+                self.current_code = launch_editor(self.current_code)
         except RuntimeError as e:
             self.notify(str(e), severity="error")
         self.refresh_body()

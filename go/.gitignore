@@ -1,10 +1,12 @@
 
-# ── GSD baseline (auto-generated) ──
+# ── GSD / agent tooling (not part of the Go course) ──
 .gsd/
 .agents/
 .gsd-id
 .mcp.json
 .bg-shell/
+.artifacts/
+skills-lock.json
 .DS_Store
 Thumbs.db
 *.swp

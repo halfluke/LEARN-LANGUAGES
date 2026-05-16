@@ -12,12 +12,55 @@ The UI is **[Textual](https://textual.textualize.io/)** over **Python 3**.
 
 ## Requirements
 
-- **Python 3.10+** (TUI driver).
-- **.NET SDK** — **`dotnet --version`** must succeed.
+### .NET SDK
+
+Exercises run as small **SDK-style console** projects (**`dotnet build`** / **`dotnet run`**). You need the **.NET SDK** (not just the runtime): **`dotnet --version`** must succeed.
+
+Install from **[Download .NET](https://dotnet.microsoft.com/download)** or your package manager. **SDK 6+** matches the template this course uses; **8** or **9** is fine.
+
+**Linux (Debian / Ubuntu / Kali)** — if your distro ships a recent SDK package:
+
+```bash
+sudo apt update
+sudo apt install dotnet-sdk-8.0
+```
+
+If that package is missing or too old, use Microsoft’s install guide for your distro: [Install .NET on Linux](https://learn.microsoft.com/en-us/dotnet/core/install/linux).
+
+**Linux (Fedora):**
+
+```bash
+sudo dnf install dotnet-sdk-8.0
+```
+
+**macOS:**
+
+```bash
+brew install dotnet
+```
+
+Or install from [dotnet.microsoft.com/download](https://dotnet.microsoft.com/download).
+
+**Windows:** install the **.NET SDK** from [dotnet.microsoft.com/download](https://dotnet.microsoft.com/download) or `winget install Microsoft.DotNet.SDK.8`.
+
+**Verify:**
+
+```bash
+dotnet --version
+dotnet --list-sdks
+```
+
+**Startup:** the TUI runs **`dotnet --version`** before the UI starts; failure prints to **stderr** and exits **1**.
+
+First exercise run may **restore NuGet packages**; allow a minute on a cold machine.
+
+### Python (TUI host)
+
+- **Python 3.10+** on **`PATH`**.
 
 Optional: **`EDITOR`** for **`e`** in the exercise editor.
 
-**Startup:** **`dotnet --version`**; failures print to stderr and exit **1**.
+Install with **`pip install -e ".[dev]"`** below (or the repo-root **`./scripts/setup-learn.sh`**, which installs this track into the root **`.venv`**).
 
 ## How exercises are run (TUI)
 

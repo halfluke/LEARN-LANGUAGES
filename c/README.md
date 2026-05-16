@@ -12,12 +12,51 @@ The UI is **[Textual](https://textual.textualize.io/)** over **Python 3**.
 
 ## Requirements
 
-- **Python 3.10+** (runs the host TUI).
-- **`cc`** (preferred) or **`gcc`** on **`PATH`** (POSIX; **native MSVC not supported** in v1 — use Linux, macOS, or **WSL2**).
+### C compiler (`cc` or `gcc`)
 
-Optional: **`EDITOR`** (`vim`, `nano`, `code --wait`, …).
+Exercises are compiled with **`cc`** (if present) or **`gcc`**, C11, **`-Wall -Wextra`**, and **`-lm`** when the math library is needed. **Native Windows MSVC is not supported** in v1 — use **Linux**, **macOS**, or **WSL2**.
 
-**Startup:** probe **`cc --version`** or **`gcc --version`**; failures print to **stderr** and exit **`1`** (no UI).
+**Linux (Debian / Ubuntu / Kali and derivatives):**
+
+```bash
+sudo apt update
+sudo apt install build-essential
+```
+
+`build-essential` pulls in **gcc**, **g++**, and usually a **`cc`** symlink. On minimal images you can install **`gcc`** alone.
+
+**Linux (Fedora / RHEL-style):**
+
+```bash
+sudo dnf install gcc
+```
+
+**macOS:** install Apple’s command-line tools (provides **`clang`** as **`cc`**):
+
+```bash
+xcode-select --install
+```
+
+Or install GCC via [Homebrew](https://brew.sh/): `brew install gcc` (you may need to set **`CC=gcc-14`** or similar if **`cc`** still points at clang — either compiler is fine for this course).
+
+**Windows:** use **WSL2** and the **Linux** packages above inside your Linux distro.
+
+**Verify** (at least one should print a version):
+
+```bash
+cc --version
+gcc --version
+```
+
+**Startup:** the TUI runs the same check; if both fail, it prints to **stderr** and exits **1** (no UI).
+
+### Python (TUI host)
+
+- **Python 3.10+** on **`PATH`** as **`python3`** (or **`python`**).
+
+Optional: **`EDITOR`** (`vim`, `nano`, `code --wait`, …) for **`e`** in the exercise screen.
+
+Install the Textual app with **`pip install -e ".[dev]"`** below (or use the repo-root **`./scripts/setup-learn.sh`**, which installs this track into the root **`.venv`**).
 
 **Grading:** write **`solution.c`**, **`cc -std=c11 -Wall -Wextra`** (plus **`-lm`** when needed), run under a timeout, compare trimmed stdout to **`expected_output`**.
 

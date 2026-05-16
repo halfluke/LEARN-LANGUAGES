@@ -1,6 +1,6 @@
 # LEARN-LANGUAGES
 
-![LEARN-LANGUAGES TUI — chapter list (Python track; Rust/Go/C#/C/Java/asm use a similar layout)](docs/assets/tui-screenshot.svg)
+![LEARN-LANGUAGES main menu — pick a language, then open that track’s course TUI](docs/assets/tui-screenshot.svg)
 
 > **Testing status:** Chapter reference solutions have been checked with each track’s automated **`check_solutions`** (and related tooling where present). The courses have **not** been manually play-tested end-to-end yet—expect rough edges in UI copy, exercise ordering, or platform-specific behavior until a full human pass.
 
@@ -8,15 +8,32 @@ Monorepo of interactive terminal courses that share one **chapter JSON schema**,
 
 Clone once; each track lives in its own subdirectory with its own TUI/toolchain.
 
-| Track | Directory | Typical run |
-|-------|-----------|-------------|
+## Main menu (recommended)
+
+From the **repository root**, install the hub (Textual only) and launch the language picker:
+
+```bash
+cd path/to/LEARN-LANGUAGES
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e .
+learn-languages
+# or: python -m learn_languages
+```
+
+**Enter** opens the selected course; **q** quits the hub. When you quit a course, you return to this menu.
+
+Python-based tracks (**C**, **C#**, **Python**, **Java**) should have their track dependencies installed (`pip install -e .` inside each track directory) before launching from the menu. **Rust**, **Go**, and **asmx64** need their toolchains on `PATH` (see per-track READMEs).
+
+| Track | Directory | Direct run (without hub) |
+|-------|-----------|---------------------------|
 | Rust | [`rust/`](rust/) | `cargo run` |
 | Go | [`go/`](go/) | `go run .` |
 | C | [`c/`](c/) | `python -m learn_c_tui` |
 | C# | [`csharp/`](csharp/) | `python -m learn_cs_tui` |
 | Python | [`python/`](python/) | `python -m learn_python_tui` |
 | Java | [`java/`](java/) | `python -m learn_java_tui` |
-| x86-64 asm (NASM / ELF64) | [`asmx64/`](asmx64/) | `cargo run` |
+| x86-64 asm (NASM / ELF64) | [`asmx64/`](asmx64/) | `cargo run --release` |
 
 ## Runtime requirements (summary)
 

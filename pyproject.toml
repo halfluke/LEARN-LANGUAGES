@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "learn-languages"
+version = "0.1.0"
+description = "LEARN-LANGUAGES hub menu — pick a language track and launch its TUI."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "textual>=0.62.0",
+]
+
+[project.scripts]
+learn-languages = "learn_languages.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["learn_languages*"]

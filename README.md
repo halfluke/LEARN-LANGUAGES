@@ -98,7 +98,7 @@ Each track’s **`README`** is authoritative. At a glance:
 | **Rust** | `rustc`, `cargo` (on `PATH`) | same + temp `rustc` / `cargo` per exercise rules | `EDITOR`; **`python3`** only for `scripts/check_solutions.py` |
 | **Go** | **Go 1.20+** (`go version` at startup) | `go run` on a temp `main.go` | `EDITOR`; **`python3`** for `scripts/check_solutions.py` |
 | **C** | **Python 3.10+**, Textual (`pip install -e …`) | **`cc`** or **`gcc`** (C11) | `EDITOR` |
-| **C#** | **Python 3.10+**, Textual | **.NET SDK** — `dotnet build` + `dotnet run --no-build` (TUI and checker use the same path; see **`csharp/README`**) | `EDITOR`; **`python3`** for `scripts/check_solutions.py` |
+| **C#** | **Python 3.10+**, Textual | **.NET SDK** — `dotnet build` + `dotnet run --no-build` (TUI and checker use the same path; see **`csharp/README`**) | `EDITOR` |
 | **Python** | **Python 3.10+** (also runs learner code) | same interpreter | `EDITOR` |
 | **Java** | **Python 3.10+**, Textual | **JDK 17+** (`javac`, `java`) | `EDITOR` |
 | **asmx64** | **Rust** (`cargo` to build the TUI) | **nasm**, **ld**, **gcc** (Linux / WSL2) | **`python3`** for `scripts/check_solutions.py` |

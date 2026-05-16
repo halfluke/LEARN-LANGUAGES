@@ -91,4 +91,12 @@ Chapter JSON lives in **`./chapters/`** under each language directory (sorted by
 
 Each track’s **`scripts/check_solutions.py`** verifies bundled reference solutions. See that track’s **`README`** for flags and work directories.
 
+**Maintainers:** from the repo root after **`./scripts/setup-dev.sh`**, run the full matrix (pytest, `go test`, `cargo test`/build, JSON parse, parallel **`check_solutions`**) with:
+
+```bash
+./scripts/verify-all.sh
+```
+
+Use **`./scripts/verify-all.sh --skip-check-solutions`** for a faster pass without grading every reference solution. The script resolves **`PYTHON`** to an absolute path (default: **`.venv/bin/python`**) so parallel track runs never break on `cd`.
+
 **Pedagogical quality** (real computation in solutions, scaffolds in starters, language-appropriate theory) is required; see **CURRICULUM.md**.

@@ -1,28 +1,28 @@
 # LEARN-ASMx64
 
-Interactive **Linux x86-64** assembly course in the terminal: **NASM**, **Intel syntax**, **ELF64**. Exercises are checked by assembling, linking, and running your program locally, comparing trimmed **stdout** to the expected text.
+Interactive **Linux x86-64** assembly course in the terminal: **NASM**, **Intel syntax**, **ELF64**. Exercises are assembled, linked, and run locally; **trimmed stdout** is compared to the expected text.
+
+The UI is **ratatui** (Rust). Learner code opens in **`$EDITOR`** when you press **`e`**.
+
+**Location:** **`asmx64/`** in the **LEARN-LANGUAGES** monorepo.
 
 ## Platform
 
-**Linux only** (v1) for exercise binaries (**ELF64**, NASM, GNU **`ld`**). **macOS and Windows (native): not supported** for the course tooling — on Windows use **WSL2** (see below). See **[../README.md](../README.md#platform-support-v1)**.
+**Linux only** (v1) for exercise binaries (**ELF64**, NASM, GNU **`ld`**). **macOS and Windows (native): not supported** — on Windows use **WSL2** (below). See **[../README.md](../README.md#platform-support-v1)**.
 
-## Prerequisites (Linux)
+## Requirements
 
-### Run the TUI (host app)
+### Run the TUI (host)
 
-- **Rust toolchain** — **`cargo`** and **`rustc`** on **`PATH`** ([rustup](https://rustup.rs/) recommended). The course UI is a Rust binary (`cargo run --release`).
+- **Rust toolchain** — **`cargo`** and **`rustc`** on **`PATH`** ([rustup](https://rustup.rs/) recommended).
 
 ### Assemble and run learner programs
 
-- **nasm** — assembler (`apt install nasm` / `dnf install nasm`)
+- **nasm** — `apt install nasm` / `dnf install nasm`
 - **binutils** — GNU **ld** (`apt install binutils` / `dnf install binutils`)
-- **gcc** — used when an exercise uses **`extern`** libc symbols; also handy for reading compiler output (`apt install build-essential` or `gcc`)
+- **gcc** — libc **`extern`** symbols and compiler listings (`apt install build-essential` or `gcc`)
 
-### Optional (maintainers)
-
-- **Python 3** — **`python3 scripts/check_solutions.py`** (same **nasm** / **ld** / **gcc** toolchain as the TUI)
-
-Smoke-check versions:
+**Verify:**
 
 ```bash
 nasm -v
@@ -30,56 +30,113 @@ ld --version
 gcc --version
 ```
 
-The TUI refuses to start if any of these commands are missing or fail: it prints an explanation to **stderr** and exits with a **non-zero status** before the alternate-screen UI starts.
+**Startup:** if **nasm**, **ld**, or **gcc** is missing or fails, the app prints to **stderr** and exits **non-zero** before the TUI starts.
+
+**Grading:** assemble/link/run your program with **timeouts**; compare trimmed **stdout** to **`expected_output`**.
+
+### External editor (`e`)
+
+Press **`e`** on the **code** screen. Set **`EDITOR`** before starting (e.g. `export EDITOR=nano`). If unset: **`nano`** → **`micro`** → **`vim`** → **`nvim`** → **`code`** → **`subl`**. Details: **[../README.md#course-tui-controls](../README.md#course-tui-controls)**.
+
+### Optional: Python (maintainers)
+
+**`python3 scripts/check_solutions.py`** — same **nasm** / **ld** / **gcc** toolchain as the TUI.
 
 ## Windows users (v1)
 
-Native **Windows PE** build/run is **not** supported in v1. Use **WSL2** with a Linux distribution (e.g. Ubuntu), install the same packages inside that Linux environment, and run the TUI there. From the app’s perspective the course remains **Linux-only**.
+Native **Windows PE** is **not** supported. Use **WSL2** (e.g. Ubuntu), install the Linux packages above inside WSL, and run the TUI there.
 
 ## Intel syntax and AT&T
 
-All exercises you **write** use **Intel syntax** with **NASM**. **AT&T** syntax appears often in **`gcc -S`** listings and default **`objdump`** disassembly. When you need Intel mnemonics in disassembly, use:
+Exercises you **write** use **Intel syntax** with **NASM**. **AT&T** often appears in **`gcc -S`** and default **`objdump`** output. For Intel disassembly:
 
 ```bash
 objdump -d -M intel ./your_binary
 ```
 
-## Running the TUI
+## Install
 
-From **`asmx64/`** (inside the LEARN-LANGUAGES monorepo—the directory that contains this **`README.md`** and **`Cargo.toml`**):
+From **`asmx64/`** ( **`Cargo.toml`** + **`chapters/`** ):
+
+```bash
+cd path/to/LEARN-LANGUAGES/asmx64
+cargo build --release
+```
+
+**Hub:** the root menu lists this track; you must install **Rust**, **nasm**, **ld**, and **gcc** yourself (the hub does not install them).
+
+## Run
 
 ```bash
 cargo run --release
+# or:
+./target/release/learn-asmx64-tui
 ```
 
-Progress is stored under `~/.learn-asmx64-tui/` (e.g. `progress.json`).
+**Progress:** `~/.learn-asmx64-tui/progress.json`
 
-Typical keys match other LEARN-* tutorials: open the in-app help for the exact bindings (chapter list, run, edit, hints).
+**Chapter directory:** auto-resolved; override with **`LEARN_ASMX64_CHAPTERS`**. See **[../README.md#finding-chapters](../README.md#finding-chapters)**.
 
-## Verifying reference solutions (CI / maintainers)
+## Learner workflow
+
+1. Start the TUI (**Run** above) or pick **asmx64** from **`learn-languages`** (after building this crate, on **Linux** or **WSL2**).
+2. Pick a **chapter**, then an **exercise** (read **theory** if you want).
+3. Press **`e`** — edit assembly in **`$EDITOR`**, then **save and quit**.
+4. Press **`r`** — assemble/link/run and compare stdout.
+5. On failure, press **`h`** for the next hint (up to two per exercise).
+6. Repeat until correct; progress saves automatically.
+
+## Keys (summary)
+
+| Context | Keys |
+|--------|------|
+| Chapter list | **`j`** / **`k`** or **↑** / **↓**, **Enter**, **`/`** jump, **`?`** help, **`s`** stats, **`q`** or **Ctrl+C** quit |
+| Theory | **`j`** / **`k`** or **↑** / **↓** scroll, **Enter** → exercises, **`b`** back |
+| Exercises | **`j`** / **`k`**, **Enter** open, **`b`** back |
+| Code | **`r`** assemble/run, **`e`** **`$EDITOR`**, **`b`** back |
+| Result | **`h`** hint on failure, **`r`** re-run, **`b`** back |
+
+## Course layout
+
+Chapters live under **`chapters/*.json`** (filename order). Edit JSON in place. Schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**.
+
+**10** chapters, **41** exercises — loaded from **`chapters/*.json`** (filename order).
+
+| # | Chapter | Exercises |
+|---|---------|-----------|
+| 1 | Variables & Syscalls | 5 |
+| 2 | Control flow | 4 |
+| 3 | Functions & calls | 4 |
+| 4 | Arrays in .data | 4 |
+| 5 | Pointer + length | 4 |
+| 6 | Strings & bytes | 4 |
+| 7 | Struct layout | 4 |
+| 8 | Method-style calls | 4 |
+| 9 | Pointers & memory | 4 |
+| 10 | Atomic update | 4 |
+
+
+## Maintainer: verify bundled solutions
 
 ```bash
 python3 scripts/check_solutions.py
+python3 scripts/check_solutions.py --chapter variables
+python3 scripts/check_solutions.py --list-failures-only
 ```
 
-Optional: `python3 scripts/check_solutions.py --chapter variables`  
-Failures only: `python3 scripts/check_solutions.py --list-failures-only`
-
-To reuse one build directory instead of per-exercise temp dirs:
+Reuse one build tree:
 
 ```bash
 export LEARN_ASMX64_CHECK_WORK="$PWD/.check-asm-crate"
 python3 scripts/check_solutions.py
 ```
 
-## Security and trust
+## Security
 
-This tool **writes your assembly to disk**, **assembles and links** it, then **executes the resulting binary** on your machine, with **timeouts** to limit runaway programs. It is intended for **trusted local learning** on your own workstation. Do not point it at untrusted chapter JSON from unknown sources without review. There is **no** sandbox beyond normal user permissions; treat course content like source code you would compile.
+Writes assembly, assembles, links, and **executes** the binary locally with **timeouts**. No sandbox beyond your user account — trust chapter content like any compile-and-run educator.
 
-## Content layout
+## Tests
 
-Chapter JSON lives under `chapters/*.json` (sorted by filename). The catalog follows the shared [LEARN-LANGUAGES/CURRICULUM.md](../CURRICULUM.md) **Asm** column: only **Adapted / Full** slots are present (for example there is no dedicated `json` chapter in v1). The schema matches other LEARN-* courses (`starter_code`, `expected_output`, `hints`, `solution`, etc.); see [TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md) if you author new chapters.
-
-## License
-
-See project policy for your fork; the course text and code are for learning purposes.
+```bash
+cargo test
+```

@@ -2,19 +2,19 @@
   "id": "packages",
   "title": "Packages",
   "description": "Learn about package declaration, importing, exporting, and init functions in Go",
-  "theory": "## Packages in Go\n\nPackages are the way Go organizes code. Every Go file belongs to a package.\n\n### Package Declaration\n\n```go\npackage main  // executable package\npackage utils // library package\n```\n\n### The main Package\n\n- `package main` is special - it tells Go this will compile to an executable\n- Must have a main() function as entry point\n\n### Importing Packages\n\n```go\nimport (\n    \"fmt\"         // standard library\n    \"math\"       // standard library\n    \"yourmodule/utils\"  // your own package\n)\n```\n\n### Exported Names\n\n- Only names starting with **uppercase** are exported (visible to other packages)\n- `func MyFunc()` is exported\n- `func myFunc()` is not exported\n\n### Package Initialization\n\n```go\nvar config map[string]string\n\nfunc init() {\n    config = make(map[string]string)\n    config[\"key\"] = \"value\"\n}\n```\n\n- `init()` runs automatically before main() when the package is first imported\n- Only one init() per package\n- Useful for setup/initialization\n\n### Package Naming Convention\n\n- Use short, descriptive names\n- `fmt` instead of `formatting`\n- But not too short: `buf` (buffer) is OK\n- Usually match the directory name\n\n### go.mod and Module\n\n```go\nmodule example.com/myapp\n\ngo 1.21\n```\n\n- go.mod defines your module\n- Import path matches module name\n",
+  "theory": "## Packages in Go\n\nIn this course, put multiple files in **one editor buffer**: use **`// File: path/to/file.go`** before each file, or a line with only **`---`** between files. Press **`r`** to build module **`learnsnippet`** and run **`go run .`**. Import your packages as **`learnsnippet/utils`**, **`learnsnippet/counter`**, etc.\n\nPackages are the way Go organizes code. Every Go file belongs to a package.\n\n### Package Declaration\n\n```go\npackage main  // executable package\npackage utils // library package\n```\n\n### The main Package\n\n- `package main` is special - it tells Go this will compile to an executable\n- Must have a main() function as entry point\n\n### Importing Packages\n\n```go\nimport (\n    \"fmt\"         // standard library\n    \"math\"       // standard library\n    \"yourmodule/utils\"  // your own package\n)\n```\n\n### Exported Names\n\n- Only names starting with **uppercase** are exported (visible to other packages)\n- `func MyFunc()` is exported\n- `func myFunc()` is not exported\n\n### Package Initialization\n\n```go\nvar config map[string]string\n\nfunc init() {\n    config = make(map[string]string)\n    config[\"key\"] = \"value\"\n}\n```\n\n- `init()` runs automatically before main() when the package is first imported\n- Only one init() per package\n- Useful for setup/initialization\n\n### Package Naming Convention\n\n- Use short, descriptive names\n- `fmt` instead of `formatting`\n- But not too short: `buf` (buffer) is OK\n- Usually match the directory name\n\n### go.mod and Module\n\n```go\nmodule example.com/myapp\n\ngo 1.21\n```\n\n- go.mod defines your module\n- Import path matches module name\n",
   "exercises": [
     {
       "id": "packages_01",
       "title": "Package Declaration",
-      "description": "Create a file in a package other than main. Declare package utils and define a function Greet() in it.",
-      "starter_code": "// File: main.go\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n    // Call Greet from utils package\n}\n\n// File: utils/utils.go\n// Declare the package declaration here\n",
+      "description": "In one buffer: `main.go` imports `learnsnippet/utils`; `utils/utils.go` defines `Greet()`. Press **`r`** to run the module.",
+      "starter_code": "// File: main.go\npackage main\n\nimport \"learnsnippet/utils\"\n\nfunc main() {\n    // Call utils.Greet()\n}\n\n// File: utils/utils.go\npackage utils\n\n// Define Greet() here\n",
       "expected_output": "Hello from utils",
       "hints": [
-        "Use package utils at the top of utils.go",
-        "Define func Greet() that prints a message"
+        "Use // File: path lines or a --- line between files in the editor",
+        "Import learnsnippet/utils from main; package name in utils/utils.go is utils"
       ],
-      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"utils\"\n)\n\nfunc main() {\n    utils.Greet()\n}\n\n// In utils package:\n// package utils\n// import \"fmt\"\n// func Greet() { fmt.Println(\"Hello from utils\") }\n"
+      "solution": "// File: main.go\npackage main\n\nimport \"learnsnippet/utils\"\n\nfunc main() {\n    utils.Greet()\n}\n\n---\n// File: utils/utils.go\npackage utils\n\nimport \"fmt\"\n\nfunc Greet() {\n    fmt.Println(\"Hello from utils\")\n}\n"
     },
     {
       "id": "packages_02",
@@ -32,39 +32,39 @@
     {
       "id": "packages_03",
       "title": "Exporting Names",
-      "description": "Create a function and a variable in a separate package. Export them by starting with uppercase. Use them in main.",
-      "starter_code": "// File: main.go\npackage main\n\n// Use exported names from counter package\n\n// File: counter/counter.go\npackage counter\n\n// Define exported variable Count and function Increment\n",
+      "description": "In one buffer: `// File: main.go` imports `learnsnippet/counter`; `// File: counter/counter.go` exports `Count` and `Increment`. Print count before and after increment.",
+      "starter_code": "// File: main.go\npackage main\n\nimport (\n    \"fmt\"\n    \"learnsnippet/counter\"\n)\n\nfunc main() {\n    // Use counter.Count and counter.Increment()\n}\n\n// File: counter/counter.go\npackage counter\n\n// Exported Count and Increment\n",
       "expected_output": "Count: 0\nIncremented: 1",
       "hints": [
         "Export by capitalizing: Count, Increment (Go exports anything starting with uppercase)",
         "In main, use counter.Count and counter.Increment()"
       ],
-      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"counter\"\n)\n\nfunc main() {\n    fmt.Println(\"Count:\", counter.Count)\n    counter.Increment()\n    fmt.Println(\"Incremented:\", counter.Count)\n}\n\n// In counter package:\n// package counter\n// var Count int\n// func Increment() { Count++ }\n"
+      "solution": "// File: main.go\npackage main\n\nimport (\n    \"fmt\"\n    \"learnsnippet/counter\"\n)\n\nfunc main() {\n    fmt.Println(\"Count:\", counter.Count)\n    counter.Increment()\n    fmt.Println(\"Incremented:\", counter.Count)\n}\n\n---\n// File: counter/counter.go\npackage counter\n\nvar Count int\n\nfunc Increment() {\n    Count++\n}\n"
     },
     {
       "id": "packages_04",
       "title": "Init Functions",
-      "description": "Create a package with an init() function that sets a global variable. Use it in main().",
-      "starter_code": "// File: main.go\npackage main\n\nimport (\n    \"fmt\"\n    \"config\"\n)\n\nfunc main() {\n    fmt.Println(\"Version:\", config.Version)\n}\n\n// File: config/config.go\npackage config\n\n// Define a global Version variable and an init() function that sets it\n",
+      "description": "Two files: `main.go` prints `config.Version`; `config/config.go` sets `Version` in `init()`.",
+      "starter_code": "// File: main.go\npackage main\n\nimport (\n    \"fmt\"\n    \"learnsnippet/config\"\n)\n\nfunc main() {\n    fmt.Println(\"Version:\", config.Version)\n}\n\n// File: config/config.go\npackage config\n\n// var Version and func init() here\n",
       "expected_output": "Version: 1.0.0",
       "hints": [
         "Declare var Version string in config package",
         "Define func init() that assigns \"1.0.0\" to Version",
         "init() runs automatically before main() when the package is imported"
       ],
-      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"config\"\n)\n\nfunc main() {\n    fmt.Println(\"Version:\", config.Version)\n}\n\n// config/config.go:\n// package config\n// var Version string\n// func init() { Version = \"1.0.0\" }\n"
+      "solution": "// File: main.go\npackage main\n\nimport (\n    \"fmt\"\n    \"learnsnippet/config\"\n)\n\nfunc main() {\n    fmt.Println(\"Version:\", config.Version)\n}\n\n---\n// File: config/config.go\npackage config\n\nvar Version string\n\nfunc init() {\n    Version = \"1.0.0\"\n}\n"
     },
     {
       "id": "packages_05",
       "title": "Unexported Names",
-      "description": "Define both exported (uppercase) and unexported (lowercase) functions in a package. Try to use only the exported one from main.",
+      "description": "Two files: `formatter/formatter.go` has `Format` (exported) and `format` (unexported); `main.go` calls only `Format`.",
       "starter_code": "package main\n\nimport \"formatter\"\n\nfunc main() {\n    // Call only the exported function Format\n}",
       "expected_output": "Formatted",
       "hints": [
         "Define func Format() and func format() in formatter package",
         "Only Format is accessible from main"
       ],
-      "solution": "package main\n\nimport \"formatter\"\n\nfunc main() {\n    formatter.Format()\n}\n\n// formatter/formatter.go:\n// package formatter\n// import \"fmt\"\n// func Format() { fmt.Println(\"Formatted\") }\n// func format() { fmt.Println(\"internal\") }\n"
+      "solution": "// File: main.go\npackage main\n\nimport \"learnsnippet/formatter\"\n\nfunc main() {\n    formatter.Format()\n}\n\n---\n// File: formatter/formatter.go\npackage formatter\n\nimport \"fmt\"\n\nfunc Format() {\n    fmt.Println(\"Formatted\")\n}\n\nfunc format() {\n    fmt.Println(\"internal\")\n}\n"
     },
     {
       "id": "packages_07",

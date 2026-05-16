@@ -66,11 +66,11 @@
     {
       "id": "maps_06",
       "title": "Iterate Map",
-      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "description": "Create `grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}`. Print each key-value pair **in key order** (sort keys first — map iteration order is random).",
       "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    grades := map[string]int{\n        \"A\": 90,\n        \"B\": 80,\n        \"C\": 70,\n    }\n    // Iterate and print each key-value\n}",
       "expected_output": "A 90\nB 80\nC 70",
-      "hints": ["Use for key, value := range grades"],
-      "solution": "package main\n\nimport \"fmt\"\n\n\nfunc main() {\n    grades := map[string]int{\n        \"A\": 90,\n        \"B\": 80,\n        \"C\": 70,\n    }\n    for key, value := range grades {\n        fmt.Println(key, value)\n    }\n}"
+      "hints": ["Collect keys, `sort.Strings(keys)`, then print in that order"],
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"sort\"\n)\n\nfunc main() {\n    grades := map[string]int{\n        \"A\": 90,\n        \"B\": 80,\n        \"C\": 70,\n    }\n    keys := make([]string, 0, len(grades))\n    for k := range grades {\n        keys = append(keys, k)\n    }\n    sort.Strings(keys)\n    for _, key := range keys {\n        fmt.Println(key, grades[key])\n    }\n}"
     }
   ]
 }

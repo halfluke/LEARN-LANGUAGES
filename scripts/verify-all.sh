@@ -151,8 +151,24 @@ run_check_solutions() {
   echo "$ec" >"$exitf"
 }
 
+step "verify_tui_alignment (Textual tracks)"
+if ! "$PY" "$ROOT/scripts/verify_tui_alignment.py"; then
+  fail "verify_tui_alignment — Textual executor/validator mismatch"
+fi
+
+if command -v go >/dev/null 2>&1; then
+  step "go TestReferenceSolutionsViaExecutor"
+  (cd "$ROOT/go" && go test -run TestReferenceSolutionsViaExecutor -count=1) || fail "go solutions alignment"
+fi
+
+if command -v cargo >/dev/null 2>&1; then
+  step "cargo test solutions_alignment (rust, asmx64)"
+  (cd "$ROOT/rust" && cargo test reference_solutions_pass_via_tui_executor -- --ignored -q) || fail "rust solutions alignment"
+  (cd "$ROOT/asmx64" && cargo test reference_solutions_pass_via_tui_executor -- --ignored -q) || fail "asmx64 solutions alignment"
+fi
+
 if [[ "$SKIP_CHECK_SOLUTIONS" -eq 0 ]]; then
-  CHECK_TRACKS=(rust c csharp python java asmx64)
+  CHECK_TRACKS=(rust go c csharp python java asmx64)
   step "check_solutions (${#CHECK_TRACKS[@]} tracks, PYTHON=$PY)"
   if [[ "$SERIAL_CHECK_SOLUTIONS" -eq 1 ]]; then
     for track in "${CHECK_TRACKS[@]}"; do

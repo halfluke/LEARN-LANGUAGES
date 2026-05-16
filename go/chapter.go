@@ -141,8 +141,3 @@ func (cl *ChapterLoader) LoadChapter(id string) (*Chapter, error) {
 
 	return nil, fmt.Errorf("chapter not found: %s", id)
 }
-
-// GetDefaultChaptersDir returns the default chapters directory
-func GetDefaultChaptersDir() string {
-	return "chapters"
-}

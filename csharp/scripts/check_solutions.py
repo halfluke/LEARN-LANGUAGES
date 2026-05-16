@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Verify every exercise *solution* in chapters/*.json builds with `dotnet` and matches expected_output.
 
-Uses one SDK project per worker under LEARN_CSHARP_CHECK_WORK: overwrite Program.cs,
-``dotnet build`` (``--no-restore`` after first build), ``dotnet exec`` on the DLL.
+Uses the same path as the learner TUI: one SDK project per worker, overwrite Program.cs,
+``dotnet build`` (``--no-restore`` after first build), then ``dotnet run --no-build``.
 
 Usage:
   python3 scripts/check_solutions.py
@@ -32,7 +32,7 @@ DEFAULT_JOBS = 2
 
 sys.path.insert(0, str(ROOT))
 
-from learn_cs_tui.executor import check_dotnet_available, execute_code_in_dir  # noqa: E402
+from learn_cs_tui.executor import check_dotnet_available, execute_code  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -45,7 +45,12 @@ class _Exercise:
 
 def check_one(solution: str, expected: str, work: Path) -> tuple[bool, str]:
     exp = (expected or "").strip()
-    res = execute_code_in_dir(solution.strip(), work)
+    res = execute_code(
+        solution.strip(),
+        work_dir=work,
+        incremental=True,
+        prefer_exec=False,
+    )
     if res.timed_out:
         return False, "timed out"
     if res.exit_code != 0:

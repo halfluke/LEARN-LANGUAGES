@@ -1,8 +1,8 @@
 {
   "id": "testing",
   "title": "Testing",
-  "description": "Writing and running tests with the standard library",
-  "theory": "\n### JUnit 5 style\nTests live beside or under a parallel test tree. Prefer `@ParameterizedTest` for tables of inputs, `@Nested` for grouping scenarios, and explicit assertions that print meaningful messages on failure.\n\nKeep tests deterministic: control time with a `Clock` you inject, isolate randomness with fixed seeds, and avoid implicit reliance on global statics when unit testing.\n\n### Example\n```java\nimport org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass MathStuffTest {\n    @Test\n    void abs_nonNegative() {\n        assertEquals(5, Math.abs(-5));\n        assertEquals(0, Math.abs(0));\n    }\n}\n```\n",
+  "description": "Testing ideas — verified here by running Main and matching stdout",
+  "theory": "\n### How this course checks your work\n\nPress **`r`** to compile and run **one `public class Main`** (your editor buffer). The TUI compares **trimmed stdout**. It does **not** run **JUnit** from the course UI — exercises ask you to **implement helpers and print** the results a test would expect.\n\n### JUnit 5 style (real projects)\n\nTests live beside or under a parallel test tree. Prefer `@ParameterizedTest` for tables of inputs, `@Nested` for grouping scenarios, and explicit assertions that print meaningful messages on failure.\n\nKeep tests deterministic: control time with a `Clock` you inject, isolate randomness with fixed seeds, and avoid implicit reliance on global statics when unit testing.\n\n### Example\n```java\nimport org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.*;\n\nclass MathStuffTest {\n    @Test\n    void abs_nonNegative() {\n        assertEquals(5, Math.abs(-5));\n        assertEquals(0, Math.abs(0));\n    }\n}\n```\n",
   "exercises": [
     {
       "id": "testing_01",

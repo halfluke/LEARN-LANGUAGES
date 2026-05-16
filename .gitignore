@@ -10,6 +10,8 @@ target/
 **/.check-csharp-work/
 **/.check-python-work/
 **/.check-java-work/
+**/.check-go-work/
+**/.verify-tui-alignment-work/
 
 # Python (c/, csharp/ TUIs)
 **/.venv/

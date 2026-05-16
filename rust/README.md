@@ -1,18 +1,20 @@
-# Learn Rust TUI
+# LEARN-Rust
 
-Terminal-based Rust course: chapters, short theory, hands-on exercises, and automatic checks against expected program output.
+Interactive **Rust** course in the terminal: **`chapters/*.json`** (**[TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**), **`rustc`** / **`cargo`** as needed, **trimmed stdout** (or **`cargo test`** for test exercises).
 
-This code lives inside the **LEARN-LANGUAGES** monorepo (**`rust/`**). Paths below assume your shell is **`rust/`** at the repo root (next to **`go/`**, **`c/`**, etc.).
+The UI is **ratatui** (Rust). Learner code is edited in **`$EDITOR`** when you press **`e`**.
+
+**Location:** **`rust/`** in the **LEARN-LANGUAGES** monorepo.
 
 ## Platform
 
-**Linux, macOS, and Windows** — install **`rustc`** / **`cargo`** via [rustup](https://rustup.rs/) (or your distro packages on Linux). See **[../README.md](../README.md#platform-support-v1)**.
+**Linux, macOS, and Windows** — **`rustc`** / **`cargo`** via [rustup](https://rustup.rs/) (or distro packages on Linux). See **[../README.md](../README.md#platform-support-v1)**.
 
-## What to install
+## Requirements
 
-### Rust toolchain (required)
+### Rust toolchain
 
-You need **`rustc`** and **`cargo`** on your `PATH`.
+You need **`rustc`** and **`cargo`** on your **`PATH`**.
 
 - **Recommended:** [rustup](https://rustup.rs/) — install stable, then confirm:
 
@@ -21,113 +23,117 @@ You need **`rustc`** and **`cargo`** on your `PATH`.
   cargo --version
   ```
 
-- **Distro packages (e.g. Debian / Kali):** `sudo apt install rustc cargo` — versions vary; if anything fails to compile, prefer rustup.
+- **Distro packages (e.g. Debian / Kali):** `sudo apt install rustc cargo` — if builds fail, prefer rustup.
 
-**Startup check:** Before the full-screen TUI starts, the app runs **`rustc --version`**. If `rustc` is missing or the command fails, it prints an explanation to **stderr** and exits with a **non-zero status** (the TUI never starts). Some exercises still need **`cargo`** on your `PATH`; that is **not** probed at startup and would surface when you run those snippets.
+**Startup:** the app runs **`rustc --version`** before the TUI starts. On failure it prints to **stderr** and exits **non-zero** (no UI). Some exercises need **`cargo`** at run time; that is not probed at startup.
 
-The first time you build or run, Cargo will compile dependencies (ratatui, serde, etc.). That can take a minute; later runs are much faster. Build artifacts live in **`target/`** (ignored by Git).
+The first **`cargo run`** / build compiles dependencies (ratatui, serde, …) and may take a minute; later runs are faster. Artifacts live in **`target/`** (gitignored).
 
-### Text editor (required for exercises)
+### External editor (`e`)
 
-Exercises open in an external editor when you press **`e`**.
+Press **`e`** on the **code** screen. Set **`EDITOR`** before starting (e.g. `export EDITOR=nano`). If unset: **`nano`** → **`micro`** → **`vim`** → **`nvim`** → **`code`** → **`subl`**. VS Code: `export EDITOR="code --wait"`. Save/quit details: **[../README.md#course-tui-controls](../README.md#course-tui-controls)**.
 
-- Set **`EDITOR`** to something you like, for example:
+### Optional: Python (maintainers only)
 
-  ```bash
-  export EDITOR=nvim   # or vim, nano, micro, etc.
-  ```
+**`python3 scripts/check_solutions.py`** — learners do not need Python.
 
-- If **`EDITOR`** is unset, the app looks for **`nano`**, **`micro`**, **`vim`**, **`nvim`**, **`code`**, or **`subl`** on your `PATH`.
-
-For **VS Code** from the terminal, use wait mode so the TUI resumes after you close the tab:
-
-```bash
-export EDITOR="code --wait"
-```
-
-### Optional: Python (only for maintainers)
-
-Bulk-checking bundled solutions uses **`python3 scripts/check_solutions.py`**. Learners using the shipped **`chapters/*.json`** do **not** need Python.
-
----
-
-## How to run the app
-
-```bash
-cd path/to/LEARN-LANGUAGES/rust
-cargo run
-```
-
-If you use a sparse checkout, still run **`cargo run`** from the directory that contains **`Cargo.toml`** and **`chapters/`** (typically **`rust/`** inside **[LEARN-LANGUAGES](../README.md)**).
-
-Release build (faster binary, same requirement to run from repo root):
-
-```bash
-cargo build --release
-./target/release/learn-rust-tui
-```
-
----
-
-## How to work through exercises
-
-1. **Start the TUI** (`cargo run` from **`rust/`** — directory with **`Cargo.toml`** and **`chapters/`**).
-2. **Pick a chapter**, then an **exercise**.
-3. Read the **theory** screen if you want, then open the exercise.
-4. Press **`e`** — your **`$EDITOR`** opens a temporary **`main.rs`** with starter code. Write a normal Rust program (usually with **`fn main()`**). Save and **quit the editor** to return to the TUI.
-5. Press **`r`** — the app compiles and runs your code, then compares **standard output** (trimmed) to the exercise’s **expected output**.
-6. If it fails, press **`h`** for a hint (up to two hints, then you can see the reference solution flow from the UI).
-
-### How your code is run
-
-So you know what environment to target:
+## How exercises are checked
 
 | Your code | What runs |
 |-----------|-----------|
-| Typical std-only snippet | **`rustc`** on a single file, then the binary. |
-| Uses **serde** / **serde_json** / **chrono** / **chrono_tz** (as in some later chapters) | **`cargo run`** in a small temporary project with those dependencies. |
-| Contains **`#[test]`** (testing chapter) | **`cargo test`**; success is **all tests passing**, not matching a printed line. |
+| Typical std-only snippet | **`rustc`** on one file, then the binary |
+| Uses **serde** / **serde_json** / **chrono** / **chrono_tz** | **`cargo run`** in a small temp project with those deps |
+| Contains **`#[test]`** | **`cargo test`** — success = all tests pass, not stdout match |
 
-Warnings on stderr do **not** fail an exercise by themselves; **exit status** and **stdout** (where applicable) drive the check.
+Warnings on **stderr** do not fail an exercise by themselves; **exit status** and **stdout** (where applicable) drive the check. Trimmed **stdout** is compared to **`expected_output`** when applicable.
 
-### Progress
+## Install
 
-Completed exercises are recorded in **`~/.learn-rust-tui/progress.json`**.
+From **`rust/`** (directory with **`Cargo.toml`** and **`chapters/`**):
 
----
+```bash
+cd path/to/LEARN-LANGUAGES/rust
+cargo build --release   # optional; first build downloads crates
+```
 
-## Keyboard reference
+**Hub:** the root **`learn-languages`** menu lists this track, but you still install Rust yourself (above). The hub does not install rustup.
 
-### Navigation
+## Run
 
-| Key | Action |
-|-----|--------|
-| `↑/↓` or `k/j` | Move in chapter or exercise list |
-| `Enter` | Open chapter or start exercise |
-| `/` | Jump to chapter by number (`1`–`9`, `0` for chapter 10) |
-| `Esc` / `Backspace` / `b` | Go back |
-| `q` or `Ctrl+C` | Quit |
-| `s` | Stats (from chapter list) |
-| `?` | Help (from chapter list) |
+```bash
+cargo run
+# or:
+./target/release/learn-rust-tui
+```
 
-### While solving
+**Progress:** `~/.learn-rust-tui/progress.json`
 
-| Key | Action |
-|-----|--------|
-| `e` | Edit exercise in **`$EDITOR`** |
-| `r` | Compile / run / check output |
-| `h` | Next hint after a failed run |
+**Chapter directory:** auto-resolved; override with **`LEARN_RUST_CHAPTERS`**. See **[../README.md#finding-chapters](../README.md#finding-chapters)**. Default when run from **`rust/`**: **`chapters/`** next to **`Cargo.toml`**.
 
----
+## Learner workflow
+
+1. Start the TUI (**Run** above) or pick **Rust** from **`learn-languages`** at the repo root (after building this crate).
+2. Pick a **chapter**, then an **exercise** (read **theory** if you want).
+3. Press **`e`** — edit **`main.rs`** (starter code provided). **Save and quit** the editor.
+4. Press **`r`** — compile/run/check.
+5. On failure, press **`h`** for the next hint (up to two per exercise).
+6. Repeat until correct; progress saves automatically.
+
+## Keys (summary)
+
+| Context | Keys |
+|--------|------|
+| Chapter list | **`j`** / **`k`** or **↑** / **↓**, **Enter**, **`/`** jump (`1`–`9`, **`0`** = ch. 10), **`?`** help, **`s`** stats, **`q`** or **Ctrl+C** quit |
+| Theory | **`j`** / **`k`** or **↑** / **↓** scroll, **Enter** → exercises, **`b`** / **Esc** / **Backspace** back |
+| Exercises | **`j`** / **`k`**, **Enter** open, **`b`** back |
+| Code | **`r`** compile/run, **`e`** **`$EDITOR`**, **`b`** back |
+| Result | **`h`** hint on failure, **`r`** re-run, **`b`** back |
 
 ## Course layout
 
-There are **17** chapters under **`chapters/*.json`**, loaded in filename order, with **121** exercises total. Each exercise defines starter code, expected output, hints, and a reference solution used by the UI and maintainer scripts.
+Chapters live under **`chapters/*.json`** (filename order). Edit JSON in place. Schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**.
 
----
+**19** chapters, **127** exercises — loaded from **`chapters/*.json`** (filename order).
 
-## Maintainer notes (optional)
+| # | Chapter | Exercises |
+|---|---------|-----------|
+| 1 | Variables & Types | 7 |
+| 2 | Ownership, moves, and copies | 3 |
+| 3 | Control Flow | 7 |
+| 4 | Functions | 7 |
+| 5 | Lifetimes (basics) | 3 |
+| 6 | Arrays | 7 |
+| 7 | Slices | 7 |
+| 8 | Maps | 7 |
+| 9 | Strings & Unicode | 7 |
+| 10 | Structs | 7 |
+| 11 | Traits | 7 |
+| 12 | Methods | 7 |
+| 13 | Packages | 7 |
+| 14 | Pointers | 7 |
+| 15 | Error Handling | 7 |
+| 16 | Concurrency | 7 |
+| 17 | Testing | 5 |
+| 18 | JSON | 9 |
+| 19 | Time | 9 |
 
-- **Edit chapter JSON** under **`chapters/`** (authoritative for this track). Align ids and pedagogy with **`../CURRICULUM.md`**.
-- **Verify all reference solutions:** `python3 scripts/check_solutions.py` (run from **`rust/`**; uses **`.check-solutions-crate`** / **`.check-solutions-target`**; see script for flags).
-- **Shared docs** (schema, curriculum): **`../CURRICULUM.md`**, **`../TUTORIAL_PLATFORM.md`** relative to **`rust/`** in this monorepo.
+
+## Maintainer: verify bundled solutions
+
+```bash
+python3 scripts/check_solutions.py
+python3 scripts/check_solutions.py --chapter variables
+python3 scripts/check_solutions.py --list-failures-only
+```
+
+Uses **`.check-solutions-crate`** / **`.check-solutions-target`** under **`rust/`** (see script for flags).
+
+## Security
+
+Writes source, compiles, and runs binaries locally with **timeouts**. Trust chapter content like any local compile-and-run course.
+
+## Tests
+
+```bash
+cargo test
+```

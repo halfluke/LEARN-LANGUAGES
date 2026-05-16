@@ -9,7 +9,7 @@
       "title": "Goroutine",
       "description": "Launch go sayHello(). Print main done. Use time.Sleep to let goroutine run.",
       "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc sayHello() {\n    fmt.Println(\"Hello!\")\n}\n\nfunc main() {\n    // Launch goroutine\n    \n    fmt.Println(\"main done\")\n}",
-      "expected_output": "main done\nHello!",
+      "expected_output": "Hello!\nmain done",
       "hints": ["go sayHello()", "time.Sleep(100 * time.Millisecond)"],
       "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc sayHello() {\n    fmt.Println(\"Hello!\")\n}\n\nfunc main() {\n    go sayHello()\n    time.Sleep(100 * time.Millisecond)\n    fmt.Println(\"main done\")\n}"
     },
@@ -52,7 +52,7 @@
     {
       "id": "concurrency_07",
       "title": "Fan-In Pattern",
-      "description": "Create two goroutines that each send a string to a shared channel. Use a third goroutine to fan-in (read) from the channel and print received values. Close the channel when both senders are done.",
+      "description": "Two goroutines each send one string on a shared channel; a third closes the channel after `WaitGroup` wait. Collect both messages, **sort them**, then print (receive order is not guaranteed).",
       "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    ch := make(chan string, 2)\n    var wg sync.WaitGroup\n    \n    // Launch two goroutines that send to ch\n    // Close ch when both are done\n    // Read from ch and print each value\n}",
       "expected_output": "hello\nworld",
       "hints": [
@@ -61,7 +61,7 @@
         "In a third goroutine, defer close(ch) after wg.Wait()",
         "Range over ch to collect all values"
       ],
-      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    ch := make(chan string, 2)\n    var wg sync.WaitGroup\n    \n    wg.Add(2)\n    go func() {\n        defer wg.Done()\n        ch <- \"hello\"\n    }()\n    go func() {\n        defer wg.Done()\n        ch <- \"world\"\n    }()\n    \n    go func() {\n        wg.Wait()\n        close(ch)\n    }()\n    \n    for msg := range ch {\n        fmt.Println(msg)\n    }\n}"
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"sort\"\n    \"sync\"\n)\n\nfunc main() {\n    ch := make(chan string, 2)\n    var wg sync.WaitGroup\n\n    wg.Add(2)\n    go func() {\n        defer wg.Done()\n        ch <- \"hello\"\n    }()\n    go func() {\n        defer wg.Done()\n        ch <- \"world\"\n    }()\n\n    go func() {\n        wg.Wait()\n        close(ch)\n    }()\n\n    var msgs []string\n    for msg := range ch {\n        msgs = append(msgs, msg)\n    }\n    sort.Strings(msgs)\n    for _, msg := range msgs {\n        fmt.Println(msg)\n    }\n}"
     },
     {
       "id": "concurrency_06",
@@ -70,7 +70,7 @@
       "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    var wg sync.WaitGroup\n    \n    // Launch 3 goroutines, each prints its number\n    // Use wg.Add and wg.Done\n    \n    // Wait and print done\n}",
       "expected_output": "1\n2\n3\ndone",
       "hints": ["wg.Add(1); defer wg.Done(); wg.Wait()"],
-      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    var wg sync.WaitGroup\n    \n    for i := 1; i <= 3; i++ {\n        wg.Add(1)\n        go func(n int) {\n            defer wg.Done()\n            fmt.Println(n)\n        }(i)\n    }\n    \n    wg.Wait()\n    fmt.Println(\"done\")\n}"
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc main() {\n    var wg sync.WaitGroup\n    results := make([]int, 3)\n\n    for i := 1; i <= 3; i++ {\n        wg.Add(1)\n        go func(n int) {\n            defer wg.Done()\n            results[n-1] = n\n        }(i)\n    }\n\n    wg.Wait()\n    for _, n := range results {\n        fmt.Println(n)\n    }\n    fmt.Println(\"done\")\n}"
     }
   ]
 }

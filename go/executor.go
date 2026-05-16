@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"time"
 )
 
@@ -27,31 +26,34 @@ type Executor struct {
 // NewExecutor creates a new executor
 func NewExecutor() *Executor {
 	return &Executor{
-		timeout: 10 * time.Second, // 10 second timeout
+		timeout: 30 * time.Second,
 	}
 }
 
-// ExecuteCode runs the user code and returns the result
-func (e *Executor) ExecuteCode(code string) (*ExecutionResult, error) {
-	// Create temporary directory
+// ExecuteCode runs learner code in a temp module (go run . or go test).
+func (e *Executor) ExecuteCode(code string, expectedOutput string) (*ExecutionResult, error) {
 	tmpDir, err := os.MkdirTemp("", "learn-go-*")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create temp directory: %w", err)
 	}
 	defer os.RemoveAll(tmpDir)
 
-	// Write code to main.go
-	mainFile := filepath.Join(tmpDir, "main.go")
-	if err := os.WriteFile(mainFile, []byte(code), 0644); err != nil {
-		return nil, fmt.Errorf("failed to write code file: %w", err)
+	mode, err := prepareSnippetWorkspace(tmpDir, code, expectedOutput)
+	if err != nil {
+		return nil, err
 	}
 
-	// Create context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), e.timeout)
 	defer cancel()
 
-	// Run go run
-	cmd := exec.CommandContext(ctx, "go", "run", mainFile)
+	var cmd *exec.Cmd
+	switch mode {
+	case runModeGoTest:
+		cmd = exec.CommandContext(ctx, "go", "test", "-count=1")
+	default:
+		cmd = exec.CommandContext(ctx, "go", "run", ".")
+	}
+	cmd.Dir = tmpDir
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
@@ -62,17 +64,15 @@ func (e *Executor) ExecuteCode(code string) (*ExecutionResult, error) {
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			exitCode = exitErr.ExitCode()
+		} else if ctx.Err() == context.DeadlineExceeded {
+			return &ExecutionResult{
+				Stdout:   stdout.String(),
+				Stderr:   stderr.String(),
+				ExitCode: -1,
+				Error:    fmt.Errorf("execution timed out after %s", e.timeout),
+				TimedOut: true,
+			}, nil
 		} else {
-			// Check if it was a timeout
-			if ctx.Err() == context.DeadlineExceeded {
-				return &ExecutionResult{
-					Stdout:   stdout.String(),
-					Stderr:   stderr.String(),
-					ExitCode: -1,
-					Error:    fmt.Errorf("execution timed out after %s", e.timeout),
-					TimedOut: true,
-				}, nil
-			}
 			exitCode = 1
 		}
 	}
@@ -100,5 +100,5 @@ func GetGoPath() string {
 		}
 	}
 
-	return "go" // fallback
+	return "go"
 }

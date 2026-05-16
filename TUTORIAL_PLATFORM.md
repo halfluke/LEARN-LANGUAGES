@@ -123,6 +123,19 @@ Run after editing chapter JSON:
 python3 scripts/check_solutions.py
 ```
 
+**Learner parity:** bundled solutions must also pass the **TUI executor + validator** (what you get when pressing **`r`**), not only the maintainer script. From the repo root:
+
+```bash
+python3 scripts/verify_tui_alignment.py          # C, C#, Python, Java (Textual)
+go test -run TestReferenceSolutionsViaExecutor     # Go (from go/)
+cargo test reference_solutions_pass_via_tui_executor -- --ignored  # Rust (from rust/)
+cargo test reference_solutions_pass_via_tui_executor -- --ignored  # asmx64 (from asmx64/)
+```
+
+`./scripts/verify-all.sh` runs **`check_solutions`** for every track and **`verify_tui_alignment`** for Textual tracks; enable the ignored Rust/asm alignment tests when changing executors.
+
+**Go multi-file:** one editor buffer with **`---`** or **`// File: path`** lines; module **`learnsnippet`**; **`PASS`** exercises use **`go test`**.
+
 ---
 
 ## 8. Tooling notes (Linux / Kali)
@@ -147,7 +160,8 @@ Same **JSON schema** can drive another TUI; swap **`executor`** for:
 | Language | Typical run | Friction |
 |----------|-------------|----------|
 | **Python** | `python3 file.py` | venv/deps; less compile-time catching. |
-| **C#** | TUI: `dotnet build` + `dotnet run --no-build` on a session csproj; maintainer checker uses `dotnet exec` (see **`csharp/README`**) | project file + TFMs; heavier cold start. |
+| **C#** | `dotnet build` + `dotnet run --no-build` on a session csproj (TUI and **`check_solutions`**) | project file + TFMs; heavier cold start. |
+| **Go** | temp module **`learnsnippet`**: `go run .` or `go test` when expected is **`PASS`**; multi-file via **`---`** / **`// File:`** | package import paths must use **`learnsnippet/...`**. |
 | **C** | `cc` / `clang` + binary | UB can “pass” stdout checks; sanitizers optional. |
 | **x86-64 asm** | assembler + linker | ABI, syntax dialect, linking; grading often needs a harness, not only stdout. |
 

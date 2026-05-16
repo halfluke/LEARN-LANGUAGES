@@ -108,15 +108,15 @@
     {
       "id": "time_08",
       "title": "Current Time",
-      "description": "Use time.Now() to get the current time. Print it, then extract the hour and minute. Also use time.Sleep to wait 1 second and print the new time.",
+      "description": "Use a **fixed** instant (`time.Date`, not `time.Now`) so output matches the checker. Print the time, hour, minute, then the instant **+1 second** (no real sleep).",
       "starter_code": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    // Get current time\n    // Print it\n    // Print hour and minute\n    \n    // Sleep for 1 second\n    // Print the time after sleep",
-      "expected_output": "2024-XX-XX HH:MM:SS.XXXXXX+XX:XX\nHour: XX\nMinute: XX\nAfter sleep: 2024-XX-XX HH:MM:SS.XXXXXX+XX:XX",
+      "expected_output": "2024-01-15 14:30:45.123456789+00:00\nHour: 14\nMinute: 30\nAfter sleep: 2024-01-15 14:30:46.123456789+00:00",
       "hints": [
-        "t := time.Now() gets the current time",
-        "time.Sleep(1 * time.Second) pauses for 1 second",
-        "t.Hour() and t.Minute() extract components"
+        "time.Date(2024, 1, 15, 14, 30, 45, 0, time.UTC) gives a fixed instant",
+        "Format with t.Format(\"2006-01-02 15:04:05.000000000-07:00\")",
+        "after := now.Add(1 * time.Second) for the line after sleep"
       ],
-      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    now := time.Now()\n    fmt.Println(now)\n    fmt.Println(\"Hour:\", now.Hour())\n    fmt.Println(\"Minute:\", now.Minute())\n    \n    time.Sleep(1 * time.Second)\n    after := time.Now()\n    fmt.Println(\"After sleep:\", after)\n}"
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"time\"\n)\n\nfunc main() {\n    now := time.Date(2024, 1, 15, 14, 30, 45, 123456789, time.UTC)\n    fmt.Println(now.Format(\"2006-01-02 15:04:05.000000000-07:00\"))\n    fmt.Println(\"Hour:\", now.Hour())\n    fmt.Println(\"Minute:\", now.Minute())\n\n    after := now.Add(1 * time.Second)\n    fmt.Println(\"After sleep:\", after.Format(\"2006-01-02 15:04:05.000000000-07:00\"))\n}"
     }
   ],
   "theory": "## Time in Go\n\nThe `time` package provides functionality for measuring and displaying time.\n\n### time.Time\n\nRepresents an instant in time with nanosecond precision:\n```go\nt := time.Date(2024, time.January, 1, 12, 0, 0, 0, time.UTC)\nt := time.Now()\n```\n\n### time.Duration\n\n```go\nhour := time.Hour\nminute := time.Minute\nduration := 2*time.Hour + 30*time.Minute\n```\n\n### Parsing\n\n```go\nt, err := time.Parse(\"2006-01-02\", \"2024-01-01\")\n```\n\n### Formatting\n\n```go\nt.Format(\"01/02/2006\")\n```\n\n### Time Arithmetic\n\n```go\nlater := t.Add(24 * time.Hour)\nearlier := t.Sub(otherTime)\n```"

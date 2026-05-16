@@ -110,7 +110,44 @@ impl ChapterLoader {
     }
 }
 
+fn chapters_dir_valid(path: &std::path::Path) -> bool {
+    let Ok(entries) = std::fs::read_dir(path) else {
+        return false;
+    };
+    entries.filter_map(Result::ok).any(|e| {
+        e.path()
+            .extension()
+            .is_some_and(|ext| ext == "json")
+    })
+}
+
 pub fn default_chapters_dir() -> PathBuf {
+    if let Ok(env) = std::env::var("LEARN_ASMX64_CHAPTERS") {
+        let trimmed = env.trim();
+        if !trimmed.is_empty() {
+            return PathBuf::from(trimmed);
+        }
+    }
+    if let Ok(cwd) = std::env::current_dir() {
+        let p = cwd.join("chapters");
+        if chapters_dir_valid(&p) {
+            return p;
+        }
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        let mut dir = exe.parent().map(std::path::Path::to_path_buf);
+        for _ in 0..6 {
+            if let Some(ref d) = dir {
+                let p = d.join("chapters");
+                if chapters_dir_valid(&p) {
+                    return p;
+                }
+                dir = d.parent().map(std::path::Path::to_path_buf);
+            } else {
+                break;
+            }
+        }
+    }
     PathBuf::from("chapters")
 }
 

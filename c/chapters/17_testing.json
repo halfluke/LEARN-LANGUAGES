@@ -1,13 +1,13 @@
 {
   "id": "testing",
   "title": "Testing",
-  "description": "Assertions and test harness patterns in C",
-  "theory": "### Assertions and harnesses\n\nLightweight testing starts with `assert` macro (`NDEBUG` disables it in release). For systematic checks, structure suites that run many small tests, report failures with file and line, and return nonzero exit status to CI. Popular minimal frameworks exist as single headers; alternatively, integrate CTest/autotools or Meson test targets to run binaries under sanitizers.\n\n### Isolation and determinism\n\nPure functions over explicit inputs are easiest to test. For code touching `time`, files, or randomness, inject dependencies via function pointers or small wrapper modules so tests can swap deterministic fakes. Golden-file tests help for parsers; property-based fuzzing (libFuzzer, AFL) complements unit tests for parsers and decoders.\n\n### Coverage and CI\n\nCombine unit tests with AddressSanitizer/UndefinedBehaviorSanitizer in CI builds. Coverage tools (`gcov`, `llvm-cov`) highlight untested branches—aim for meaningful coverage, not percentages alone.\n\n```c\n#include <assert.h>\n\nstatic int square(int x) { return x * x; }\n\nint main(void) {\n    assert(square(3) == 9);\n    return 0;\n}\n```\n",
+  "description": "Testing ideas — verified here by compiling one program and matching stdout",
+  "theory": "### How this course checks your work\n\nPress **`r`** to **compile and run one `.c` file** (your editor buffer). The TUI compares **trimmed stdout**. It does **not** run a separate test harness — implement the logic in **`main`** (and `static` helpers) and **print** the expected lines.\n\n### Assertions and harnesses (real projects)\n\nLightweight testing starts with `assert` macro (`NDEBUG` disables it in release). For systematic checks, structure suites that run many small tests, report failures with file and line, and return nonzero exit status to CI. Popular minimal frameworks exist as single headers; alternatively, integrate CTest/autotools or Meson test targets to run binaries under sanitizers.\n\n### Isolation and determinism\n\nPure functions over explicit inputs are easiest to test. For code touching `time`, files, or randomness, inject dependencies via function pointers or small wrapper modules so tests can swap deterministic fakes. Golden-file tests help for parsers; property-based fuzzing (libFuzzer, AFL) complements unit tests for parsers and decoders.\n\n### Coverage and CI\n\nCombine unit tests with AddressSanitizer/UndefinedBehaviorSanitizer in CI builds. Coverage tools (`gcov`, `llvm-cov`) highlight untested branches—aim for meaningful coverage, not percentages alone.\n\n```c\n#include <assert.h>\n\nstatic int square(int x) { return x * x; }\n\nint main(void) {\n    assert(square(3) == 9);\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "testing_01",
       "title": "Basic test (stdout)",
-      "description": "Implement `sum` and print `sum(2, 3)` (same intent as the C `#[test]` exercise).",
+      "description": "Implement `sum` and print `sum(2, 3)` with `printf` (no trailing newline).",
       "starter_code": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return 0; }\n\nint main(void) {\n    printf(\"%d\", sum(2, 3));\n    return 0;\n}\n",
       "expected_output": "5",
       "hints": [

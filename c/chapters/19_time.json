@@ -96,7 +96,7 @@
     {
       "id": "time_08",
       "title": "Current Time",
-      "description": "Use time.Now() to get the current time. Print it, then extract the hour and minute. Also use time.Sleep to wait 1 second and print the new time.",
+      "description": "Build a **fixed** UTC instant in `struct tm` (not `time(NULL)`). Print it, hour, minute, then **+1 second** on `time_t` (no `sleep`).",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // build fixed instant, strftime, add 1 second\n    return 0;\n}\n",
       "expected_output": "2024-06-01 10:15:30 UTC\nHour: 10\nMinute: 15\nAfter +1s: 2024-06-01 10:15:31 UTC",
       "hints": [

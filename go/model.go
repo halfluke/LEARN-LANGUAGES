@@ -53,7 +53,11 @@ func LaunchEditorCmd(initialCode string) tea.Cmd {
 // runCmd executes the current code asynchronously and returns a Cmd
 func runCmd(m *Model) tea.Cmd {
 	return func() tea.Msg {
-		execRes, execErr := m.executor.ExecuteCode(m.currentCode)
+		expected := ""
+		if m.selectedExercise != nil {
+			expected = m.selectedExercise.ExpectedOutput
+		}
+		execRes, execErr := m.executor.ExecuteCode(m.currentCode, expected)
 		return ResultMsg{
 			execRes:   execRes,
 			err:       execErr,

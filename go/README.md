@@ -1,84 +1,96 @@
-# Learn Go TUI
+# LEARN-Go
 
-An interactive terminal-based Go learning platform with chapters, exercises, code validation, and progress tracking.
+Interactive **Go** course in the terminal: **`chapters/*.json`** (**[TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**), **`go run`** / **`go test`** in a temp module, **trimmed stdout** (or **all tests pass**) checks.
 
-**Monorepo layout:** this tree is **`go/`** inside **LEARN-LANGUAGES** (`cd path/to/LEARN-LANGUAGES/go`).
+The UI is **Bubble Tea** (Go). Learner code opens in **`$EDITOR`** when you press **`e`**.
+
+**Location:** **`go/`** in the **LEARN-LANGUAGES** monorepo.
 
 ## Platform
 
-**Linux, macOS, and Windows** — install **Go 1.20+** from [go.dev/dl](https://go.dev/dl/). See **[../README.md](../README.md#platform-support-v1)**.
-
----
+**Linux, macOS, and Windows** — **Go 1.20+** on **`PATH`**. See **[../README.md](../README.md#platform-support-v1)**.
 
 ## Requirements
 
-- **Go** toolchain on your **`PATH`** (the README targets **Go 1.20+**; use a current stable release from [go.dev/dl](https://go.dev/dl/)).
-- **Text editor** for exercises: set **`EDITOR`** if you like; otherwise the app tries **`nano`**, **`micro`**, **`vim`**, **`nvim`**, **`code`**, and **`subl`** on your `PATH` (same order as the other tracks).
+### Go toolchain
 
-**Startup check:** Before the Bubble Tea UI starts, the binary runs **`go version`** (trying `go` on `PATH` and a few common install locations). If Go is not available, it prints an explanation to **stderr** and exits with a **non-zero status** (the TUI never starts). When Go is found, you may see one **success line on stderr** before the UI loads.
+Install a current stable release from [go.dev/dl](https://go.dev/dl/) (README targets **1.20+**).
 
-**How exercises are checked:** The TUI does **not** only lint your source. It writes your code to a temporary **`main.go`** and runs **`go run`** on that file (with a timeout), then compares trimmed **stdout** to the exercise’s **`expected_output`**.
+**Verify:**
 
-There is **no** bundled `check_solutions.py` in this track—only the Go toolchain and an editor are required to learn.
+```bash
+go version
+```
+
+**Startup:** before the UI starts, the binary runs **`go version`**. If Go is missing, it prints to **stderr** and exits **non-zero** (no TUI).
+
+**Grading:** your editor buffer is turned into a small module under **`learnsnippet`** (see **Multi-file code** below). Most exercises use **`go run .`** and compare **stdout**; testing exercises use **`go test`** when **`expected_output`** is **`PASS`**.
+
+### Multi-file code (packages & testing)
+
+In one buffer you can use either:
+
+- A line with only **`---`** between files (e.g. **`main.go`** above, **`main_test.go`** below), or  
+- **`// File: path/to/file.go`** before each file (e.g. **`// File: utils/utils.go`**).
+
+The TUI writes those files, adds **`go.mod`**, and runs **`go run .`** or **`go test`**. Import your packages as **`learnsnippet/utils`**, **`learnsnippet/counter`**, etc.
+
+### External editor (`e`)
+
+Press **`e`** on the **code** screen. Set **`EDITOR`** before starting (e.g. `export EDITOR=nano`). If unset: **`nano`** → **`micro`** → **`vim`** → **`nvim`** → **`code`** → **`subl`**. Details: **[../README.md#course-tui-controls](../README.md#course-tui-controls)**.
 
 ## Install
 
-From the **`go/`** directory (repository root layout):
+From **`go/`**:
 
 ```bash
 cd path/to/LEARN-LANGUAGES/go
 go build -o learn-go-tui .
-./learn-go-tui
 ```
 
-Or run without a separate binary:
+**Hub:** the root **`learn-languages`** menu can open this track after you build the binary; the hub does **not** install Go for you.
+
+## Run
 
 ```bash
+./learn-go-tui
+# or without installing a binary:
 go run .
 ```
 
-## How to Use
+**Progress:** `~/.learn-go-tui/progress.json`
 
-### Navigation
+**Chapter directory:** auto-resolved (see **[../README.md#finding-chapters](../README.md#finding-chapters)**); override with **`LEARN_GO_CHAPTERS`**. Default when run from **`go/`**: **`chapters/`**.
 
-| Key | Action |
-|-----|--------|
-| `↑/↓` or `k/j` | Navigate chapter/exercise list |
-| `Enter` | Select chapter/exercise |
-| `/` | Jump to a chapter by number |
-| `←` / `Esc` / `Backspace` / `b` | Go back |
-| `q` or `Ctrl+C` | Quit |
+## Learner workflow
 
-### Exercises
+1. Start the TUI (**Run** above) or pick **Go** from **`learn-languages`** (after **`go build`**).
+2. Pick a **chapter**, then an **exercise** (scroll **theory** with **`j`** / **`k`** if you want).
+3. Press **`e`** — edit in **`$EDITOR`**, then **save and quit**.
+4. Press **`r`** — **`go run`** and stdout check.
+5. On failure, press **`h`** for the next hint (up to two per exercise).
+6. Repeat until correct; progress saves automatically.
 
-| Key | Action |
-|-----|--------|
-| `e` | Open $EDITOR to write code |
-| `r` | Run and validate your code |
-| `h` | Get a hint (up to 2 hints per exercise) |
+## Keys (summary)
 
-### Workflow
+| Context | Keys |
+|--------|------|
+| Chapter list | **`j`** / **`k`** or **↑** / **↓**, **Enter**, **`/`** jump, **`?`** help, **`s`** stats, **`q`** or **Ctrl+C** quit |
+| Theory | **`j`** / **`k`** or **↑** / **↓** scroll, **Enter** → exercises, **`b`** / **Esc** / **Backspace** back |
+| Exercises | **`j`** / **`k`**, **Enter** open, **`b`** back |
+| Code | **`r`** run, **`e`** **`$EDITOR`**, **`b`** back |
+| Result | **`h`** hint on failure, **`r`** re-run, **`b`** back |
 
-1. Select a chapter from the main menu
-2. Choose an exercise
-3. Press `e` to open your editor
-4. Write your solution, save & close
-5. Press `r` to run and validate
-6. If incorrect, press `h` for hints
-7. Repeat until correct
+## Course layout
 
-### Progress
+Chapters live under **`chapters/*.json`** (filename order). Edit JSON in place. Schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**.
 
-Progress is saved automatically to `~/.learn-go-tui/progress.json`.
-
-## Chapters
-
-Chapters load from `chapters/*.json` in **lexicographic filename order** (prefixed names like `01_variables.json` … `19_time.json`). The canonical outline lives in **[../CURRICULUM.md](../CURRICULUM.md)**. There is **no** `05_lifetimes.json` in Go (lifetimes are **N/A** for Go in the shared matrix). Shared schema and grading rules: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**.
+**18** chapters, **124** exercises — loaded from **`chapters/*.json`** (filename order).
 
 | # | Chapter | Exercises |
 |---|---------|-----------|
 | 1 | Variables & Types | 7 |
-| 2 | Ownership (Go: values, copies, references) | 3 |
+| 2 | Values, copies, and references (Go) | 3 |
 | 3 | Control Flow | 7 |
 | 4 | Functions | 7 |
 | 5 | Arrays | 7 |
@@ -95,3 +107,28 @@ Chapters load from `chapters/*.json` in **lexicographic filename order** (prefix
 | 16 | Testing | 5 |
 | 17 | JSON | 9 |
 | 18 | Time | 9 |
+
+
+## Maintainer: verify bundled solutions
+
+```bash
+python3 scripts/check_solutions.py
+python3 scripts/check_solutions.py --chapter variables
+python3 scripts/check_solutions.py --list-failures-only
+```
+
+Default work dir: **`.check-go-work`**. Override: **`LEARN_GO_CHECK_WORK`**.
+
+**Chapter path override:** **`LEARN_GO_CHAPTERS=/path/to/chapters`** (same resolution as the TUI — see **[../README.md#finding-chapters](../README.md#finding-chapters)**).
+
+Loader smoke test: **`go test`** from **`go/`**.
+
+## Security
+
+Writes **`main.go`**, runs **`go run`** locally with **timeouts**. Trust chapter content like any local run-snippet educator.
+
+## Tests
+
+```bash
+go test
+```

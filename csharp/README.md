@@ -58,7 +58,9 @@ First exercise run may **restore NuGet packages**; allow a minute on a cold mach
 
 - **Python 3.10+** on **`PATH`**.
 
-Optional: **`EDITOR`** for **`e`** in the exercise editor.
+### External editor (`e`)
+
+Press **`e`** on the **code** screen to edit in **`$EDITOR`**. If unset: **`nano`** → **`micro`** → **`vim`** → **`nvim`** → **`code`** → **`subl`** (first on `PATH`). Example: `export EDITOR=nano`. Details: **[../README.md#course-tui-controls](../README.md#course-tui-controls)**.
 
 Install with **`pip install -e ".[dev]"`** below (or the repo-root **`./scripts/setup-learn.sh`**, which installs this track into the root **`.venv`**).
 
@@ -73,6 +75,8 @@ When you press **`r`** on an exercise:
 Trimmed **stdout** is compared to **`expected_output`**.
 
 ## Install (editable)
+
+**Hub (optional):** from the repo root, **`./scripts/setup-learn.sh`**, activate **`.venv`**, then **`learn-languages`** → **C#**. Or install only this track:
 
 ```bash
 cd path/to/LEARN-LANGUAGES/csharp
@@ -95,6 +99,17 @@ learn-csharp-tui
 export LEARN_CSHARP_CHAPTERS=/absolute/path/to/chapters
 ```
 
+See **[../README.md#finding-chapters](../README.md#finding-chapters)** for the full resolution order.
+
+## Learner workflow
+
+1. Start the TUI (**Run** above) or open **C#** from **`learn-languages`** (hub setup).
+2. Pick a **chapter**, then an **exercise** (read **theory** if you want).
+3. Press **`e`** — edit in **`$EDITOR`**, then **save and quit**.
+4. Press **`r`** — **`dotnet` build/run** and compare stdout.
+5. On failure, press **`h`** for the next hint (up to two per exercise).
+6. Repeat until correct; progress saves automatically.
+
 ## Keys (summary)
 
 | Context | Keys |
@@ -116,23 +131,47 @@ python3 scripts/check_solutions.py --jobs 1
 python3 scripts/check_solutions.py --list-failures-only
 ```
 
-The checker is **faster** than the TUI path on purpose; it is not identical subprocess wiring:
-
 | | TUI (learner) | `check_solutions.py` (maintainer) |
 |--|----------------|-----------------------------------|
-| Projects | One per session | **`--jobs 2`** by default → `worker-0/`, `worker-1/` under the work dir |
-| After build | **`dotnet run --no-build`** | **`dotnet exec`** on the built DLL |
-| Goal | Match real **`dotnet run`** behavior | Bulk-verify all reference solutions quickly |
+| Projects | One per session (reused) | **`--jobs 2`** → `worker-0/`, `worker-1/` (each reused across many exercises) |
+| After build | **`dotnet run --no-build`** | **`dotnet run --no-build`** (same as TUI) |
+| Goal | Match real **`dotnet run`** behavior | Bulk-verify all reference solutions (parallel workers) |
 
-Work directory: **`./.check-csharp-work`** (override **`LEARN_CSHARP_CHECK_WORK`**). Safe to delete; it is gitignored.
+Work directory: **`.check-csharp-work`** (override **`LEARN_CSHARP_CHECK_WORK`**). Safe to delete; gitignored.
 
-Edit chapter JSON under **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
+## Course layout
+
+Chapters live under **`chapters/*.json`** (filename order). Edit JSON in place. Schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**.
+
+**18** chapters, **124** exercises — loaded from **`chapters/*.json`** (filename order).
+
+| # | Chapter | Exercises |
+|---|---------|-----------|
+| 1 | Variables and types | 7 |
+| 2 | References vs values | 3 |
+| 3 | Control flow | 7 |
+| 4 | Functions | 7 |
+| 5 | Sequences and lists | 7 |
+| 6 | Spans and arrays | 7 |
+| 7 | Dictionaries | 7 |
+| 8 | Strings | 7 |
+| 9 | Structs and records | 7 |
+| 10 | Interfaces | 7 |
+| 11 | Methods | 7 |
+| 12 | Namespaces and projects | 7 |
+| 13 | Unsafe code | 7 |
+| 14 | Errors and exceptions | 7 |
+| 15 | Async and tasks | 7 |
+| 16 | Testing | 5 |
+| 17 | JSON | 9 |
+| 18 | Date and time | 9 |
+
 
 ## Security
 
 The TUI and checker **write your source to disk**, **compile** with **`dotnet`**, and **execute** the resulting program under timeouts. Treat chapter snippets like any local compile-and-run exercise.
 
-## Tests
+## Tests (dev install)
 
 ```bash
 python3 -m pytest tests/ -q

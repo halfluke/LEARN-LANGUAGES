@@ -5,6 +5,9 @@ mod model;
 mod progress;
 mod validator;
 
+#[cfg(test)]
+mod solutions_alignment;
+
 use crate::editor::Editor;
 use crate::model::{App, UiEffect};
 use crossterm::event::{self, Event};

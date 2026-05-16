@@ -25,14 +25,28 @@ func NewValidator() *Validator {
 
 // Validate checks the execution result against expected output
 func (v *Validator) Validate(execRes *ExecutionResult, exercise *Exercise, hintsUsed int) *ValidationResult {
-	// Check for compilation errors first
-	if execRes.ExitCode != 0 || execRes.Stderr != "" {
+	expected := strings.TrimSpace(exercise.ExpectedOutput)
+
+	if expected == "PASS" {
+		if execRes.TimedOut {
+			return v.handleCompilationError(execRes, exercise, hintsUsed)
+		}
+		if execRes.ExitCode == 0 {
+			return &ValidationResult{
+				Passed:  true,
+				Message: "Correct! All tests passed.",
+			}
+		}
 		return v.handleCompilationError(execRes, exercise, hintsUsed)
 	}
 
-	// Compare output
+	// Build/run failure
+	if execRes.ExitCode != 0 {
+		return v.handleCompilationError(execRes, exercise, hintsUsed)
+	}
+
+	// Compare stdout (ignore stderr on success — e.g. go run cache lines)
 	output := strings.TrimSpace(execRes.Stdout)
-	expected := strings.TrimSpace(exercise.ExpectedOutput)
 
 	if output == expected {
 		return &ValidationResult{

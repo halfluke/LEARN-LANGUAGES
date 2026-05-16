@@ -4,7 +4,7 @@ Interactive **C** course in the terminal: **`chapters/*.json`** (**[TUTORIAL_PLA
 
 The UI is **[Textual](https://textual.textualize.io/)** over **Python 3**.
 
-**Location:** **`c/`** in the LEARN-LANGUAGES monorepo.
+**Location:** **`c/`** in the **LEARN-LANGUAGES** monorepo.
 
 ## Platform
 
@@ -54,7 +54,9 @@ gcc --version
 
 - **Python 3.10+** on **`PATH`** as **`python3`** (or **`python`**).
 
-Optional: **`EDITOR`** (`vim`, `nano`, `code --wait`, …) for **`e`** in the exercise screen.
+### External editor (`e`)
+
+Press **`e`** on the **code** screen to edit in **`$EDITOR`**. If unset: **`nano`** → **`micro`** → **`vim`** → **`nvim`** → **`code`** → **`subl`** (first on `PATH`). Example: `export EDITOR=nano` or `export EDITOR="code --wait"`. Details: **[../README.md#course-tui-controls](../README.md#course-tui-controls)**.
 
 Install the Textual app with **`pip install -e ".[dev]"`** below (or use the repo-root **`./scripts/setup-learn.sh`**, which installs this track into the root **`.venv`**).
 
@@ -64,7 +66,7 @@ Install the Textual app with **`pip install -e ".[dev]"`** below (or use the rep
 
 ## Install (editable)
 
-From the **`c/`** directory:
+**Hub (optional):** from the repo root, **`./scripts/setup-learn.sh`**, activate **`.venv`**, then **`learn-languages`** → **C**. Or install only this track:
 
 ```bash
 cd path/to/LEARN-LANGUAGES/c
@@ -89,6 +91,17 @@ Alternate chapter path:
 export LEARN_C_CHAPTERS=/absolute/path/to/chapters
 ```
 
+See **[../README.md#finding-chapters](../README.md#finding-chapters)** for the full resolution order.
+
+## Learner workflow
+
+1. Start the TUI (**Run** above) or open **C** from **`learn-languages`** (hub setup).
+2. Pick a **chapter**, then an **exercise** (read **theory** if you want).
+3. Press **`e`** — edit in **`$EDITOR`**, then **save and quit**.
+4. Press **`r`** — compile/run and compare stdout.
+5. On failure, press **`h`** for the next hint (up to two per exercise).
+6. Repeat until correct; progress saves automatically.
+
 ## Keys (summary)
 
 | Context | Keys |
@@ -99,23 +112,48 @@ export LEARN_C_CHAPTERS=/absolute/path/to/chapters
 | Code | **`r`** compile/run, **`e`** external editor, **`b`** back |
 | Result | **`h`** hint on failure, **`r`** re-run, **`b`** back to list |
 
-## Verify solutions
+## Course layout
+
+Chapters live under **`chapters/*.json`** (filename order). Edit JSON in place. Schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**.
+
+**17** chapters, **117** exercises — loaded from **`chapters/*.json`** (filename order).
+
+| # | Chapter | Exercises |
+|---|---------|-----------|
+| 1 | Variables and types | 7 |
+| 2 | Aliasing and memory | 3 |
+| 3 | Control flow | 7 |
+| 4 | Functions | 7 |
+| 5 | Arrays | 7 |
+| 6 | Pointers and array views | 7 |
+| 7 | Associative data | 7 |
+| 8 | Strings | 7 |
+| 9 | Structs | 7 |
+| 10 | Polymorphism in C | 7 |
+| 11 | Methods as functions | 7 |
+| 12 | Pointers | 7 |
+| 13 | Error handling | 7 |
+| 14 | Concurrency | 7 |
+| 15 | Testing | 5 |
+| 16 | JSON | 9 |
+| 17 | Time | 9 |
+
+
+## Maintainer: verify bundled solutions
 
 ```bash
 python3 scripts/check_solutions.py
+python3 scripts/check_solutions.py --chapter variables
+python3 scripts/check_solutions.py --list-failures-only
 ```
 
-Default **`./.check-c-work`**. Override: **`LEARN_C_CHECK_WORK`**.
-
-## Curriculum
-
-Edit **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
+Default work dir: **`.check-c-work`**. Override: **`LEARN_C_CHECK_WORK`**.
 
 ## Security
 
-Writes source, compiles natives, executes under timeouts — only use trusted chapter content.
+Writes source, compiles natives, and runs them locally with **timeouts** — only use trusted chapter content.
 
-## Tests
+## Tests (dev install)
 
 ```bash
 python3 -m pytest tests/ -q

@@ -98,7 +98,7 @@
     {
       "id": "time_08",
       "title": "Current Time",
-      "description": "Use time.Now() to get the current time. Print it, then extract the hour and minute. Also use time.Sleep to wait 1 second and print the new time.",
+      "description": "Use a **fixed** `datetime` (not the wall clock) so output matches the checker. Print the instant, hour, minute, then **+1 second** with `timedelta` (no `sleep`).",
       "starter_code": "from datetime import datetime, timedelta, timezone\n",
       "expected_output": "2024-06-01 10:15:30 UTC\nHour: 10\nMinute: 15\nAfter +1s: 2024-06-01 10:15:31 UTC",
       "hints": [

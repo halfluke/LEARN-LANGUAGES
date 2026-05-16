@@ -19,8 +19,8 @@
       "description": "Define custom error type NotFoundError with Unwrap(). Check errors.Is() to handle.",
       "starter_code": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\ntype NotFoundError struct {\n    Key string\n}\n\nfunc (e NotFoundError) Error() string {\n    return \"not found: \" + e.Key\n}\n\nfunc findUser(name string) error {\n    if name != \"alice\" {\n        return NotFoundError{Key: name}\n    }\n    return nil\n}\n\nfunc main() {\n    err := findUser(\"bob\")\n    if errors.Is(err, NotFoundError{}) {\n        fmt.Println(\"User not found\")\n    }\n}",
       "expected_output": "User not found",
-      "hints": ["Need to implement Unwrap() for errors.Is to work"],
-      "solution": "package main\n\nimport (\n    \"errors\"\n    \"fmt\"\n)\n\ntype NotFoundError struct {\n    Key string\n}\n\nfunc (e NotFoundError) Error() string {\n    return \"not found: \" + e.Key\n}\n\nfunc (e NotFoundError) Unwrap() error {\n    return nil\n}\n\nfunc findUser(name string) error {\n    if name != \"alice\" {\n        return NotFoundError{Key: name}\n    }\n    return nil\n}\n\nfunc main() {\n    err := findUser(\"bob\")\n    if errors.Is(err, NotFoundError{}) {\n        fmt.Println(\"User not found\")\n    }\n}"
+      "hints": ["Use a type assertion: if _, ok := err.(NotFoundError); ok { ... }"],
+      "solution": "package main\n\nimport \"fmt\"\n\ntype NotFoundError struct {\n    Key string\n}\n\nfunc (e NotFoundError) Error() string {\n    return \"not found: \" + e.Key\n}\n\nfunc findUser(name string) error {\n    if name != \"alice\" {\n        return NotFoundError{Key: name}\n    }\n    return nil\n}\n\nfunc main() {\n    err := findUser(\"bob\")\n    if _, ok := err.(NotFoundError); ok {\n        fmt.Println(\"User not found\")\n    }\n}"
     },
     {
       "id": "errors_03",

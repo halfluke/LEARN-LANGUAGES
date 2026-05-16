@@ -1,13 +1,13 @@
 {
   "id": "testing",
   "title": "Testing",
-  "description": "Writing and running tests with the standard library",
-  "theory": "### xUnit-style building blocks\n\n.NET testing commonly uses **xUnit**, **NUnit**, or **MSTest**. `[Fact]` marks a single test; `[Theory]` pairs `[InlineData]` or member data with parameters. Assertions come from `Assert.*` helpers or fluent libraries like FluentAssertions.\n\n### Isolation and fakes\n\nPrefer testing through small, injectable dependencies (constructor injection) so you can substitute fakes in tests. `Microsoft.Extensions.DependencyInjection` is the typical container in ASP.NET Core apps.\n\n### Coverage and determinism\n\nUse deterministic clocks or seeds when testing time or randomness. Separate pure logic from IO so tests stay fast and reliable.\n\n```csharp\nusing Xunit;\n\nnamespace Tests;\n\npublic class MathTests\n{\n    [Fact]\n    public void Adds()\n    {\n        Assert.Equal(4, 2 + 2);\n    }\n\n    [Theory]\n    [InlineData(1, 2, 3)]\n    [InlineData(-1, 1, 0)]\n    public void AddsMany(int a, int b, int sum) =>\n        Assert.Equal(sum, a + b);\n}\n```\n",
+  "description": "Testing ideas — verified here by `dotnet run` and matching stdout",
+  "theory": "### How this course checks your work\n\nPress **`r`** to **`dotnet build`** and **`dotnet run`** on **one program** (your editor buffer, top-level statements in `Program.cs`). The TUI compares **trimmed stdout**. It does **not** run **xUnit/NUnit** in the course UI — exercises ask you to **implement logic and print** what a test would assert.\n\n### xUnit-style building blocks (real projects)\n\n.NET testing commonly uses **xUnit**, **NUnit**, or **MSTest**. `[Fact]` marks a single test; `[Theory]` pairs `[InlineData]` or member data with parameters. Assertions come from `Assert.*` helpers or fluent libraries like FluentAssertions.\n\n### Isolation and fakes\n\nPrefer testing through small, injectable dependencies (constructor injection) so you can substitute fakes in tests. `Microsoft.Extensions.DependencyInjection` is the typical container in ASP.NET Core apps.\n\n### Coverage and determinism\n\nUse deterministic clocks or seeds when testing time or randomness. Separate pure logic from IO so tests stay fast and reliable.\n\n```csharp\nusing Xunit;\n\nnamespace Tests;\n\npublic class MathTests\n{\n    [Fact]\n    public void Adds()\n    {\n        Assert.Equal(4, 2 + 2);\n    }\n\n    [Theory]\n    [InlineData(1, 2, 3)]\n    [InlineData(-1, 1, 0)]\n    public void AddsMany(int a, int b, int sum) =>\n        Assert.Equal(sum, a + b);\n}\n```\n",
   "exercises": [
     {
       "id": "testing_01",
       "title": "Basic test (stdout)",
-      "description": "Implement `Sum` and Console.WriteLine `Sum(2, 3)` (same intent as the Rust `#[test]` exercise).",
+      "description": "Implement `Sum` and `Console.WriteLine(Sum(2, 3))`.",
       "starter_code": "static int Sum(int a, int b) => 0;\nConsole.WriteLine(Sum(2, 3));\n",
       "expected_output": "5",
       "hints": [

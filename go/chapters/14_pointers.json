@@ -7,14 +7,15 @@
     {
       "id": "pointers_01",
       "title": "Declare a Pointer",
-      "description": "Declare a pointer to an int named 'ptr' that points to a variable 'x' with value 42. Print the pointer value using fmt.Println(ptr).",
-      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 42\n    // Declare a pointer ptr that points to x\n    \n    // Print the pointer\n}",
-      "expected_output": "0xc000",
+      "description": "Declare a pointer to an int named 'ptr' that points to a variable 'x' with value 42. Print the value at ptr using fmt.Println(*ptr).",
+      "starter_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 42\n    // Declare a pointer ptr that points to x\n    \n    // Print the value ptr points to\n}",
+      "expected_output": "42",
       "hints": [
         "Use var ptr *int to declare a pointer to int",
-        "Use ptr = &x to assign the address of x to ptr"
+        "Use ptr = &x to assign the address of x to ptr",
+        "Dereference with *ptr to read the int value"
       ],
-      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 42\n    var ptr *int\n    ptr = &x\n    fmt.Println(ptr)\n}"
+      "solution": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 42\n    var ptr *int\n    ptr = &x\n    fmt.Println(*ptr)\n}"
     },
     {
       "id": "pointers_02",

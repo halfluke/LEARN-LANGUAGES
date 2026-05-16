@@ -89,7 +89,7 @@
         "strings.HasPrefix(url, \"https://\")",
         "strings.HasSuffix(url, \".com\")"
       ],
-      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    url := \"https://example.com\"\n    fmt.Println(strings.HasPrefix(url, \"https://\"))\n    fmt.Println(strings.HasSuffix(url, \".com\"))\n}"
+      "solution": "package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() {\n    url := \"https://example.com\"\n    fmt.Println(strings.HasPrefix(url, \"https://\"), strings.HasSuffix(url, \".com\"))\n}"
     }
   ]
 }

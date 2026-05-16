@@ -4,6 +4,10 @@ Interactive **Python 3** course in the terminal: **`chapters/*.json`** shared w
 
 Located under **`python/`** in the **LEARN-LANGUAGES** monorepo (`cd` here after cloning).
 
+## Platform
+
+**Linux, macOS, and Windows** — **Python 3.10+** on `PATH`. See **[../README.md](../README.md#platform-support-v1)**.
+
 ## Requirements
 
 | Requirement | Notes |

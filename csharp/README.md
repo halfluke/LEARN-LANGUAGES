@@ -6,6 +6,10 @@ The UI is **[Textual](https://textual.textualize.io/)** over **Python 3**.
 
 **Location:** **`csharp/`** in the LEARN-LANGUAGES monorepo (no `#` in the path name — the old **`LEARN-C#`** wording referred to standalone repos).
 
+## Platform
+
+**Linux, macOS, and Windows** — [.NET SDK](https://dotnet.microsoft.com/download) plus **Python 3.10+** for the Textual TUI. See **[../README.md](../README.md#platform-support-v1)**.
+
 ## Requirements
 
 - **Python 3.10+** (TUI driver).

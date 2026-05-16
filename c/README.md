@@ -6,6 +6,10 @@ The UI is **[Textual](https://textual.textualize.io/)** over **Python 3**.
 
 **Location:** **`c/`** in the LEARN-LANGUAGES monorepo.
 
+## Platform
+
+**Linux and macOS** — **`cc`** or **`gcc`** on `PATH`. **Windows (native MSVC): not supported** in v1; use **WSL2** with a Linux toolchain. See **[../README.md](../README.md#platform-support-v1)**.
+
 ## Requirements
 
 - **Python 3.10+** (runs the host TUI).

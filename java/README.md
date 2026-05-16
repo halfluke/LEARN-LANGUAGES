@@ -6,6 +6,10 @@ The UI is Python + **Textual**; the learner code is plain Java (`public class Ma
 
 Located under **`java/`** in the **LEARN-LANGUAGES** monorepo (`cd` here after cloning).
 
+## Platform
+
+**Linux, macOS, and Windows** — **JDK 17+** (`javac`, `java`) and **Python 3.10+** for the TUI. See **[../README.md](../README.md#platform-support-v1)**.
+
 ## Requirements
 
 | Requirement | Notes |

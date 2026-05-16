@@ -4,6 +4,10 @@ Terminal-based Rust course: chapters, short theory, hands-on exercises, and auto
 
 This code lives inside the **LEARN-LANGUAGES** monorepo (**`rust/`**). Paths below assume your shell is **`rust/`** at the repo root (next to **`go/`**, **`c/`**, etc.).
 
+## Platform
+
+**Linux, macOS, and Windows** — install **`rustc`** / **`cargo`** via [rustup](https://rustup.rs/) (or your distro packages on Linux). See **[../README.md](../README.md#platform-support-v1)**.
+
 ## What to install
 
 ### Rust toolchain (required)

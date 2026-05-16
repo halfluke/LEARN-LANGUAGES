@@ -2,6 +2,10 @@
 
 Interactive **Linux x86-64** assembly course in the terminal: **NASM**, **Intel syntax**, **ELF64**. Exercises are checked by assembling, linking, and running your program locally, comparing trimmed **stdout** to the expected text.
 
+## Platform
+
+**Linux only** (v1) for exercise binaries (**ELF64**, NASM, GNU **`ld`**). **macOS and Windows (native): not supported** for the course tooling — on Windows use **WSL2** (see below). See **[../README.md](../README.md#platform-support-v1)**.
+
 ## Prerequisites (Linux)
 
 ### Run the TUI (host app)

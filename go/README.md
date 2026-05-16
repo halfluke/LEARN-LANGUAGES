@@ -4,6 +4,10 @@ An interactive terminal-based Go learning platform with chapters, exercises, cod
 
 **Monorepo layout:** this tree is **`go/`** inside **LEARN-LANGUAGES** (`cd path/to/LEARN-LANGUAGES/go`).
 
+## Platform
+
+**Linux, macOS, and Windows** — install **Go 1.20+** from [go.dev/dl](https://go.dev/dl/). See **[../README.md](../README.md#platform-support-v1)**.
+
 ---
 
 ## Requirements

@@ -28,7 +28,21 @@ Each track’s **`README`** is authoritative. At a glance:
 | **Java** | **Python 3.10+**, Textual | **JDK 17+** (`javac`, `java`) | `EDITOR` |
 | **asmx64** | **Rust** (`cargo` to build the TUI) | **nasm**, **ld**, **gcc** (Linux / WSL2) | **`python3`** for `scripts/check_solutions.py` |
 
-Startup probes, timeouts, and platform limits (e.g. asm is Linux-only v1) are documented per track.
+## Platform support (v1)
+
+Legend: **Yes** = supported for the course TUI and exercise checks; **WSL** = use Windows Subsystem for Linux; **No** = not supported in v1.
+
+| Track | Linux | macOS | Windows (native) | Notes |
+|-------|:-----:|:-----:|:----------------:|-------|
+| **Rust** | Yes | Yes | Yes | [rustup](https://rustup.rs/) on all three |
+| **Go** | Yes | Yes | Yes | `go` on `PATH` |
+| **C** | Yes | Yes | No | **`cc`/`gcc`** (POSIX); **not** MSVC — use **WSL2** on Windows |
+| **C#** | Yes | Yes | Yes | [.NET SDK](https://dotnet.microsoft.com/download) |
+| **Python** | Yes | Yes | Yes | Python 3.10+ |
+| **Java** | Yes | Yes | Yes | JDK 17+ |
+| **asmx64** | Yes | No | No | **ELF64 / NASM / GNU `ld`** — Linux only; on Windows use **WSL2** |
+
+Details and caveats: each track **`README`** (sections **Platform** or **Requirements**).
 
 ## Shared docs
 

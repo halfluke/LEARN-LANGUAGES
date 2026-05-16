@@ -195,9 +195,6 @@ One-off or batch authoring helpers; use **`--dry-run`** where supported before o
 |--------|----------------|
 | **`scripts/apply_chapter_theory.py`** | Merges expanded theory from **`scripts/theory/`** into **`chapters/*.json`**, and strips maintainer-only curriculum boilerplate. |
 | **`scripts/apply_exercise_hints.py`** | Copies hints from **`scripts/hints/<track>.json`** into matching exercises (tracks: python, java, csharp, c, rust). |
-| **`scripts/fix_rust_cross_refs.py`** | Rewrites Rust chapter JSON to remove Go-ported wording and replace thin theory with Rust-specific copy. |
-| **`scripts/fix_ported_chapter_metadata.py`** | Fixes chapter-level **title** / **description** on Python, Java, C#, and C after a Go port. |
-| **`scripts/fix_ported_exercise_text.py`** | Rewrites exercise **title** / **description** text on those same tracks (Go idioms → track-idiomatic wording). |
 
 **`scripts/theory/`** is not run directly: **`content.py`** aggregates per-track theory modules (`c.py`, `csharp.py`, `python_track.py`, `java_track.py`, `rust_expansions.py`, `go_expansions.py`, `asmx64.py`); **`_strip.py`** removes boilerplate. Used only by **`apply_chapter_theory.py`**.
 

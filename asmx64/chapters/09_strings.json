@@ -2,7 +2,7 @@
   "id": "strings",
   "title": "Strings & bytes",
   "description": "NUL-terminated C strings vs explicit length",
-  "theory": "## Two representations\n\n- **Counted:** keep length in a register (syscall `write`).\n- **NUL-terminated:** end with `db '...', 0` when interoperating with libc (`printf`).\n\nThis chapter stays syscall-first.\n",
+  "theory": "### Bytes, not abstract text\n\nIn this track, strings are **byte sequences** with a known length. UTF-8 literals in\nthe assembler appear exactly as the bytes you wrote between quotes; NASM does not interpret\nthem as Unicode code points beyond encoding those bytes.\n\nFor truly dynamic text you either format into a scratch buffer or emit digits by repeated\ndivision—classic **itoa**-style loops—or use libc helpers when you link with **gcc**.\n\n### `write`-friendly layouts\n\nPlace literals in **`.data`** (`db 'H', 'e', 'l', 'l', 'o'`) and compute **`len equ $ - msg`**\nso lengths stay consistent when you edit content. When printing single computed digits,\nmaterialize ASCII by adding **`'0'`** into a byte buffer in **`.bss`**.\n\n```nasm\nsection .data\n    greeting: db 'Hello', 10\n    glen equ $ - greeting\n\nsection .text\n    mov rax, 1\n    mov rdi, 1\n    mov rsi, greeting\n    mov rdx, glen\n    syscall\n```\n\n### NUL terminators are optional\n\nC strings end at **`0`**, but **syscalls** consume explicit lengths. Do not assume a\nNUL unless you call routines that do; mixing models is a common off-by-one source.\n",
   "exercises": [
     {
       "id": "strings_01",

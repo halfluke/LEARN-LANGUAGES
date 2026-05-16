@@ -1,64 +1,66 @@
 {
   "id": "controlflow",
-  "title": "Control Flow",
-  "description": "If statements, loops, and switch cases in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Control flow in C#\n\n`if`/`else`, `switch` expressions, `for`, `foreach`, `while`, `break`, and `continue`. Prefer `foreach` for collections.\n",
+  "title": "Control flow",
+  "description": "if, while, for, and match in C#",
+  "theory": "### Conditionals and patterns\n\nBranching uses `if`, `else if`, and `switch`. Modern C# favors **pattern matching**: you can switch on types, combine property tests with `when`, and use **switch expressions** that return values concisely.\n\nThe **nullable reference types** feature (nullable context) lets the compiler warn when you may dereference `null`. Combine it with null checks, null-coalescing (`??`), null-conditional (`?.`), and the `??=` assignment operator for clearer control flow around missing values.\n\n### Loops and iterators\n\n`for`, `while`, and `do/while` behave much like C-family languages. `foreach` works on anything that exposes a public `GetEnumerator` or satisfies the async enumerable pattern. `break` and `continue` work in loops; `goto` exists but is reserved for rare IL-level patterns or generated code.\n\nLINQ methods (`Where`, `Select`, etc.) do not mutate collections—they describe queries executed when enumerated. That distinction matters for side effects and performance.\n\n```csharp\nusing System;\nusing System.Linq;\n\nvar xs = new[] { 1, 2, 3, 4 };\n\nvar sumEven = xs.Where(n => n % 2 == 0).Sum();\n\nvar label = DateTime.Now.Hour switch\n{\n    < 12 => \"morning\",\n    < 18 => \"afternoon\",\n    _ => \"evening\"\n};\n\nConsole.WriteLine($\"{sumEven} {label}\");\n```\n",
   "exercises": [
     {
       "id": "controlflow_01",
       "title": "If Statement",
-      "description": "Declare age := 20. If age >= 18, print Adult. Otherwise print Minor.",
+      "description": "Declare age = 20. If age >= 18, Console.WriteLine Adult. Otherwise Console.WriteLine Minor.",
       "starter_code": "var age = 20;\n// if (age >= 18) Console.WriteLine(\"Adult\"); else Console.WriteLine(\"Minor\");",
       "expected_output": "Adult",
       "hints": [
-        "Use if age >= 18 { Console.WriteLine(\"Adult\") } else { Console.WriteLine(\"Minor\") }"
+        "Use classic `if` / `else` with `Console.WriteLine`.",
+        "Compare integers with standard C# relational operators."
       ],
       "solution": "var age = 20;\nif (age >= 18) Console.WriteLine(\"Adult\");\nelse Console.WriteLine(\"Minor\");"
     },
     {
       "id": "controlflow_02",
       "title": "For Loop",
-      "description": "Use a for loop to print numbers 1 through 5.",
+      "description": "Use a for loop to Console.WriteLine numbers 1 through 5.",
       "starter_code": "for (var i = 1; i <= 5; i++) { /* Console.WriteLine(i); */ }",
       "expected_output": "1\n2\n3\n4\n5",
       "hints": [
-        "Use for i := 1; i <= 5; i++ { Console.WriteLine(i) }"
+        "A `for` loop with inclusive bounds uses `var i = 1; i <= 5; i++`.",
+        "Emit one integer per iteration with its own newline when required."
       ],
       "solution": "for (var i = 1; i <= 5; i++) Console.WriteLine(i);"
     },
     {
       "id": "controlflow_03",
       "title": "Switch Statement",
-      "description": "Declare day := 2. Use a switch statement to print the day name: 1=Monday, 2=Tuesday, 3=Wednesday, default=Unknown.",
+      "description": "Declare day = 2. Use a switch statement to Console.WriteLine the day name: 1=Monday, 2=Tuesday, 3=Wednesday, default=Unknown.",
       "starter_code": "var day = 2;\n// switch (day) { ... }",
       "expected_output": "Tuesday",
       "hints": [
-        "switch day { case 1: ... default: ... }",
-        "No break statement needed in Go cases"
+        "Switch on the `day` primitive with labeled `case` branches and terminating `break;`.",
+        "Provide `_` / `default` for unknown weekday codes."
       ],
       "solution": "var day = 2;\nswitch (day)\n{\n    case 1: Console.WriteLine(\"Monday\"); break;\n    case 2: Console.WriteLine(\"Tuesday\"); break;\n    case 3: Console.WriteLine(\"Wednesday\"); break;\n    default: Console.WriteLine(\"Unknown\"); break;\n}"
     },
     {
       "id": "controlflow_04",
       "title": "For-Range Loop",
-      "description": "Create a slice colors := []string{\"red\", \"green\", \"blue\"}. Use for-range to print each color on its own line.",
+      "description": "Create a slice colors = list[\"red\", \"green\", \"blue\"}. Use for ... in to Console.WriteLine each color on its own line.",
       "starter_code": "var colors = new[] { \"red\", \"green\", \"blue\" };\n// foreach (var c in colors) Console.WriteLine(c);",
       "expected_output": "red\ngreen\nblue",
       "hints": [
-        "for index, color := range colors { }",
-        "Use Console.WriteLine(color)"
+        "Model the collection as `new[] { ... }` or `List<string>`; iterate with `foreach`.",
+        "Each `Console.WriteLine` emits its own newline."
       ],
       "solution": "var colors = new[] { \"red\", \"green\", \"blue\" };\nforeach (var c in colors) Console.WriteLine(c);"
     },
     {
       "id": "controlflow_05",
       "title": "Else If Chain",
-      "description": "Declare score := 85. Print the grade: 90+ = A, 80+ = B, 70+ = C, 60+ = D, below 60 = F.",
+      "description": "Declare score = 85. Print the grade: 90+ = A, 80+ = B, 70+ = C, 60+ = D, below 60 = F.",
       "starter_code": "var score = 85;\n// chain if / else if for grade",
       "expected_output": "B",
       "hints": [
-        "Use if score >= 90 { A } else if score >= 80 { B } ...",
-        "Check from highest to lowest"
+        "Chain conditions from highest thresholds downward (≥90 ⇒ A…).",
+        "Ternary ladders or cascading `else if` both work."
       ],
       "solution": "var score = 85;\nstring grade = score >= 90 ? \"A\" : score >= 80 ? \"B\" : score >= 70 ? \"C\" : score >= 60 ? \"D\" : \"F\";\nConsole.WriteLine(grade);"
     },
@@ -69,21 +71,20 @@
       "starter_code": "var i = 1;\n// while / for with break at 5",
       "expected_output": "1\n2\n3\n4",
       "hints": [
-        "Use for { } for an infinite loop",
-        "if i >= 5 { break } exits the loop",
-        "Increment i inside the loop"
+        "Increment a counter forever (`for (;;)`) until `break` fires at the cutoff.",
+        "Print numbers before branching out of the loop when that matches the checker."
       ],
       "solution": "for (var i = 1; ; i++)\n{\n    if (i >= 5) break;\n    Console.WriteLine(i);\n}"
     },
     {
       "id": "controlflow_06",
       "title": "Continue Statement",
-      "description": "Use a for loop to print numbers 1 to 10, but skip printing even numbers using continue.",
+      "description": "Use a for loop to Console.WriteLine numbers 1 to 10, but skip Console.WriteLineing even numbers using continue.",
       "starter_code": "for (var i = 1; i <= 10; i++) { /* skip evens */ }",
       "expected_output": "1\n3\n5\n7\n9",
       "hints": [
-        "if i % 2 == 0 { continue } skips even numbers",
-        "Check i % 2 != 0 or i % 2 == 1 to print odd numbers"
+        "Use `%` parity checks and `continue` to skip undesired iterations.",
+        "Loop inclusively across the requested numeric range."
       ],
       "solution": "for (var i = 1; i <= 10; i++)\n{\n    if (i % 2 == 0) continue;\n    Console.WriteLine(i);\n}"
     }

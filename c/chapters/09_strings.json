@@ -1,18 +1,17 @@
 {
   "id": "strings",
-  "title": "Strings & Runes",
-  "description": "Learn about string constants, runes, string manipulation, and formatting in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## C strings\n\n`const char *`, `printf`, and `strncmp` for comparisons.\n",
+  "title": "Strings",
+  "description": "char arrays, string literals, and stdio",
+  "theory": "### Null-terminated byte strings\n\nC strings are sequences of `char` ending at the first `\\0` byte. The standard library in `<string.h>` provides `strlen`, `strcmp`, `strncmp`, `strchr`, `strstr`, and more. Because length is implicit, overrunning a buffer while copying is a chronic bug—always know destination capacity. Prefer `strncpy` only if you understand its padding semantics; `snprintf` into a buffer is often clearer for bounded string building.\n\n### Wide and multibyte text\n\nFor international text, `<wchar.h>` and `<uchar.h>` add wide and UTF-8/UTF-16/UTF-32 utilities, but `char` strings remain the default. Treat external text as UTF-8 is common on modern POSIX systems; still validate and normalize when security matters. Do not confuse byte counts with character counts in Unicode.\n\n### Copying and formatting\n\n`memcpy` copies raw bytes; `memmove` handles overlapping regions safely. For formatted output use `printf` family with correct format specifiers (`%zu` for `size_t`, `PRIu32` macros from `<inttypes.h>` for fixed integers). Read input with `fgets` for line-oriented data rather than unbounded `scanf` into fixed stacks.\n\n```c\n#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char dst[32];\n    const char *src = \"hello\";\n    snprintf(dst, sizeof dst, \"%s world\", src);\n    printf(\"%zu\\n\", strlen(dst));\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "strings_01",
       "title": "String Constants",
-      "description": "Declare a string variable greeting and assign it the value \"Hello, Go!\". Then print it using printf.",
+      "description": "Declare a string variable greeting and assign it the value \"Hello, C!\". Then print it using printf.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *greeting = \"Hello, Go!\";\n    // puts(greeting);\n    return 0;\n}\n",
       "expected_output": "Hello, Go!",
       "hints": [
-        "Use greeting := \"Hello, Go!\" to declare and assign",
-        "Use printf(greeting) to print"
+        "`const char *greeting = \"Hello, Go!\";` — `puts(greeting);` matches the reference solution."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *greeting = \"Hello, Go!\";\n    puts(greeting);\n    return 0;\n}\n"
     },
@@ -23,71 +22,67 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    char ch = 'A';\n    // %c and %d\n    return 0;\n}\n",
       "expected_output": "Character: A\nCode Point: 65",
       "hints": [
-        "Use var ch rune = 'A' or ch := 'A'",
-        "Use fmt.Printf(\"Character: %c\\n\", ch) for the character",
-        "Use fmt.Printf(\"Code Point: %d\\n\", ch) for the Unicode code point"
+        "`char ch = 'A';`",
+        "`printf(\"Character: %c\\nCode Point: %d\\n\", ch, (int)ch);`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    char ch = 'A';\n    printf(\"Character: %c\\nCode Point: %d\\n\", ch, (int)ch);\n    return 0;\n}\n"
     },
     {
       "id": "strings_03",
       "title": "String Manipulation",
-      "description": "Use strings.Contains to check if \"Hello\" is in \"Hello, World!\", strings.Replace to replace \"World\" with \"Go\", and strings.Split to split \"a,b,c\" by comma.",
+      "description": "Use strings.Contains to check if \"Hello\" is in \"Hello, World!\", strings.Replace to replace \"World\" with \"C\", and strings.Split to split \"a,b,c\" by comma.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *text = \"Hello, World!\";\n    // strstr, replace, strtok\n    return 0;\n}\n",
       "expected_output": "Contains: true\nReplaced: Hello, Go!\nFirst: a",
       "hints": [
-        "strings.Contains(text, \"Hello\") returns true if found",
-        "strings.Replace(text, \"World\", \"Go\", 1) replaces first occurrence",
-        "strings.Split(\"a,b,c\", \",\") returns []string{\"a\", \"b\", \"c\"}"
+        "`strstr(text, \"Hello\")` drives the Contains line (`\"true\"` / `\"false\"` strings).",
+        "Copy `text` to a writable `char buf[]`, locate `\"World\"` with `strstr`, patch to `Go!` and terminate like the sample.",
+        "`strtok` on `\"a,b,c\"` split by `\",\"` to print the first token `a`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n#include <string.h>\n    const char *text = \"Hello, World!\";\n    printf(\"Contains: %s\\n\", strstr(text, \"Hello\") ? \"true\" : \"false\");\n    char buf[32];\n    strcpy(buf, text);\n    char *w = strstr(buf, \"World\");\n    if (w) { w[0]='G'; w[1]='o'; w[2]='!'; w[3]='\\0'; }\n    printf(\"Replaced: %s\\n\", buf);\n    char ab[] = \"a,b,c\";\n    char *tok = strtok(ab, \",\");\n    printf(\"First: %s\\n\", tok);\n    return 0;\n}\n"
     },
     {
       "id": "strings_04",
       "title": "String Formatting",
-      "description": "Use fmt.Sprintf to format a string with a name and age, then print it. Also use fmt.Printf to format a floating point number to 2 decimal places.",
+      "description": "Use print to format a string with a name and age, then print it. Also use print to format a floating point number to 2 decimal places.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // snprintf name/age and pi\n    return 0;\n}\n",
       "expected_output": "Alice is 30 years old\nPi is 3.14",
       "hints": [
-        "fmt.Sprintf(\"%s is %d years old\", name, age) creates the formatted string",
-        "Use fmt.Printf(\"Pi is %.2f\\n\", pi) for 2 decimal places"
+        "`snprintf(line, sizeof line, \"%s is %d years old\", \"Alice\", 30);` then `puts(line);`",
+        "`printf(\"Pi is %.2f\\n\", 3.14159);`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    char line[64];\n    snprintf(line, sizeof line, \"%s is %d years old\", \"Alice\", 30);\n    puts(line);\n    printf(\"Pi is %.2f\\n\", 3.14159);\n    return 0;\n}\n"
     },
     {
       "id": "strings_05",
       "title": "To Upper and To Lower",
-      "description": "Given s := \"Go Programming\", print it in all uppercase and then all lowercase.",
+      "description": "Given s = \"C Programming\", print it in all uppercase and then all lowercase.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *s = \"Go Programming\";\n    // toupper loop\n    return 0;\n}\n",
       "expected_output": "GO PROGRAMMING\ngo programming",
       "hints": [
-        "strings.ToUpper(s)",
-        "strings.ToLower(s)"
+        "`strcpy` into `up`/`lo`, then loop bytes with `toupper` / `tolower` cast through `(unsigned char)`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n#include <ctype.h>\n#include <string.h>\n    const char *s = \"Go Programming\";\n    char up[32], lo[32];\n    strcpy(up, s); strcpy(lo, s);\n    for (char *p = up; *p; p++) *p = (char)toupper((unsigned char)*p);\n    for (char *p = lo; *p; p++) *p = (char)tolower((unsigned char)*p);\n    puts(up);\n    puts(lo);\n    return 0;\n}\n"
     },
     {
       "id": "strings_07",
       "title": "Reverse a String",
-      "description": "Given s := \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
+      "description": "Given s = \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    char s[] = \"hello\";\n    // reverse in place\n    return 0;\n}\n",
       "expected_output": "olleh",
       "hints": [
-        "Use []rune(s) to convert the string",
-        "Swap runes[0] with runes[len-1], runes[1] with len-2, etc.",
-        "Use string(runes) to convert back"
+        "Mutable `char s[] = \"hello\";` — swap `s[i]` with `s[j]` for `i < j` moving inward."
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char s[] = \"hello\";\n    size_t n = strlen(s);\n    for (size_t i = 0, j = n - 1; i < j; i++, j--) {\n        char t = s[i]; s[i] = s[j]; s[j] = t;\n    }\n    puts(s);\n    return 0;\n}\n"
     },
     {
       "id": "strings_06",
       "title": "String HasPrefix and HasSuffix",
-      "description": "Declare url := \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
+      "description": "Declare url = \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *url = \"https://example.com\";\n    // prefix/suffix\n    return 0;\n}\n",
       "expected_output": "true true",
       "hints": [
-        "strings.HasPrefix(url, \"https://\")",
-        "strings.HasSuffix(url, \".com\")"
+        "Prefix: `strncmp(url, \"https://\", 8) == 0`.",
+        "Suffix: compare `strcmp(url + strlen(url) - 4, \".com\")` when length ≥ 4."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n#include <string.h>\n    const char *url = \"https://example.com\";\n    printf(\"%s %s\\n\",\n           strncmp(url, \"https://\", 8) == 0 ? \"true\" : \"false\",\n           strcmp(url + strlen(url) - 4, \".com\") == 0 ? \"true\" : \"false\");\n    return 0;\n}\n"
     }

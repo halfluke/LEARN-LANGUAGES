@@ -1,18 +1,18 @@
 {
   "id": "strings",
-  "title": "Strings & Runes",
-  "description": "Learn about string constants, runes, string manipulation, and formatting in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Strings and formatting\n\n`string` is UTF-16. Use **`StringBuilder`** for repeated concatenation and **`CultureInfo`** for invariant formatting.\n",
+  "title": "Strings",
+  "description": "str, formatting, and text processing",
+  "theory": "### Strings as UTF-16\n\n`string` is an immutable sequence of UTF-16 code units. Indexing yields `char` (16 bits), which is not always a full Unicode scalar value—extended grapheme clusters may span multiple `char` values. For user-perceived characters, consider `StringInfo` or `System.Text.Rune` in modern codebases.\n\nConcatenating strings in loops allocates repeatedly; `StringBuilder` batches edits. Interpolated strings compile to efficient formatting when combined with `StringBuilder.Append` or `DefaultInterpolatedStringHandler` optimizations on modern runtimes.\n\n### Memory and search\n\n`ReadOnlySpan<char>` avoids allocating substrings when parsing slices of a larger string. `string.AsSpan()` bridges to span-based APIs. `MemoryExtensions` introduces span-aware `Contains`, `IndexOf`, and similar helpers.\n\nCulture matters: `ToUpperInvariant`/`ToLowerInvariant` is preferred for protocol identifiers; linguistically correct casing uses culture-aware overloads.\n\n```csharp\nusing System;\nusing System.Globalization;\nusing System.Text;\n\nvar sb = new StringBuilder();\n\nsb.Append(\"Hello, \").Append(\"world\");\n\nConsole.WriteLine(sb.ToString());\n\nConsole.WriteLine(42.ToString(CultureInfo.InvariantCulture));\n```\n",
   "exercises": [
     {
       "id": "strings_01",
       "title": "String Constants",
-      "description": "Declare a string variable greeting and assign it the value \"Hello, Go!\". Then print it using Console.WriteLine.",
+      "description": "Declare a string variable greeting and assign it the value \"Hello, C#!\". Then Console.WriteLine it using Console.WriteLine.",
       "starter_code": "var greeting = \"Hello, Go!\";\n// Console.WriteLine(greeting);",
       "expected_output": "Hello, Go!",
       "hints": [
-        "Use greeting := \"Hello, Go!\" to declare and assign",
-        "Use Console.WriteLine(greeting) to print"
+        "Assign `var greeting = \"…\"` from a string literal.",
+        "`string` references are immutable; print with `Console.WriteLine(greeting)`."
       ],
       "solution": "var greeting = \"Hello, Go!\";\nConsole.WriteLine(greeting);"
     },
@@ -23,71 +23,69 @@
       "starter_code": "char ch = 'A';\n// Character / code point lines",
       "expected_output": "Character: A\nCode Point: 65",
       "hints": [
-        "Use var ch rune = 'A' or ch := 'A'",
-        "Use fmt.Printf(\"Character: %c\\n\", ch) for the character",
-        "Use fmt.Printf(\"Code Point: %d\\n\", ch) for the Unicode code point"
+        "`char` holds UTF-16 code units; casting to `(int)` reveals the ordinal.",
+        "Print human-readable characters with interpolated formatting."
       ],
       "solution": "char ch = 'A';\nConsole.WriteLine($\"Character: {ch}\");\nConsole.WriteLine($\"Code Point: {(int)ch}\");"
     },
     {
       "id": "strings_03",
       "title": "String Manipulation",
-      "description": "Use strings.Contains to check if \"Hello\" is in \"Hello, World!\", strings.Replace to replace \"World\" with \"Go\", and strings.Split to split \"a,b,c\" by comma.",
+      "description": "Use strings.Contains to check if \"Hello\" is in \"Hello, World!\", strings.Replace to replace \"World\" with \"C#\", and strings.Split to split \"a,b,c\" by comma.",
       "starter_code": "var text = \"Hello, World!\";\n// Contains, Replace, Split",
       "expected_output": "Contains: True\nReplaced: Hello, Go!\nFirst: a",
       "hints": [
-        "strings.Contains(text, \"Hello\") returns true if found",
-        "strings.Replace(text, \"World\", \"Go\", 1) replaces first occurrence",
-        "strings.Split(\"a,b,c\", \",\") returns []string{\"a\", \"b\", \"c\"}"
+        "Use instance methods `.Contains`/`.Replace` or static `string` helpers consistently.",
+        "Split commas with `\"a,b,c\".Split(',')` and take index `[0]` for the first field.",
+        "When output mirrors Boolean strings, stringify with `.ToString()`."
       ],
       "solution": "var text = \"Hello, World!\";\nConsole.WriteLine($\"Contains: {text.Contains(\"Hello\")}\");\nConsole.WriteLine($\"Replaced: {text.Replace(\"World\", \"Go\")}\");\nConsole.WriteLine($\"First: {\"a,b,c\".Split(',')[0]}\");"
     },
     {
       "id": "strings_04",
       "title": "String Formatting",
-      "description": "Use fmt.Sprintf to format a string with a name and age, then print it. Also use fmt.Printf to format a floating point number to 2 decimal places.",
+      "description": "Use Console.WriteLine to format a string with a name and age, then Console.WriteLine it. Also use Console.WriteLine to format a floating point number to 2 decimal places.",
       "starter_code": "var name = \"Alice\"; var age = 30;\n// format lines",
       "expected_output": "Alice is 30 years old\nPi is 3.14",
       "hints": [
-        "fmt.Sprintf(\"%s is %d years old\", name, age) creates the formatted string",
-        "Use fmt.Printf(\"Pi is %.2f\\n\", pi) for 2 decimal places"
+        "Interpolated `$\"…\"` strings replace verbose composite-format calls.",
+        "`ToString(\"F2\", CultureInfo.InvariantCulture)` pins decimal places for floating output."
       ],
       "solution": "var name = \"Alice\"; var age = 30;\nConsole.WriteLine($\"{name} is {age} years old\");\nConsole.WriteLine(\"Pi is 3.14\");"
     },
     {
       "id": "strings_05",
       "title": "To Upper and To Lower",
-      "description": "Given s := \"Go Programming\", print it in all uppercase and then all lowercase.",
+      "description": "Given s = \"C# Programming\", Console.WriteLine it in all uppercase and then all lowercase.",
       "starter_code": "var s = \"Go Programming\";\n// ToUpper / ToLower",
       "expected_output": "GO PROGRAMMING\ngo programming",
       "hints": [
-        "strings.ToUpper(s)",
-        "strings.ToLower(s)"
+        "Case transforms use `.ToUpper()` / `.ToLower()` (`Invariant` overloads optional).",
+        "Separate outputs with newline when the checker lists both forms."
       ],
       "solution": "var s = \"Go Programming\";\nConsole.WriteLine(s.ToUpper());\nConsole.WriteLine(s.ToLower());"
     },
     {
       "id": "strings_07",
       "title": "Reverse a String",
-      "description": "Given s := \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
+      "description": "Given s = \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
       "starter_code": "var s = \"hello\";\n// reverse",
       "expected_output": "olleh",
       "hints": [
-        "Use []rune(s) to convert the string",
-        "Swap runes[0] with runes[len-1], runes[1] with len-2, etc.",
-        "Use string(runes) to convert back"
+        "`ToCharArray` + `Array.Reverse` is the textbook reversal approach.",
+        "Wrap back into `new string(chars)` for printing."
       ],
       "solution": "var s = \"hello\";\nvar chars = s.ToCharArray();\nArray.Reverse(chars);\nConsole.WriteLine(new string(chars));"
     },
     {
       "id": "strings_06",
       "title": "String HasPrefix and HasSuffix",
-      "description": "Declare url := \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
+      "description": "Declare url = \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
       "starter_code": "var url = \"https://example.com\";\n// StartsWith / EndsWith",
       "expected_output": "true true",
       "hints": [
-        "strings.HasPrefix(url, \"https://\")",
-        "strings.HasSuffix(url, \".com\")"
+        "Prefix/suffix probing maps to `.StartsWith` / `.EndsWith`.",
+        "Normalize boolean casing with `.ToString().ToLowerInvariant()` when grader stdout is lowercase."
       ],
       "solution": "var url = \"https://example.com\";\nConsole.Write($\"{url.StartsWith(\"https://\").ToString().ToLowerInvariant()} {url.EndsWith(\".com\").ToString().ToLowerInvariant()}\");"
     }

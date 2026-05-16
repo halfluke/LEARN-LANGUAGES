@@ -1,8 +1,8 @@
 {
   "id": "pointers",
   "title": "Pointers",
-  "description": "Learn about pointers, memory addresses, and how to work with reference types in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Pointers\n\n`&`, `*`, `const`, and pointer arithmetic on arrays.\n",
+  "description": "Addresses, dereference, and const correctness",
+  "theory": "### Addresses and indirection\n\nThe unary `&` takes the address of an object; unary `*` dereferences a pointer. Pointer types must match the pointed-to object unless you intentionally use `void *` as a generic address and cast when reading (with care). Pointer arithmetic scales by the pointee size: `p + 1` advances one element, not one byte—use `char *` for byte-oriented walks.\n\n### `const` and `restrict`\n\n`const T *` prevents modification through that path; `T *const` fixes the pointer variable itself. `const`-correct APIs document who may mutate shared data. `restrict` promises exclusive access during a function call—misuse breaks optimizations and semantics.\n\n### Null and undefined behavior\n\nA null pointer (`NULL`) is not dereferenceable. Wild pointers and use-after-free look like data corruption. For interoperability with hardware, `volatile` and `uintptr_t` appear, but never casually—misuse masks optimizer assumptions.\n\n```c\n#include <stdio.h>\n\nvoid bump(int *p) { if (p) (*p)++; }\n\nint main(void) {\n    int x = 0;\n    bump(&x);\n    printf(\"%d\\n\", x);\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "pointers_01",
@@ -11,8 +11,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int x = 42;\n    int *ptr = &x;\n    // print *ptr\n    return 0;\n}\n",
       "expected_output": "42",
       "hints": [
-        "Use var ptr *int to declare a pointer to int",
-        "Use ptr = &x to assign the address of x to ptr"
+        "`printf(\"%d\\n\", *ptr);` after `int *ptr = &x;`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int x = 42;\n    int *ptr = &x;\n    printf(\"%d\\n\", *ptr);\n    return 0;\n}\n"
     },
@@ -23,8 +22,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int value = 100;\n    int *ptr = &value;\n    return 0;\n}\n",
       "expected_output": "100",
       "hints": [
-        "Use ptr := &value to create a pointer",
-        "Use *ptr to dereference and get the value"
+        "`printf(\"%d\\n\", *ptr);`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int value = 100;\n    int *ptr = &value;\n    printf(\"%d\\n\", *ptr);\n    return 0;\n}\n"
     },
@@ -35,8 +33,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic void modify(int *p) { }\n\nint main(void) {\n    // modify(&num);\n    return 0;\n}\n",
       "expected_output": "10",
       "hints": [
-        "Inside modify, use *p = *p * 2 to double the value",
-        "Call modify(&num) to pass the address"
+        "In `modify`: `*p *= 2;`",
+        "`modify(&num);`"
       ],
       "solution": "#include <stdio.h>\n\nstatic void modify(int *p) { *p = *p * 2; }\n\nint main(void) {\n    int num = 5;\n    modify(&num);\n    printf(\"%d\\n\", num);\n    return 0;\n}\n"
     },
@@ -47,8 +45,8 @@
       "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    // malloc int, set 99\n    return 0;\n}\n",
       "expected_output": "99",
       "hints": [
-        "Use new(int) to allocate a new pointer",
-        "Use *ptr = 99 to assign a value"
+        "`int *ptr = malloc(sizeof *ptr); *ptr = 99;`",
+        "`printf(\"%d\\n\", *ptr); free(ptr);`"
       ],
       "solution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *ptr = malloc(sizeof *ptr);\n    *ptr = 99;\n    printf(\"%d\\n\", *ptr);\n    free(ptr);\n    return 0;\n}\n"
     },
@@ -59,8 +57,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    struct Person { const char *name; };\n    return 0;\n}\n",
       "expected_output": "Bob",
       "hints": [
-        "p := &Person{Name: \"Bob\"}",
-        "Use p.Name to access field through pointer"
+        "`struct Person p = {\"Bob\"}; puts(p.name);` — or `struct Person *p = &person; puts(p->name);`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    struct Person { const char *name; };\n    struct Person p = {\"Bob\"};\n    puts(p.name);\n    return 0;\n}\n"
     },
@@ -71,8 +68,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int *ptr = NULL;\n    // nil check\n    return 0;\n}\n",
       "expected_output": "nil",
       "hints": [
-        "Use var ptr *int to declare a nil pointer",
-        "Use if ptr == nil to check"
+        "`if (ptr == NULL) puts(\"nil\");` — with `ptr` initialized `NULL`, you always print `nil` here."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n#include <stddef.h>\n    int *ptr = NULL;\n    puts(ptr == NULL ? \"nil\" : \"value\");\n    return 0;\n}\n"
     },
@@ -83,8 +79,7 @@
       "starter_code": "#include <stdio.h>\n\nstatic void swap(int *a, int *b) { }\n\nint main(void) {\n    // swap(&x, &y);\n    return 0;\n}\n",
       "expected_output": "10 5",
       "hints": [
-        "temp := *a; *a = *b; *b = temp",
-        "Call swap(&x, &y)"
+        "`int tmp = *a; *a = *b; *b = tmp;` in `swap`."
       ],
       "solution": "#include <stdio.h>\n\nstatic void swap(int *a, int *b) {\n    int t = *a; *a = *b; *b = t;\n}\n\nint main(void) {\n    int x = 5, y = 10;\n    swap(&x, &y);\n    printf(\"%d %d\\n\", x, y);\n    return 0;\n}\n"
     }

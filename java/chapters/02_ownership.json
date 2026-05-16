@@ -1,42 +1,42 @@
 {
   "id": "ownership",
-  "title": "Values, copies, and references (Go)",
-  "description": "Go has garbage collection and no Rust-style ownership, but values vs pointers still shape how data is shared.",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References vs primitives\n\nPrimitives copy by value; objects share references. `String` is immutable like Go strings.\n",
+  "title": "Values, references, and mutation",
+  "description": "How Java passes references, copies fields, and shares mutable objects",
+  "theory": "\n### References and garbage collection\nJava does not expose manual memory ownership like systems languages with linear types. Instead, many references can alias the same object on the heap, and the garbage collector reclaims unreachable objects automatically. Your core obligation is logical correctness: do not leak references you no longer need in long-lived caches, static fields, or collections unless that retention is intentional.\n\nThink in terms of lifetimes and scopes: locals and parameters disappear when a stack frame ends; instance fields live as long as the enclosing object; static fields live for the class loader’s lifetime.\n\n### Resource ownership with try-with-resources\nFor non-memory resources (files, sockets, database connections), use try-with-resources so that `close()` runs deterministically. Types must implement `AutoCloseable` or `Closeable`.\n\n```java\ntry (var reader = Files.newBufferedReader(path)) {\n    // use reader\n} // close called automatically\n```\n\n### Defensive copies and trust boundaries\nWhen you accept mutable objects from callers, decide whether your API should store aliases or copy data. At trust boundaries (parsing input, crossing threads), prefer immutable snapshots or unmodifiable views to prevent surprising cross-caller mutation.\n",
   "exercises": [
     {
       "id": "ownership_01",
       "title": "String reassignment",
-      "description": "Assign `s := \"hi\"`, assign `t := s`, print `t` with `System.out.print` (no newline).",
+      "description": "Assign `s = \"hi\"`, assign `t = s`, System.out.println `t` with `System.out.System.out.println` (no newline).",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        String s = \"hi\";\n    }\n}\n",
       "expected_output": "hi",
       "hints": [
-        "`t := s` copies the string header, both refer to same bytes",
-        "`fmt.Print(t)`"
+        "Assign `String t = s;` so both refer to the same string instance.",
+        "Use `System.out.print(t);` (no newline)."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String s = \"hi\";\n        String t = s;\n        System.out.print(t);\n    }\n}\n"
     },
     {
       "id": "ownership_02",
       "title": "Slice header copy",
-      "description": "Create `s := []int{1, 2}`, assign `t := s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `System.out.print` (no space, no newline) → `92`.",
+      "description": "Create `s = int[] {1, 2}`, assign `t = s`, set `t[0] = 9`, System.out.println `s[0]` and `s[1]` concatenated as digits with `System.out.System.out.println` (no space, no newline) → `92`.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        int[] s = {1, 2};\n    }\n}\n",
       "expected_output": "92",
       "hints": [
-        "`t := s` shares backing array",
-        "`t[0] = 9` affects `s[0]`"
+        "Assign `int[] t = s;` — the second reference aliases the same array object.",
+        "Mutating `t[0]` is visible through `s`; print `s[0]` and `s[1]` concatenated as digits with `System.out.print`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int[] s = {1, 2};\n        int[] t = s;\n        t[0] = 9;\n        System.out.print(\"\" + s[0] + s[1]);\n    }\n}\n"
     },
     {
       "id": "ownership_03",
       "title": "Int copy",
-      "description": "`a := 3`, `b := a`, increment `b` with `b++`, print `a` and `b` space-separated with `System.out.print` (no trailing newline).",
+      "description": "`a = 3`, `b = a`, increment `b` with `b++`, System.out.println `a` and `b` space-separated with `System.out.System.out.println` (no trailing newline).",
       "starter_code": "public class Main {\n    public static void main(String[] args) { int a = 3; }\n}\n",
       "expected_output": "3 4",
       "hints": [
-        "`b := a` copies the `int`",
-        "`b++`"
+        "Copy the primitive: `int b = a;` then `b++` only changes `b`.",
+        "Print `a` and `b` separated by a space using `System.out.print`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int a = 3;\n        int b = a;\n        b++;\n        System.out.print(a + \" \" + b);\n    }\n}\n"
     }

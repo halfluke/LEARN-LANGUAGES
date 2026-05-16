@@ -1,8 +1,8 @@
 {
   "id": "arrays",
-  "title": "Arrays",
-  "description": "Fixed-size arrays in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Arrays\n\n`int[]`, enhanced `for`, and `Arrays.toString` or manual formatting for stable output.\n",
+  "title": "Sequences and lists",
+  "description": "Lists as the primary fixed/dynamic sequence",
+  "theory": "\n### Fixed-length sequences\nArrays (`T[]` for references, `int[]` for primitives) have a fixed length set at construction. They are covariant for reference types (`String[]` is an `Object[]`), which interacts with heap pollution checks at runtime if you assign incompatible element types.\n\nMultidimensional arrays are arrays of arrays; ragged arrays (rows of different lengths) are natural in Java.\n\n### Utilities and interoperability\n`java.util.Arrays` provides sorting, binary search, copying, and parallel prefix helpers. Prefer `List` APIs at boundaries when you need grow/shrink semantics; convert with `List.of(array)` for a fixed list view where appropriate, understanding the aliasing implications.\n\n```java\nint[] nums = {3, 1, 4};\nArrays.sort(nums);\nint[] copy = Arrays.copyOf(nums, nums.length + 1);\ncopy[copy.length - 1] = 1;\n```\n",
   "exercises": [
     {
       "id": "arrays_01",
@@ -11,31 +11,31 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) { int[] arr = new int[5]; }\n}\n",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "Use arr [5]int = [5]int{1, 2, 3, 4, 5}",
-        "System.out.println(arr) prints the whole array"
+        "Use `int[] arr = {1,2,3,4,5};` and a small helper to print `[1 2 3 4 5]` like the solution’s `fmt` method.",
+        "`Arrays.toString` uses commas — bracket spacing must match the exercise."
       ],
       "solution": "public class Main {\nstatic String fmt(int[] a) {\n        StringBuilder sb = new StringBuilder(\"[\");\n        for (int i = 0; i < a.length; i++) {\n            if (i > 0) sb.append(' ');\n            sb.append(a[i]);\n        }\n        return sb.append(']').toString();\n    }\n    public static void main(String[] args) {\n        int[] arr = {1, 2, 3, 4, 5};\n        System.out.println(fmt(arr));\n    }\n}\n"
     },
     {
       "id": "arrays_02",
       "title": "Array Iteration",
-      "description": "Create array nums := [3]int{10, 20, 30}. Use range to print each element.",
+      "description": "Create array nums = [10, 20, 30}. Use range to System.out.println each element.",
       "starter_code": "public class Main {\n    public static void main(String[] args) { int[] nums = {10, 20, 30}; }\n}\n",
       "expected_output": "10\n20\n30",
       "hints": [
-        "Use for i, v := range nums { System.out.println(v) }"
+        "Enhanced `for (int v : nums)` with `System.out.println(v);`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int[] nums = {10, 20, 30};\n        for (int v : nums) System.out.println(v);\n    }\n}\n"
     },
     {
       "id": "arrays_03",
       "title": "Array Length",
-      "description": "Create arr := [4]int{1, 2, 3, 4}. Print the length using len(arr).",
+      "description": "Create arr = [1, 2, 3, 4}. Print the length using len(arr).",
       "starter_code": "public class Main {\n    public static void main(String[] args) { int[] arr = {1, 2, 3, 4}; }\n}\n",
       "expected_output": "4",
       "hints": [
-        "Use len(arr) to get array length",
-        "System.out.println(len(arr))"
+        "Use `arr.length` for fixed arrays.",
+        "Print the length."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int[] arr = {1, 2, 3, 4};\n        System.out.println(arr.length);\n    }\n}\n"
     },
@@ -46,8 +46,8 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        int[] arr = new int[5];\n        arr[0] = 10; arr[1] = 20;\n    }\n}\n",
       "expected_output": "[10 20 0 0 0]",
       "hints": [
-        "Use arr := [5]int{10, 20}",
-        "Rest get zero values"
+        "After partially filling `new int[5]`, format with the same bracket style as `arrays_01`.",
+        "Zeros appear for unset slots."
       ],
       "solution": "public class Main {\nstatic String fmt(int[] a) {\n        StringBuilder sb = new StringBuilder(\"[\");\n        for (int i = 0; i < a.length; i++) {\n            if (i > 0) sb.append(' ');\n            sb.append(a[i]);\n        }\n        return sb.append(']').toString();\n    }\n    public static void main(String[] args) {\n        int[] arr = new int[5];\n        arr[0] = 10; arr[1] = 20;\n        System.out.println(fmt(arr));\n    }\n}\n"
     },
@@ -58,32 +58,31 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) { int[][] matrix = {{1, 2}, {3, 4}}; }\n}\n",
       "expected_output": "1\n2\n3\n4",
       "hints": [
-        "Use matrix := [2][2]int{{1, 2}, {3, 4}}",
-        "Use nested range or direct indexing"
+        "Nested loops: outer over rows, inner over each row’s elements.",
+        "Print one number per line."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int[][] matrix = {{1, 2}, {3, 4}};\n        for (int[] row : matrix)\n            for (int val : row)\n                System.out.println(val);\n    }\n}\n"
     },
     {
       "id": "arrays_07",
       "title": "Array Sum",
-      "description": "Create arr := [5]int{10, 20, 30, 40, 50}. Compute the sum of all elements and print it.",
+      "description": "Create arr = [10, 20, 30, 40, 50}. Compute the sum of all elements and System.out.println it.",
       "starter_code": "public class Main {\n    public static void main(String[] args) { int[] arr = {10, 20, 30, 40, 50}; }\n}\n",
       "expected_output": "150",
       "hints": [
-        "Initialize a sum variable to 0",
-        "Use range to iterate and accumulate: sum += v"
+        "Accumulate with `int sum = 0;` and `for (int v : arr) sum += v;`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int[] arr = {10, 20, 30, 40, 50};\n        int sum = 0;\n        for (int v : arr) sum += v;\n        System.out.println(sum);\n    }\n}\n"
     },
     {
       "id": "arrays_06",
       "title": "Array Element Access",
-      "description": "Create arr := [3]int{100, 200, 300}. Print the first element (index 0) and last element (index 2).",
+      "description": "Create arr = [100, 200, 300}. Print the first element (index 0) and last element (index 2).",
       "starter_code": "public class Main {\n    public static void main(String[] args) { int[] arr = {100, 200, 300}; }\n}\n",
       "expected_output": "100 300",
       "hints": [
-        "arr[0] is first, arr[2] is last",
-        "System.out.println(arr[0], arr[2])"
+        "Index with `arr[0]` and `arr[length-1]` (here index `2`).",
+        "Concatenate with a space for `System.out.println`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int[] arr = {100, 200, 300};\n        System.out.println(arr[0] + \" \" + arr[2]);\n    }\n}\n"
     }

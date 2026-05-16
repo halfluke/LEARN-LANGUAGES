@@ -1,8 +1,8 @@
 {
   "id": "functions",
   "title": "Functions",
-  "description": "Functions, parameters, and return values in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Functions\n\n`def`, parameters, `return`, and closures that capture outer names.\n",
+  "description": "def, parameters, return values, and closures",
+  "theory": "### Defining behavior\n\nFunctions are first-class objects created with `def`. Type annotations document\nintent (`def greet(name: str) -> str:`) but are not enforced at runtime unless you\nadd a separate checker. Default arguments are evaluated **once** at function\ndefinition time—never use mutable defaults (`def bad(items=[])`); use `None` and\nallocate inside the body.\n\n### Flexible signatures\n\n`*args` collects positional extras into a tuple; `**kwargs` collects keyword extras\ninto a dict. Use `/` and `*` in the parameter list to control positional-only vs\nkeyword-only arguments when designing stable APIs.\n\n```python\ndef append_suffix(base: str, *, suffix: str = \"!\") -> str:\n    return base + suffix\n\n\ndef summarize(title: str, *scores: int, **meta: str) -> dict[str, object]:\n    return {\"title\": title, \"scores\": scores, \"meta\": meta}\n```\n",
   "exercises": [
     {
       "id": "functions_01",
@@ -11,8 +11,7 @@
       "starter_code": "def greet():\n    pass\n\n",
       "expected_output": "Hello",
       "hints": [
-        "Define greet() before main()",
-        "Use print(\"Hello\") inside greet"
+        "Print Hello inside greet before calling greet()."
       ],
       "solution": "def greet():\n    print(\"Hello\")\n\ngreet()\n"
     },
@@ -23,8 +22,8 @@
       "starter_code": "def greet(name):\n    pass\n\n",
       "expected_output": "Hello, Alice",
       "hints": [
-        "Use fmt.Printf(\"Hello, %s\\n\", name)",
-        "Pass \"Alice\" as argument"
+        "Format the greeting with an f-string or concatenation referencing name.",
+        "Call greet(\"Alice\") after defining the helper."
       ],
       "solution": "def greet(name):\n    print(f\"Hello, {name}\")\n\ngreet(\"Alice\")\n"
     },
@@ -35,8 +34,8 @@
       "starter_code": "def add(a, b):\n    return 0\n\n",
       "expected_output": "7",
       "hints": [
-        "Use return a + b",
-        "Print the returned value"
+        "Return a + b from add.",
+        "print(add(3, 4)) surfaces the summed value."
       ],
       "solution": "def add(a, b):\n    return a + b\n\nprint(add(3, 4))\n"
     },
@@ -47,9 +46,8 @@
       "starter_code": "def divide(a, b):\n    return None if b == 0 else a // b\n",
       "expected_output": "3 None",
       "hints": [
-        "func divide(a, b int) (int, error)",
-        "Check if b == 0 and return errors.New(\"division by zero\")",
-        "Print result, err"
+        "Preserve the divisor guard returning None for zero denominators.",
+        "print(divide(10, 3), divide(10, 0)) lines up quotient then None."
       ],
       "solution": "def divide(a, b):\n    return None if b == 0 else a // b\nprint(divide(10, 3), divide(10, 0))\n"
     },
@@ -60,8 +58,8 @@
       "starter_code": "def sum_all(*nums):\n    return 0\n\n",
       "expected_output": "15",
       "hints": [
-        "Use ...int to accept variable arguments",
-        "Loop through numbers with range or use a for loop"
+        "*nums bundles arbitrary ints into a tuple parameter.",
+        "sum(nums) aggregates the unpacked arguments."
       ],
       "solution": "def sum_all(*nums):\n    return sum(nums)\n\nprint(sum_all(1, 2, 3, 4, 5))\n"
     },
@@ -72,22 +70,21 @@
       "starter_code": "def process():\n    pass\n\n",
       "expected_output": "start\nworking\nend",
       "hints": [
-        "Use print(\"start\") to print first",
-        "Use defer print(\"end\") to defer the last print",
-        "defer runs when the surrounding function returns"
+        "try / finally guarantees the trailing print even after ordinary completion.",
+        "Emit start before working, tuck working inside try, finish with end in finally."
       ],
       "solution": "def process():\n    print('start')\n    try:\n        print('working')\n    finally:\n        print('end')\n\nprocess()\n"
     },
     {
       "id": "functions_06",
       "title": "Closure",
-      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder := makeAdder(), then call adder(5) and adder(10), printing both results.",
+      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder = makeAdder(), then call adder(5) and adder(10), printing both results.",
       "starter_code": "def make_adder():\n    pass\n\n",
       "expected_output": "5\n15",
       "hints": [
-        "Create sum := 0 inside makeAdder",
-        "return func(x int) int { sum += x; return sum }",
-        "sum is captured in the closure"
+        "Return a nested function closing over mutable total.",
+        "nonlocal total is required before += mutates the outer binding.",
+        "Each call to adder accumulates returning running totals."
       ],
       "solution": "def make_adder():\n    total = 0\n    def adder(x):\n        nonlocal total\n        total += x\n        return total\n    return adder\n\nadder = make_adder()\nprint(adder(5))\nprint(adder(10))\n"
     }

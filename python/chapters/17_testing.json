@@ -1,17 +1,18 @@
 {
   "id": "testing",
   "title": "Testing",
-  "description": "Writing tests in Go with the testing package",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Testing\n\nProduction code uses `pytest` or `unittest`. Here, small scripts print the same outcomes you would assert in tests.\n",
+  "description": "Writing and running tests with the standard library",
+  "theory": "### Automated checks as executable specs\n\n`unittest` ships in the standard library with classes and assertions; many teams\nprefer **pytest** for plain functions and fixtures. Structure tests around behavior:\nArrange inputs, Act on the code under test, Assert expected outputs or exceptions.\n\n### Fixtures and parametrization\n\nPytest fixtures inject dependencies cleanly; `@pytest.mark.parametrize` fights\ncopy-paste when scenarios differ only by data. Keep tests deterministic—mock time,\nrandomness, and network boundaries when needed.\n\n```python\nimport pytest\n\n\ndef odds_only(nums: list[int]) -> list[int]:\n    return [n for n in nums if n % 2]\n\n\n@pytest.mark.parametrize(\n    \"nums,expected\",\n    [\n        ([1, 2, 3], [1, 3]),\n        ([], []),\n    ],\n)\ndef test_odds_only(nums: list[int], expected: list[int]) -> None:\n    assert odds_only(nums) == expected\n```\n",
   "exercises": [
     {
       "id": "testing_01",
       "title": "Basic test (stdout)",
-      "description": "Implement `sum` and print `sum(2, 3)` (same intent as the Go `testing` exercise).",
+      "description": "Implement `sum` and print `sum(2, 3)` (same intent as the Python `testing` exercise).",
       "starter_code": "def sum(a, b):\n    return 0\n\n# print(sum(2, 3))\n",
       "expected_output": "5",
       "hints": [
-        "Return `a + b`."
+        "sum should return arithmetic addition operands.",
+        "Uncomment trailing print illustrating harness addition."
       ],
       "solution": "def sum(a, b):\n    return a + b\n\nprint(sum(2, 3))\n"
     },
@@ -22,7 +23,8 @@
       "starter_code": "def multiply(a, b):\n    return 0\n\n",
       "expected_output": "6 0 -4",
       "hints": [
-        "Use one `print` with three values."
+        "multiply returns products for each pairing.",
+        "Single print merges three computations separated by spaces."
       ],
       "solution": "def multiply(a, b):\n    return a * b\n\nprint(multiply(2, 3), multiply(0, 5), multiply(-1, 4))\n"
     },
@@ -33,7 +35,8 @@
       "starter_code": "def divide(a, b):\n    return None\n\n",
       "expected_output": "ok",
       "hints": [
-        "Return `None` when `b == 0`."
+        "Use // for integer division whenever b is nonzero.",
+        "Return None before dividing when b == 0, then gate printing ok behind both behaviors."
       ],
       "solution": "def divide(a, b):\n    if b == 0:\n        return None\n    return a // b\n\nif divide(10, 2) == 5 and divide(10, 0) is None:\n    print('ok')\n"
     },
@@ -44,7 +47,8 @@
       "starter_code": "def validate(age):\n    pass\n\n",
       "expected_output": "yes",
       "hints": [
-        "`raise ValueError('age cannot be negative')` when `age < 0`."
+        "raise ValueError with negative clue inside message for invalid ages.",
+        "Capture ValueError inspecting str(exception) substring negative."
       ],
       "solution": "def validate(age):\n    if age < 0:\n        raise ValueError('age cannot be negative')\n\ntry:\n    validate(-5)\nexcept ValueError as e:\n    print('yes' if 'negative' in str(e) else 'no')\n"
     },
@@ -55,7 +59,8 @@
       "starter_code": "def sum(a, b):\n    return a + b\n\n",
       "expected_output": "done",
       "hints": [
-        "`for _ in range(10000): sum(2, 3)`"
+        "range(10000) loop heats path calling sum repetitively.",
+        "print(\"done\", end=\"\") prevents extra newline aligning harness."
       ],
       "solution": "def sum(a, b):\n    return a + b\n\nfor _ in range(10000):\n    sum(2, 3)\nprint('done', end='')\n"
     }

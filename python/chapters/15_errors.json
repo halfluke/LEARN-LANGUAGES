@@ -1,17 +1,18 @@
 {
   "id": "errors",
-  "title": "Error Handling",
-  "description": "Go's error handling patterns",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Exceptions\n\n`try`/`except`, raising `ValueError`/`RuntimeError`, and exception chaining with `raise ... from`.\n",
+  "title": "Errors and exceptions",
+  "description": "Raising, catching, and modeling failure in Python",
+  "theory": "### Exceptions as control flow signals\n\nPython uses exceptions for errors **and** for benign sentinel patterns (`StopIteration`,\n`StopAsyncIteration`). Prefer specific exceptions (`ValueError`, `KeyError`,\n`TypeError`) over bare `Exception`. `try` / `except` / `else` / `finally` structures\ncleanup clearly: `else` runs when no exception occurs in `try`; `finally` always runs.\n\n### Raising and chaining\n\n`raise RuntimeError(\"bad\") from original` preserves context. Custom exceptions are\nordinary classes—usually inherit from `Exception`, not `BaseException` (reserved for\nsystem exits and keyboard interrupts).\n\n```python\ndef divide(a: float, b: float) -> float:\n    if b == 0:\n        raise ZeroDivisionError(\"b must be non-zero\")\n    return a / b\n\n\ntry:\n    divide(1, 0)\nexcept ZeroDivisionError as err:\n    recovered = f\"handled: {err}\"\n```\n",
   "exercises": [
     {
       "id": "errors_01",
       "title": "Return Error",
-      "description": "Define divide(a, b float64) (float64, error). Return error if b==0. Call with divide(10, 0) and handle error.",
+      "description": "Define divide(a, b float) (float, error). Return error if b==0. Call with divide(10, 0) and handle error.",
       "starter_code": "def divide(a, b):\n    return 0, None\n\n",
       "expected_output": "Error: division by zero",
       "hints": [
-        "if b == 0 { return 0, errors.New(\"division by zero\") }"
+        "Return (quotient, optional_exception) tuples similar to sentinel patterns.",
+        "If err evaluates truthy within if err: print prefixed message."
       ],
       "solution": "def divide(a, b):\n    if b == 0:\n        return 0, ValueError(\"division by zero\")\n    return a / b, None\n\nresult, err = divide(10, 0)\nif err:\n    print(\"Error:\", err)\n"
     },
@@ -22,18 +23,20 @@
       "starter_code": "class NotFoundError(Exception):\n    pass\n\n",
       "expected_output": "User not found",
       "hints": [
-        "Need to implement Unwrap() for errors.Is to work"
+        "__init__ on custom exceptions forwards formatted messages upward.",
+        "Catch NotFoundError mapping to textual User not found."
       ],
       "solution": "class NotFoundError(Exception):\n    def __init__(self, key):\n        self.key = key\n        super().__init__(f\"not found: {key}\")\n\ndef find_user(name):\n    if name != \"alice\":\n        raise NotFoundError(name)\n\ntry:\n    find_user(\"bob\")\nexcept NotFoundError:\n    print(\"User not found\")\n"
     },
     {
       "id": "errors_03",
-      "title": "fmt.Errorf Wrapping",
-      "description": "Create a function wrapError() that uses fmt.Errorf to wrap an error with context.",
+      "title": "print Wrapping",
+      "description": "Create a function wrapError() that uses print to wrap an error with context.",
       "starter_code": "def wrap_error():\n    pass\n\n",
       "expected_output": "wrapped: base error",
       "hints": [
-        "Use %w to wrap the error"
+        "Assign inner ValueError instances into __cause__ for chained narratives.",
+        "Printing outer error surfaces textual top message."
       ],
       "solution": "def wrap_error():\n    base = ValueError(\"base error\")\n    e = ValueError(\"wrapped: base error\")\n    e.__cause__ = base\n    return e\n\nerr = wrap_error()\nprint(err)\n"
     },
@@ -44,7 +47,8 @@
       "starter_code": "class ValidationError(Exception):\n    pass\n\n",
       "expected_output": "email",
       "hints": [
-        "errors.As(err, &ve) extracts the error into ve"
+        "ValidationError persists field hints on self.",
+        "except ValidationError binds ve permitting ve.field diagnostics."
       ],
       "solution": "class ValidationError(Exception):\n    def __init__(self, field, msg):\n        self.field = field\n        super().__init__(msg)\n\ndef validate():\n    raise ValidationError(\"email\", \"invalid email\")\n\ntry:\n    validate()\nexcept ValidationError as ve:\n    print(ve.field)\n"
     },
@@ -55,7 +59,8 @@
       "starter_code": "def safe_divide(a, b):\n    return 0, None\n\n",
       "expected_output": "5",
       "hints": [
-        "return a / b, nil"
+        "Return None quotient plus ValueError for invalid divisors.",
+        "Branch separately on truthiness after safe_divide(10, 2)."
       ],
       "solution": "def safe_divide(a, b):\n    if b == 0:\n        return None, ValueError('cannot divide by zero')\n    return a // b, None\n\nresult, err = safe_divide(10, 2)\nif err:\n    print('Error:', err)\nelse:\n    print(result)\n"
     },
@@ -66,8 +71,8 @@
       "starter_code": "ERR_DISK_FULL = ValueError('disk full')\n",
       "expected_output": "reading data.txt: disk full\nDisk is full",
       "hints": [
-        "Use %w verb in fmt.Errorf to wrap the underlying error",
-        "errors.Is(err, target) checks if err wraps or equals target"
+        "Construct contextual errors carrying __cause__ referencing shared sentinel.",
+        "Equality on __cause__ triggers Disk status print."
       ],
       "solution": "ERR_DISK_FULL = ValueError(\"disk full\")\n\ndef read_file(name):\n    e = ValueError(f\"reading {name}: disk full\")\n    e.__cause__ = ERR_DISK_FULL\n    return e\n\nerr = read_file(\"data.txt\")\nprint(err)\nif err.__cause__ is ERR_DISK_FULL:\n    print(\"Disk is full\")\n"
     },
@@ -78,9 +83,8 @@
       "starter_code": "ERR_NOT_FOUND = Exception('not found')\n",
       "expected_output": "not found",
       "hints": [
-        "ErrNotFound = errors.New(\"not found\")",
-        "return \"\", ErrNotFound",
-        "if errors.Is(err, ErrNotFound)"
+        "Module-level sentinel objects reuse identity comparisons.",
+        "if err is ERR_NOT_FOUND distinguishes sentinel hits."
       ],
       "solution": "ERR_NOT_FOUND = ValueError(\"not found\")\n\ndef get_item(i):\n    if i < 0:\n        return ERR_NOT_FOUND\n    return \"item\"\n\nerr = get_item(-1)\nif err is ERR_NOT_FOUND:\n    print(\"not found\")\n"
     }

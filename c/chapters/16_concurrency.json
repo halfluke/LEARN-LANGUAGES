@@ -1,8 +1,8 @@
 {
   "id": "concurrency",
   "title": "Concurrency",
-  "description": "POSIX threads and simple IPC in C",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md).\n\n## pthreads on Linux\n\nUse **`pthread_create`**, **`pthread_join`**, and **`pthread_mutex_t`** for shared state. For tiny producer/consumer demos, an anonymous **pipe** (`pipe(2)`) is enough to move bytes between threads without pulling in a full queue library.\n",
+  "description": "Threads and synchronization with pthreads",
+  "theory": "### Threads and synchronization\n\nPOSIX threads (`pthread.h`) provide `pthread_create`, `pthread_join`, mutexes (`pthread_mutex_t`), condition variables, and read-write locks. Share only immutable data freely; mutable shared memory requires synchronization. Mutex rules—“lock before touching shared state, unlock on all paths”—mirror discipline you would apply in any concurrent system, but C gives no compile-time race detection.\n\n### Atomics and memory order\n\nC11 `<stdatomic.h>` supplies atomic types and fences for lock-free algorithms when you can prove correctness—expert territory. Weaker-than-`memory_order_seq_cst` orderings enable performance but are easy to misuse; prefer mutexes until profiling proves otherwise.\n\n### Pitfalls\n\nData races on non-atomic objects are undefined behavior. Destroying a mutex while held, double-locking non-recursive mutexes without design, or signaling condition variables without the right predicate checks are common bugs. Tools like ThreadSanitizer (TSan) help enormously.\n\n```c\n#include <pthread.h>\n#include <stdio.h>\n\nstatic void *worker(void *arg) {\n    (void)arg;\n    return NULL;\n}\n\nint main(void) {\n    pthread_t t;\n    pthread_create(&t, NULL, worker, NULL);\n    pthread_join(t, NULL);\n    puts(\"done\");\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "concurrency_01",
@@ -11,8 +11,8 @@
       "starter_code": "#include <pthread.h>\n#include <stdio.h>\n#include <unistd.h>\n\n/* void *worker(void *arg) { ... } */\n\nint main(void) {\n    return 0;\n}\n",
       "expected_output": "Hello!\nmain done",
       "hints": [
-        "`pthread_create` / `pthread_join`",
-        "`nanosleep(2)` for a 100ms pause (portable; `usleep` is not in standard C)"
+        "`pthread_create(&t, NULL, worker, NULL);` where `worker` prints `Hello!`.",
+        "Sleep ~100 ms via `nanosleep` on a `struct timespec`, then `pthread_join` and print `main done`."
       ],
       "solution": "#include <pthread.h>\n#include <stdio.h>\n#include <time.h>\n\nstatic void ms_sleep(unsigned ms)\n{\n    struct timespec ts;\n    ts.tv_sec = (time_t)(ms / 1000u);\n    ts.tv_nsec = (long)((ms % 1000u) * 1000000u);\n    nanosleep(&ts, NULL);\n}\n\nstatic void *worker(void *arg)\n{\n    (void)arg;\n    puts(\"Hello!\");\n    return NULL;\n}\n\nint main(void)\n{\n    pthread_t t;\n    pthread_create(&t, NULL, worker, NULL);\n    ms_sleep(100);\n    pthread_join(t, NULL);\n    puts(\"main done\");\n    return 0;\n}\n"
     },
@@ -23,7 +23,8 @@
       "starter_code": "#include <pthread.h>\n#include <stdio.h>\n#include <unistd.h>\n\nint main(void) { return 0; }\n",
       "expected_output": "ping",
       "hints": [
-        "`pipe(fd)` then `write(fd[1], ...)` / `read(fd[0], ...)`"
+        "`pipe(fd);` — writer uses `fd[1]`, reader `fd[0]`.",
+        "`write` the four bytes of `ping` without a newline if the expected output is bare `ping`."
       ],
       "solution": "#include <pthread.h>\n#include <stdio.h>\n#include <string.h>\n#include <unistd.h>\n\nstatic int g_out;\n\nstatic void *sender(void *arg)\n{\n    (void)arg;\n    const char *m = \"ping\";\n    write(g_out, m, (int)strlen(m));\n    return NULL;\n}\n\nint main(void)\n{\n    int fd[2];\n    pipe(fd);\n    g_out = fd[1];\n    pthread_t th;\n    pthread_create(&th, NULL, sender, NULL);\n    char buf[16];\n    ssize_t n = read(fd[0], buf, sizeof(buf) - 1);\n    if (n > 0) {\n        buf[n] = '\\0';\n        fputs(buf, stdout);\n    }\n    close(fd[0]);\n    close(fd[1]);\n    pthread_join(th, NULL);\n    return 0;\n}\n"
     },
@@ -34,7 +35,7 @@
       "starter_code": "#include <stdio.h>\n#include <unistd.h>\n\nint main(void) { return 0; }\n",
       "expected_output": "10 20",
       "hints": [
-        "`snprintf` into a small buffer, then `write(fd[1], ...)` (no `dprintf` needed)"
+        "`snprintf(buf, sizeof buf, \"10 20\"); write(fd[1], buf, (size_t)n);`"
       ],
       "solution": "#include <pthread.h>\n#include <stdio.h>\n#include <unistd.h>\n\nstatic int g_wr;\n\nstatic void *producer(void *arg)\n{\n    (void)arg;\n    char buf[32];\n    int n = snprintf(buf, sizeof(buf), \"10 20\");\n    if (n > 0) {\n        write(g_wr, buf, (size_t)n);\n    }\n    return NULL;\n}\n\nint main(void)\n{\n    int fd[2];\n    pipe(fd);\n    g_wr = fd[1];\n    pthread_t th;\n    pthread_create(&th, NULL, producer, NULL);\n    char buf[32];\n    ssize_t n = read(fd[0], buf, sizeof(buf) - 1);\n    if (n > 0) {\n        buf[n] = '\\0';\n        fputs(buf, stdout);\n    }\n    close(fd[0]);\n    close(fd[1]);\n    pthread_join(th, NULL);\n    return 0;\n}\n"
     },
@@ -45,7 +46,7 @@
       "starter_code": "#include <pthread.h>\n#include <stdio.h>\n#include <unistd.h>\n\nint main(void) { return 0; }\n",
       "expected_output": "from ch1",
       "hints": [
-        "`nanosleep` for ~10ms inside the worker before `write`"
+        "Worker sleeps ~10 ms (`nanosleep`) before writing `from ch1` into the pipe."
       ],
       "solution": "#include <pthread.h>\n#include <stdio.h>\n#include <string.h>\n#include <time.h>\n#include <unistd.h>\n\nstatic int g_wr;\n\nstatic void ms_sleep(unsigned ms)\n{\n    struct timespec ts;\n    ts.tv_sec = (time_t)(ms / 1000u);\n    ts.tv_nsec = (long)((ms % 1000u) * 1000000u);\n    nanosleep(&ts, NULL);\n}\n\nstatic void *worker(void *arg)\n{\n    (void)arg;\n    ms_sleep(10);\n    const char *m = \"from ch1\";\n    write(g_wr, m, (int)strlen(m));\n    return NULL;\n}\n\nint main(void)\n{\n    int fd[2];\n    pipe(fd);\n    g_wr = fd[1];\n    pthread_t th;\n    pthread_create(&th, NULL, worker, NULL);\n    char buf[32];\n    ssize_t n = read(fd[0], buf, sizeof(buf) - 1);\n    if (n > 0) {\n        buf[n] = '\\0';\n        fputs(buf, stdout);\n    }\n    close(fd[0]);\n    close(fd[1]);\n    pthread_join(th, NULL);\n    return 0;\n}\n"
     },
@@ -56,7 +57,8 @@
       "starter_code": "#include <pthread.h>\n#include <stdio.h>\n#include <unistd.h>\n\nint main(void) { return 0; }\n",
       "expected_output": "1\n2\n3",
       "hints": [
-        "Close the write end in the reader after the producer exits so `read` returns 0"
+        "Producer writes three newline-terminated lines then `close`s the write end so `read` eventually returns 0.",
+        "Reader loops `read` into a buffer and `fwrite`s to stdout until EOF."
       ],
       "solution": "#include <pthread.h>\n#include <stdio.h>\n#include <string.h>\n#include <unistd.h>\n\nstatic int g_wr;\n\nstatic void *producer(void *arg)\n{\n    (void)arg;\n    const char *msg = \"1\\n2\\n3\";\n    write(g_wr, msg, strlen(msg));\n    close(g_wr);\n    return NULL;\n}\n\nint main(void)\n{\n    int fd[2];\n    pipe(fd);\n    g_wr = fd[1];\n    pthread_t th;\n    pthread_create(&th, NULL, producer, NULL);\n    pthread_join(th, NULL);\n    char chunk[64];\n    ssize_t n;\n    while ((n = read(fd[0], chunk, sizeof(chunk))) > 0) {\n        fwrite(chunk, 1, (size_t)n, stdout);\n    }\n    close(fd[0]);\n    return 0;\n}\n"
     },
@@ -67,7 +69,8 @@
       "starter_code": "#include <pthread.h>\n#include <stdio.h>\n#include <string.h>\n\nint main(void) { return 0; }\n",
       "expected_output": "hello\nworld",
       "hints": [
-        "`qsort` on an array of `char *`"
+        "`pthread_mutex_lock` around `words[count++] = ...`.",
+        "After joins, `qsort` the two pointers with `strcmp` and print both lines."
       ],
       "solution": "#include <pthread.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstatic pthread_mutex_t mu = PTHREAD_MUTEX_INITIALIZER;\nstatic char *words[2];\nstatic int count;\n\nstatic void *add_word(void *arg)\n{\n    const char *w = (const char *)arg;\n    pthread_mutex_lock(&mu);\n    words[count++] = (char *)w;\n    pthread_mutex_unlock(&mu);\n    return NULL;\n}\n\nstatic int cmp_str(const void *a, const void *b)\n{\n    char *const *x = (char *const *)a;\n    char *const *y = (char *const *)b;\n    return strcmp(*x, *y);\n}\n\nint main(void)\n{\n    pthread_t t1, t2;\n    pthread_create(&t1, NULL, add_word, \"hello\");\n    pthread_create(&t2, NULL, add_word, \"world\");\n    pthread_join(t1, NULL);\n    pthread_join(t2, NULL);\n    qsort(words, 2, sizeof(words[0]), cmp_str);\n    puts(words[0]);\n    puts(words[1]);\n    return 0;\n}\n"
     },
@@ -78,7 +81,7 @@
       "starter_code": "#include <pthread.h>\n#include <stdio.h>\n\nstatic void *print_id(void *arg)\n{\n    int id = *(int *)arg;\n    printf(\"%d\\n\", id);\n    return NULL;\n}\n\nint main(void) { return 0; }\n",
       "expected_output": "1\n2\n3\ndone",
       "hints": [
-        "Join each thread before creating the next"
+        "Create thread, `pthread_join` it, then repeat so IDs print `1`, `2`, `3` in order before `done`."
       ],
       "solution": "#include <pthread.h>\n#include <stdio.h>\n\nstatic void *print_id(void *arg)\n{\n    int id = *(int *)arg;\n    printf(\"%d\\n\", id);\n    return NULL;\n}\n\nint main(void)\n{\n    int ids[3] = {1, 2, 3};\n    for (int i = 0; i < 3; i++) {\n        pthread_t t;\n        pthread_create(&t, NULL, print_id, &ids[i]);\n        pthread_join(t, NULL);\n    }\n    puts(\"done\");\n    return 0;\n}\n"
     }

@@ -1,29 +1,31 @@
 {
   "id": "json",
   "title": "JSON",
-  "description": "Serialization with System.Text.Json",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md).\n\n## JSON in C#\n\n**`System.Text.Json`** is the BCL stack for JSON. This chapter uses **`JsonSerializer`** on **`Dictionary<string, object>`** and **`JsonDocument`** so solutions compile cleanly in single-file `Program.cs` top-level programs (no file-scoped type ordering surprises).\n",
+  "description": "json module encoding and decoding",
+  "theory": "### System.Text.Json\n\n`System.Text.Json` is the built-in serializer for high throughput and low allocation. `JsonSerializer.Serialize` / `Deserialize` map between JSON and CLR types via source-generated serializers (`JsonSerializerContext`) or reflection-based serializers.\n\n**Naming policies** let you switch between `camelCase` JSON and PascalCase CLR properties. **Converters** handle tricky types like `DateTimeOffset` or discriminated unions expressed as tagged objects.\n\n### DOM vs strongly typed\n\n`JsonDocument` and `JsonNode` allow ad hoc navigation when schema is fluid; binding to records or classes catches shape errors early. For large files, **streaming** APIs avoid loading the entire payload into memory.\n\n```csharp\nusing System;\nusing System.Text.Json;\n\nrecord User(string Name, int Age);\n\nvar json = JsonSerializer.Serialize(new User(\"Ada\", 36));\n\nvar u = JsonSerializer.Deserialize<User>(json);\n\nConsole.WriteLine(u);\n```\n",
   "exercises": [
     {
       "id": "json_01",
       "title": "Serialize a struct",
-      "description": "Build a JSON object for `Name=Alice`, `Age=30` and print it with stable key order (`Name` then `Age`).",
+      "description": "Build a JSON object for `Name=Alice`, `Age=30` and Console.WriteLine it with stable key order (`Name` then `Age`).",
       "starter_code": "using System.Collections.Generic;\nusing System.Text.Json;\n\n// JsonSerializer.Serialize(...)\n",
       "expected_output": "{\"Name\":\"Alice\",\"Age\":30}",
       "hints": [
-        "`Dictionary<string, object>` preserves insertion order on modern .NET",
-        "`JsonSerializer.Serialize(dict)`"
+        "Insert keys in emission order (`Name` before `Age`) into `Dictionary<string, object>` on modern runtime.",
+        "`JsonSerializer.Serialize` handles primitive boxing cleanly.",
+        "Import `System.Text.Json` namespaces explicitly."
       ],
       "solution": "using System.Collections.Generic;\nusing System.Text.Json;\n\nvar p = new Dictionary<string, object>\n{\n    [\"Name\"] = \"Alice\",\n    [\"Age\"] = 30,\n};\nConsole.WriteLine(JsonSerializer.Serialize(p));\n"
     },
     {
       "id": "json_02",
       "title": "Deserialize JSON",
-      "description": "Parse `{\"Name\":\"Bob\",\"Age\":25}` and print `Bob 25` on one line.",
+      "description": "Parse `{\"Name\":\"Bob\",\"Age\":25}` and Console.WriteLine `Bob 25` on one line.",
       "starter_code": "using System.Text.Json;\n\n// JsonDocument.Parse\n",
       "expected_output": "Bob 25",
       "hints": [
-        "`root.GetProperty(\"Name\").GetString()`"
+        "`JsonDocument.Parse` + `RootElement.GetProperty(\"Name\")` is lightweight structured access.",
+        "Dispose `JsonDocument` with `using` for deterministic cleanup."
       ],
       "solution": "using System.Text.Json;\n\nvar json = \"{\\\"Name\\\":\\\"Bob\\\",\\\"Age\\\":25}\";\nusing var doc = JsonDocument.Parse(json);\nvar root = doc.RootElement;\nvar name = root.GetProperty(\"Name\").GetString();\nvar age = root.GetProperty(\"Age\").GetInt32();\nConsole.WriteLine($\"{name} {age}\");\n"
     },
@@ -34,7 +36,8 @@
       "starter_code": "using System.Collections.Generic;\nusing System.Text.Json;\n",
       "expected_output": "{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}",
       "hints": [
-        "Dictionary keys are the JSON keys verbatim"
+        "Dictionary keys dictate JSON naming—use literals like `first_name` verbatim.",
+        "No renaming policy necessary when dictionaries drive serialization."
       ],
       "solution": "using System.Collections.Generic;\nusing System.Text.Json;\n\nvar u = new Dictionary<string, object>\n{\n    [\"first_name\"] = \"John\",\n    [\"last_name\"] = \"Doe\",\n    [\"birth_year\"] = 1990,\n};\nConsole.WriteLine(JsonSerializer.Serialize(u));\n"
     },
@@ -45,20 +48,21 @@
       "starter_code": "using System.Collections.Generic;\nusing System.Text.Json;\nusing System.Text.Json.Serialization;\n",
       "expected_output": "{\"Server\":\"api.example.com\"}",
       "hints": [
-        "`DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull` on `JsonSerializerOptions`",
-        "Use `Dictionary<string, string?>` and only add `Server`"
+        "`JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull` drops empty fields.",
+        "Populate only non-null dictionary entries contributing to payload."
       ],
       "solution": "using System.Collections.Generic;\nusing System.Text.Json;\nusing System.Text.Json.Serialization;\n\nvar c = new Dictionary<string, string?> { [\"Server\"] = \"api.example.com\" };\nvar opts = new JsonSerializerOptions\n{\n    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,\n};\nConsole.WriteLine(JsonSerializer.Serialize(c, opts));\n"
     },
     {
       "id": "json_05",
       "title": "Round trip",
-      "description": "Serialize a product `{id:1,name:Laptop,price:999.99}` camelCase, deserialize, and print two lines with the Go-style brace formatting.",
+      "description": "Serialize a product `{id:1,name:Laptop,price:999.99}` camelCase, deserialize, and Console.WriteLine two lines with the C#-style brace formatting.",
       "starter_code": "using System.Collections.Generic;\nusing System.Globalization;\nusing System.Text.Json;\n",
       "expected_output": "Original: {1 Laptop 999.99}\nRecovered: {1 Laptop 999.99}",
       "hints": [
-        "`JsonSerializer.Serialize` / `Deserialize` with `PropertyNamingPolicy = JsonNamingPolicy.CamelCase`",
-        "Format price with `ToString(\"F2\", CultureInfo.InvariantCulture)`"
+        "Toggle `PropertyNamingPolicy = JsonNamingPolicy.CamelCase` for CLR→JSON bridging.",
+        "Round-trip through `Deserialize<Dictionary<string, JsonElement>>` when dynamic shapes persist.",
+        "Invariant culture keeps prices aligned when stringifying decimals/doubles manually."
       ],
       "solution": "using System;\nusing System.Collections.Generic;\nusing System.Globalization;\nusing System.Text.Json;\n\nFunc<Dictionary<string, JsonElement>, string> fmt = p =>\n{\n    var id = p[\"id\"].GetInt32();\n    var name = p[\"name\"].GetString()!;\n    var price = p[\"price\"].GetDouble();\n    return $\"{{{id} {name} {price.ToString(\"F2\", CultureInfo.InvariantCulture)}}}\";\n};\n\nvar original = new Dictionary<string, object>\n{\n    [\"id\"] = 1,\n    [\"name\"] = \"Laptop\",\n    [\"price\"] = 999.99,\n};\nvar opts = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };\nvar json = JsonSerializer.Serialize(original, opts);\nvar origDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json, opts)!;\nvar recovered = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json, opts)!;\nConsole.WriteLine($\"Original: {fmt(origDict)}\");\nConsole.WriteLine($\"Recovered: {fmt(recovered)}\");\n"
     },
@@ -69,7 +73,8 @@
       "starter_code": "using System.Collections.Generic;\nusing System.Text.Json;\n",
       "expected_output": "{\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}",
       "hints": [
-        "Nest a `Dictionary<string, object>` for `Address`"
+        "Nest dictionaries to express structured JSON subtrees.",
+        "Serialize outer container once inner maps are hydrated."
       ],
       "solution": "using System.Collections.Generic;\nusing System.Text.Json;\n\nvar addr = new Dictionary<string, object>\n{\n    [\"Street\"] = \"123 Main St\",\n    [\"City\"] = \"Springfield\",\n};\nvar user = new Dictionary<string, object>\n{\n    [\"Name\"] = \"Alice\",\n    [\"Address\"] = addr,\n};\nConsole.WriteLine(JsonSerializer.Serialize(user));\n"
     },
@@ -80,29 +85,32 @@
       "starter_code": "using System.Collections.Generic;\nusing System.Text.Json;\n",
       "expected_output": "[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]",
       "hints": [
-        "`List<Dictionary<string, object>>` serializes to a JSON array"
+        "`List<Dictionary<string, object>>` becomes a JSON array of objects sequentially.",
+        "Keep person property ordering consistent inside each dictionary."
       ],
       "solution": "using System.Collections.Generic;\nusing System.Text.Json;\n\nvar people = new List<Dictionary<string, object>>\n{\n    new() { [\"Name\"] = \"Alice\", [\"Age\"] = 30 },\n    new() { [\"Name\"] = \"Bob\", [\"Age\"] = 25 },\n};\nConsole.WriteLine(JsonSerializer.Serialize(people));\n"
     },
     {
       "id": "json_09",
       "title": "Deferred nested JSON",
-      "description": "Parse nested JSON, print `level`, then print the nested `data` object using `GetRawText()` to preserve key order.",
+      "description": "Parse nested JSON, Console.WriteLine `level`, then Console.WriteLine the nested `data` object using `GetRawText()` to preserve key order.",
       "starter_code": "using System.Text.Json;\n",
       "expected_output": "info\n{\"action\":\"login\",\"user\":\"alice\"}",
       "hints": [
-        "`GetRawText()` preserves the nested fragment from the source text"
+        "Use `.GetRawText()` on nested `JsonElement`s to preserve key ordering verbatim.",
+        "Print scalar properties before dumping nested fragments if instructions demand layering."
       ],
       "solution": "using System.Text.Json;\n\nvar json = \"{\\\"level\\\":\\\"info\\\",\\\"data\\\":{\\\"action\\\":\\\"login\\\",\\\"user\\\":\\\"alice\\\"}}\";\nusing var doc = JsonDocument.Parse(json);\nvar root = doc.RootElement;\nConsole.WriteLine(root.GetProperty(\"level\").GetString());\nConsole.WriteLine(root.GetProperty(\"data\").GetRawText());\n"
     },
     {
       "id": "json_08",
       "title": "Decode an array",
-      "description": "Parse a JSON array of people and print `Name Age` per line.",
+      "description": "Parse a JSON array of people and Console.WriteLine `Name Age` per line.",
       "starter_code": "using System.Text.Json;\n",
       "expected_output": "Alice 30\nBob 25",
       "hints": [
-        "`EnumerateArray()` on the root `JsonElement`"
+        "Enumerate `.RootElement.EnumerateArray()` for loosely typed parses.",
+        "Read UTF-16 property names (`Name`, `Age`) via `GetProperty(...).GetString()` / `.GetInt32()`."
       ],
       "solution": "using System.Text.Json;\n\nvar json = \"[{\\\"Name\\\":\\\"Alice\\\",\\\"Age\\\":30},{\\\"Name\\\":\\\"Bob\\\",\\\"Age\\\":25}]\";\nusing var doc = JsonDocument.Parse(json);\nforeach (var el in doc.RootElement.EnumerateArray())\n{\n    var name = el.GetProperty(\"Name\").GetString();\n    var age = el.GetProperty(\"Age\").GetInt32();\n    Console.WriteLine($\"{name} {age}\");\n}\n"
     }

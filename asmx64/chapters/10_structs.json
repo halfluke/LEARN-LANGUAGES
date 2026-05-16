@@ -2,7 +2,7 @@
   "id": "structs",
   "title": "Struct layout",
   "description": "Offsets, padding awareness, and little-endian fields",
-  "theory": "## Manual layout\n\nWithout `struct` syntax, model records as **labels + equates** for offsets. Respect alignment rules when interoperating with C (`align` directives).\n",
+  "theory": "### Records as ordered layout\n\nA **struct** is a block of fields at fixed offsets. NASM does not know about Rust or C\nlayouts automatically; you either equate offsets (`struc`/`istruc` support in NASM) or\ndocument them and address fields as **`base + displacement`**.\n\nPadding appears when types naturally align to machine boundaries—mirror what **`clang`**\nwould emit if you need to share a struct with C **`extern`** functions.\n\n### Example record in `.data`\n\n```nasm\nstruc Point\n    .x: resd 1\n    .y: resd 1\nendstruc\n\nsection .data\n    origin: istruc Point\n        at Point.x, dd 2\n        at Point.y, dd 3\n    iend\n```\n\n### Loading members\n\nUse appropriately sized moves: **`dword`** for 32-bit fields, **`qword`** for pointers.\nSign-extend or zero-extend when promoting narrower fields to **`rax`** for arithmetic,\nmatching how compilers prepare values before AMD64 operations.\n",
   "exercises": [
     {
       "id": "structs_01",

@@ -1,8 +1,8 @@
 {
   "id": "maps",
-  "title": "Maps",
-  "description": "Hash maps (dictionaries) in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Small tables\n\nParallel arrays / linear search keep exercises portable without a hash library.\n",
+  "title": "Associative data",
+  "description": "Hash tables and key/value patterns (adapted)",
+  "theory": "### No built-in table\n\nThe C standard library does not provide associative containers. You implement key–value maps with data structures (hash tables with separate chaining or open addressing; balanced trees for ordered maps) or you embed a mature library such as khash, uthash, or similar when licensing fits your project. Keys are often strings (`char *` with `strcmp`) or integers; values can be `void *` with type discipline enforced by convention.\n\n### Hashing and equality\n\nFor hash maps you need a hash function (djb2, FNV, xxHash for speed—not cryptographically secure), an equality predicate, and a policy for resizing when load factor grows. Collisions are inevitable—your chaining or probing strategy defines performance. For small fixed universes, a flat table with linear search often suffices without hashing.\n\n### Practical API shape\n\nTypical operations are `insert`, `lookup`, `remove`, and optionally `foreach`. Store `struct entry { const char *key; void *value; }` for string keys, or wrap opaque handles if you need stable pointers across reallocation of backing storage.\n\n```c\n#include <stddef.h>\n#include <string.h>\n\n/* Map-like lookup in a tiny static table of string keys */\ntypedef struct { const char *k; int v; } pair_t;\n\nint lookup(const pair_t *tab, size_t n, const char *key) {\n    for (size_t i = 0; i < n; ++i) {\n        if (strcmp(tab[i].k, key) == 0) return tab[i].v;\n    }\n    return -1;\n}\n```\n",
   "exercises": [
     {
       "id": "maps_01",
@@ -11,75 +11,77 @@
       "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"Alice\", \"Bob\"};\n    int vals[] = {25, 30};\n    print_str_int_map(keys, vals, 2);\n    putchar('\\n');\n    return 0;\n}\n",
       "expected_output": "map[Alice:25 Bob:30]",
       "hints": [
-        "Use ages := map[string]int{\"Alice\": 25, \"Bob\": 30}"
+        "`const char *keys[] = {\"Alice\", \"Bob\"}; int vals[] = {25, 30};` — keep index alignment.",
+        "`print_str_int_map(keys, vals, 2); putchar('\\n');` as in the starter."
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"Alice\", \"Bob\"};\n    int vals[] = {25, 30};\n    print_str_int_map(keys, vals, 2);\n    putchar('\\n');\n    return 0;\n}\n"
     },
     {
       "id": "maps_02",
       "title": "Map Lookup",
-      "description": "Create map scores := map[string]int{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
+      "description": "Create map scores = parallel key/value arrays{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
       "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    // parallel arrays lookup \"Math\"\n    return 0;\n}\n",
       "expected_output": "95",
       "hints": [
-        "Use scores[\"Math\"] to get value",
-        "printf(scores[\"Math\"])"
+        "Define parallel arrays for `Math`/`Physics` and call `map_get_str_int(..., \"Math\", &found)`.",
+        "`printf(\"%d\\n\", ...)` with the returned score."
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"Math\", \"Physics\"};\n    int vals[] = {95, 88};\n    int found;\n    printf(\"%d\\n\", map_get_str_int(keys, vals, 2, \"Math\", &found));\n    return 0;\n}\n"
     },
     {
       "id": "maps_03",
       "title": "Add to Map",
-      "description": "Create empty map names := make(map[string]string). Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
+      "description": "Create empty map names = empty parallel key/value arrays. Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
       "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_str_map(const char **keys, const char **vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%s\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\n\nint main(void) {\n    // keys 1,2\n    return 0;\n}\n",
       "expected_output": "map[1:One 2:Two]",
       "hints": [
-        "names[\"1\"] = \"One\""
+        "`const char *keys[] = {\"1\", \"2\"}; const char *vals[] = {\"One\", \"Two\"};`",
+        "`print_str_str_map(keys, vals, 2);`"
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_str_map(const char **keys, const char **vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%s\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\n\nint main(void) {\n    const char *keys[] = {\"1\", \"2\"};\n    const char *vals[] = {\"One\", \"Two\"};\n    print_str_str_map(keys, vals, 2);\n    return 0;\n}\n"
     },
     {
       "id": "maps_04",
       "title": "Delete from Map",
-      "description": "Create map data := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
+      "description": "Create map data = parallel key/value arrays{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
       "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    // without key b\n    return 0;\n}\n",
       "expected_output": "map[a:1 c:3]",
       "hints": [
-        "Use delete(data, \"b\")"
+        "Model deletion by listing only remaining keys: `{\"a\", \"c\"}` with `{1, 3}`."
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"a\", \"c\"};\n    int vals[] = {1, 3};\n    print_str_int_map(keys, vals, 2);\n    return 0;\n}\n"
     },
     {
       "id": "maps_05",
       "title": "Check Key Existence",
-      "description": "Create map inventory := map[string]int{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
+      "description": "Create map inventory = parallel key/value arrays{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
       "starter_code": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    // lookup bananas\n    return 0;\n}\n",
       "expected_output": "not found",
       "hints": [
-        "Use value, exists := inventory[\"bananas\"]",
-        "Check the exists variable"
+        "`map_get_str_int(keys, vals, n, \"bananas\", &found);` leaves `found == 0`.",
+        "`puts(found ? \"exists\" : \"not found\");`"
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nstatic void print_str_int_map(const char **keys, const int *vals, int n) {\n    printf(\"map[\");\n    for (int i = 0; i < n; i++) {\n        if (i) putchar(' ');\n        printf(\"%s:%d\", keys[i], vals[i]);\n    }\n    printf(\"]\");\n}\nstatic int map_get_str_int(const char **keys, const int *vals, int n,\n                           const char *key, int *found) {\n    for (int i = 0; i < n; i++)\n        if (strcmp(keys[i], key) == 0) { *found = 1; return vals[i]; }\n    *found = 0;\n    return 0;\n}\n\nint main(void) {\n    const char *keys[] = {\"apples\", \"oranges\"};\n    int vals[] = {5, 3};\n    int found;\n    map_get_str_int(keys, vals, 2, \"bananas\", &found);\n    puts(found ? \"exists\" : \"not found\");\n    return 0;\n}\n"
     },
     {
       "id": "maps_07",
       "title": "Map Length",
-      "description": "Create map counts := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
+      "description": "Create map counts = parallel key/value arrays{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // n = 3 entries\n    return 0;\n}\n",
       "expected_output": "3",
       "hints": [
-        "Use len(counts) to get the number of key-value pairs"
+        "`const char *keys[] = {\"one\", \"two\", \"three\"};` — print `3` or `sizeof keys / sizeof keys[0]`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *keys[] = {\"one\", \"two\", \"three\"};\n    int vals[] = {1, 2, 3};\n    printf(\"%d\\n\", 3);\n    return 0;\n}\n"
     },
     {
       "id": "maps_06",
       "title": "Iterate Map",
-      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "description": "Create map grades = parallel key/value arrays{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // print A 90\\nB 80\\nC 70\n    return 0;\n}\n",
       "expected_output": "A 90\nB 80\nC 70",
       "hints": [
-        "Use for key, value := range grades"
+        "Parallel `keys[]` / `vals[]` with three grades; loop `for (int i = 0; i < 3; i++)`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *keys[] = {\"A\", \"B\", \"C\"};\n    int vals[] = {90, 80, 70};\n    for (int i = 0; i < 3; i++) printf(\"%s %d\\n\", keys[i], vals[i]);\n    return 0;\n}\n"
     }

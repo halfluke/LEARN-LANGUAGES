@@ -2,7 +2,7 @@
   "id": "methods",
   "title": "Methods",
   "description": "Methods and traits (`Display`) in Rust",
-  "theory": "## Methods in Rust\n\nAttach functions to types with `impl Type { ... }`. Use `&self`, `&mut self`, or `self` receivers.\n\nRust does not have Go-style `defer`; scope-based `Drop` covers some patterns.\n",
+  "theory": "### `self`, `&self`, `&mut self`\n\nMethods are functions in an `impl` block whose first parameter is `self`. Taking **`self`**\nby value consumes the receiver—use for builders or finalizing transitions. **`&self`**\nborrows immutably; **`&mut self`** allows in-place field mutation without moving the outer value.\n\nRust automatically borrows when you use dot syntax: `s.len()` becomes `(&s).len()` when\n`len` expects `&self`. This ergonomics layer is why method chains look fluent even when\nownership is strict underneath.\n\n### Inherent vs trait methods\n\nInherent methods live directly on the type. Trait methods arrive via scope: explicit\n`Trait::method(&x)` disambiguates when name clashes occur. UFCS (universal function call\nsyntax) is your friend when the compiler’s pick surprises.\n\n```rust\nstruct Rect { w: f64, h: f64 }\n\nimpl Rect {\n    fn area(&self) -> f64 { self.w * self.h }\n    fn scale(&mut self, k: f64) {\n        self.w *= k;\n        self.h *= k;\n    }\n}\n```\n\n### Builder patterns and privacy\n\nMethod-heavy APIs often pair `pub fn new` with private fields so only approved transitions\nrun—`mut` access cannot bypass module privacy. That combination is how small structs still\nenforce large invariants.\n",
   "exercises": [
     {
       "id": "methods_01",

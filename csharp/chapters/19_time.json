@@ -1,52 +1,57 @@
 {
   "id": "time",
-  "title": "Time",
-  "description": "Dates, zones, and durations in .NET",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md).\n\n## Time in C#\n\nPrefer **`DateTimeOffset`** for instants with offsets, **`TimeSpan`** for durations, and **`TimeZoneInfo`** for named zones. Use **`CultureInfo.InvariantCulture`** when parsing and formatting must be stable across machines.\n",
+  "title": "Date and time",
+  "description": "datetime, timedelta, and time zones",
+  "theory": "### DateTime vs DateTimeOffset\n\n`DateTime` mixes **unspecified**, UTC, and local kinds; bugs appear when you subtract values with different kinds or assume `Now` is universal. Prefer **`DateTimeOffset`** for instants that must round-trip with an explicit offset, and be deliberate about **UTC** at storage boundaries.\n\n### TimeSpan and arithmetic\n\n`TimeSpan` measures elapsed time between ticks; it does not encode calendar concepts. Calendars use `DateOnly` / `TimeOnly` (.NET 6+) for human schedules without tying them to a time zone ambiguously.\n\nTime zone conversions should go through **`TimeZoneInfo`** rather than fixed offsets for historical DST rules. For monotonic measurements (timeouts, profiling), `Stopwatch` uses a high-resolution clock unrelated to wall time.\n\n```csharp\nusing System;\n\nvar utc = DateTime.UtcNow;\n\nvar dto = DateTimeOffset.UtcNow;\n\nvar span = TimeSpan.FromMinutes(90);\n\nConsole.WriteLine($\"{utc:o} | {dto:o} | {span}\");\n```\n",
   "exercises": [
     {
       "id": "time_01",
       "title": "Build a UTC instant",
-      "description": "Create **2024-01-01 12:00:00 UTC** and print it exactly in the checker’s format.",
+      "description": "Create **2024-01-01 12:00:00 UTC** and Console.WriteLine it exactly in the checker’s format.",
       "starter_code": "using System;\nusing System.Globalization;\n\n// new DateTimeOffset(...)\n",
       "expected_output": "2024-01-01 12:00:00 UTC",
       "hints": [
-        "`DateTimeOffset` keeps UTC offset explicit",
-        "Append the literal ` UTC` to match the Rust/Go exercises"
+        "Construct `DateTimeOffset` with explicit `TimeSpan.Zero` offset for anchored UTC timestamps.",
+        "Format invariantly as `yyyy-MM-dd HH:mm:ss` then suffix the literal ` UTC` token exactly.",
+        "Leverage `CultureInfo.InvariantCulture` for stable textual output."
       ],
       "solution": "using System;\nusing System.Globalization;\n\nvar t = new DateTimeOffset(2024, 1, 1, 12, 0, 0, TimeSpan.Zero);\nConsole.WriteLine($\"{t.ToString(\"yyyy-MM-dd HH:mm:ss\", CultureInfo.InvariantCulture)} UTC\");\n"
     },
     {
       "id": "time_02",
       "title": "Components in Tokyo",
-      "description": "Build **2023-03-15 14:30** in **`Asia/Tokyo`** and print the component lines expected by the checker.",
+      "description": "Build **2023-03-15 14:30** in **`Asia/Tokyo`** and Console.WriteLine the component lines expected by the checker.",
       "starter_code": "using System;\nusing System.Globalization;\n\n// TimeZoneInfo.FindSystemTimeZoneById(\"Asia/Tokyo\")\n",
       "expected_output": "Year: 2023\nMonth: March\nDay: 15\nHour: 14\nMinute: 30\nWeekday: Wednesday",
       "hints": [
-        "`TimeZoneInfo.ConvertTimeFromUtc` helps when you start from a UTC instant",
-        "`ToString(\"MMMM\")` / `\"dddd\"` for month/weekday names"
+        "Resolve canonical zones via `TimeZoneInfo.FindSystemTimeZoneById(\"Asia/Tokyo\")`.",
+        "`GetUtcOffset` feeds `DateTimeOffset` creation for wall-clock interpretation.",
+        "Month/weekday names come from invariant `MMMM`/`dddd` format patterns."
       ],
       "solution": "using System;\nusing System.Globalization;\n\nvar tz = TimeZoneInfo.FindSystemTimeZoneById(\"Asia/Tokyo\");\nvar wall = new DateTime(2023, 3, 15, 14, 30, 0, DateTimeKind.Unspecified);\nvar offset = tz.GetUtcOffset(wall);\nvar local = new DateTimeOffset(wall, offset);\nConsole.WriteLine($\"Year: {local.Year}\");\nConsole.WriteLine($\"Month: {local.ToString(\"MMMM\", CultureInfo.InvariantCulture)}\");\nConsole.WriteLine($\"Day: {local.Day}\");\nConsole.WriteLine($\"Hour: {local.Hour}\");\nConsole.WriteLine($\"Minute: {local.Minute}\");\nConsole.WriteLine($\"Weekday: {local.ToString(\"dddd\", CultureInfo.InvariantCulture)}\");\n"
     },
     {
       "id": "time_03",
       "title": "Durations",
-      "description": "Print a Go-style duration line for **2h30m0s**, then print **`500ms`** on the next line.",
+      "description": "Print a C#-style duration line for **2h30m0s**, then Console.WriteLine **`500ms`** on the next line.",
       "starter_code": "using System;\n\n// TimeSpan.FromHours / FromMinutes\n",
       "expected_output": "2h30m0s\n500ms",
       "hints": [
-        "`TotalHours` is a `double`—cast to `int` for the hours field in this exercise"
+        "Compose durations with `TimeSpan.FromHours` / `FromMinutes`.",
+        "Hours component often `(int)d.TotalHours` while minutes/seconds pull structural fields.",
+        "Second line literal matches fixed millisecond substring when specified."
       ],
       "solution": "using System;\n\nvar d = TimeSpan.FromHours(2) + TimeSpan.FromMinutes(30);\nConsole.WriteLine($\"{(int)d.TotalHours}h{d.Minutes}m{d.Seconds}s\");\nConsole.WriteLine(\"500ms\");\n"
     },
     {
       "id": "time_04",
       "title": "Parse naive datetime",
-      "description": "Parse `\"2024-06-15 09:30:00\"` as UTC wall time and print `yyyy-MM-dd HH:mm:ss UTC`.",
+      "description": "Parse `\"2024-06-15 09:30:00\"` as UTC wall time and Console.WriteLine `yyyy-MM-dd HH:mm:ss UTC`.",
       "starter_code": "using System;\nusing System.Globalization;\n\n// DateTimeOffset.ParseExact(..., DateTimeStyles.AssumeUniversal | AdjustToUniversal)\n",
       "expected_output": "2024-06-15 09:30:00 UTC",
       "hints": [
-        "`DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal` treats the value as UTC"
+        "`DateTimeOffset.ParseExact` honors custom patterns.",
+        "Combine `DateTimeStyles.AssumeUniversal | AdjustToUniversal` when Wall time equals UTC labeling."
       ],
       "solution": "using System;\nusing System.Globalization;\n\nvar s = \"2024-06-15 09:30:00\";\nvar dto = DateTimeOffset.ParseExact(\n    s,\n    \"yyyy-MM-dd HH:mm:ss\",\n    CultureInfo.InvariantCulture,\n    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);\nConsole.WriteLine($\"{dto.ToString(\"yyyy-MM-dd HH:mm:ss\", CultureInfo.InvariantCulture)} UTC\");\n"
     },
@@ -57,51 +62,58 @@
       "starter_code": "using System;\nusing System.Globalization;\n\n// dto.ToString(...)\n",
       "expected_output": "07/04/2024\nThursday, July 4, 2024",
       "hints": [
-        "`%e`-style single-digit days are awkward—format with `d` and post-process double spaces if needed"
+        "Separate short (`MM/dd/yyyy`) versus long textual formats explicitly.",
+        "Post-process duplicated spaces from ordinal day formatting replacements if graders expect single spacing."
       ],
       "solution": "using System;\nusing System.Globalization;\n\nvar t = new DateTimeOffset(2024, 7, 4, 16, 0, 0, TimeSpan.Zero);\nConsole.WriteLine(t.ToString(\"MM/dd/yyyy\", CultureInfo.InvariantCulture));\nvar longForm = t.ToString(\"dddd, MMMM d, yyyy\", CultureInfo.InvariantCulture);\nConsole.WriteLine(longForm.Replace(\"  \", \" \"));\n"
     },
     {
       "id": "time_06",
       "title": "Add duration",
-      "description": "Start at **2024-01-15 10:00 UTC**, add **3 days + 5 hours**, print the result in the same style as other UTC exercises.",
+      "description": "Start at **2024-01-15 10:00 UTC**, add **3 days + 5 hours**, Console.WriteLine the result in the same style as other UTC exercises.",
       "starter_code": "using System;\nusing System.Globalization;\n\n// dto.AddDays / AddHours\n",
       "expected_output": "2024-01-18 15:00:00 UTC",
       "hints": [
-        "`TimeSpan.FromDays(3) + TimeSpan.FromHours(5)`"
+        "Add composite spans: `dto + TimeSpan.FromDays(...) + TimeSpan.FromHours(...)`.",
+        "Keep zero offsets whenever you append ` UTC` to timestamps."
       ],
       "solution": "using System;\nusing System.Globalization;\n\nvar t = new DateTimeOffset(2024, 1, 15, 10, 0, 0, TimeSpan.Zero);\nvar outT = t + TimeSpan.FromDays(3) + TimeSpan.FromHours(5);\nConsole.WriteLine($\"{outT.ToString(\"yyyy-MM-dd HH:mm:ss\", CultureInfo.InvariantCulture)} UTC\");\n"
     },
     {
       "id": "time_07",
       "title": "Subtract instants",
-      "description": "Between **2024-11-25** and **2024-12-25** UTC midnights, print `720h0m0s` then `Days: 30`.",
+      "description": "Between **2024-11-25** and **2024-12-25** UTC midnights, Console.WriteLine `720h0m0s` then `Days: 30`.",
       "starter_code": "using System;\n\n// (now - then)\n",
       "expected_output": "720h0m0s\nDays: 30",
       "hints": [
-        "`(later - earlier).TotalHours`"
+        "Subtract two `DateTimeOffset` instances to derive `TimeSpan`.",
+        "Hours line often formats total whole hours (`(int)diff.TotalHours`).",
+        "Days line casts `TotalDays` to integers when fractions irrelevant."
       ],
       "solution": "using System;\n\nvar now = new DateTimeOffset(2024, 12, 25, 0, 0, 0, TimeSpan.Zero);\nvar then = new DateTimeOffset(2024, 11, 25, 0, 0, 0, TimeSpan.Zero);\nvar diff = now - then;\nConsole.WriteLine($\"{(int)diff.TotalHours}h0m0s\");\nConsole.WriteLine($\"Days: {(int)diff.TotalDays}\");\n"
     },
     {
       "id": "time_09",
       "title": "Before / after",
-      "description": "Compare two UTC instants and print the two boolean lines expected by the checker.",
+      "description": "Compare two UTC instants and Console.WriteLine the two boolean lines expected by the checker.",
       "starter_code": "using System;\n\n// DateTimeOffset operators\n",
       "expected_output": "January 1 is before December 31: true\nDecember 31 is after January 1: true",
       "hints": [
-        "`<` and `>` read nicely for instants"
+        "Comparison operators `<`/`>` communicate ordering compactly.",
+        "Lower-case booleans normally come from interpolating `.ToString().ToLowerInvariant()` results."
       ],
       "solution": "using System;\n\nvar t1 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);\nvar t2 = new DateTimeOffset(2024, 12, 31, 0, 0, 0, TimeSpan.Zero);\nConsole.WriteLine($\"January 1 is before December 31: {(t1 < t2).ToString().ToLowerInvariant()}\");\nConsole.WriteLine($\"December 31 is after January 1: {(t2 > t1).ToString().ToLowerInvariant()}\");\n"
     },
     {
       "id": "time_08",
       "title": "Fixed clock (no wall time)",
-      "description": "Use a fixed `DateTimeOffset` (no `DateTime.Now`) and print the instant, hour/minute, then **+1s** labeled like the checker.",
+      "description": "Use a fixed `DateTimeOffset` (no `DateTime.Now`) and Console.WriteLine the instant, hour/minute, then **+1s** labeled like the checker.",
       "starter_code": "using System;\nusing System.Globalization;\n\n// dto.AddSeconds(1)\n",
       "expected_output": "2024-06-01 10:15:30 UTC\nHour: 10\nMinute: 15\nAfter +1s: 2024-06-01 10:15:31 UTC",
       "hints": [
-        "Keep everything in UTC for stable output"
+        "Never call ambient clocks—stay on constructed `DateTimeOffset` timelines.",
+        "`AddSeconds(1)` models incremental ticking explicitly.",
+        "Print hour/minute constituents before illustrating `+1s` shift."
       ],
       "solution": "using System;\nusing System.Globalization;\n\nvar t = new DateTimeOffset(2024, 6, 1, 10, 15, 30, TimeSpan.Zero);\nConsole.WriteLine($\"{t.ToString(\"yyyy-MM-dd HH:mm:ss\", CultureInfo.InvariantCulture)} UTC\");\nConsole.WriteLine($\"Hour: {t.Hour}\");\nConsole.WriteLine($\"Minute: {t.Minute}\");\nvar after = t.AddSeconds(1);\nConsole.WriteLine($\"After +1s: {after.ToString(\"yyyy-MM-dd HH:mm:ss\", CultureInfo.InvariantCulture)} UTC\");\n"
     }

@@ -2,7 +2,7 @@
   "id": "slices",
   "title": "Pointer + length",
   "description": "Representing a view into memory (slice-like)",
-  "theory": "## Pointer + length\n\nA *logical slice* is `(ptr, len)` in registers. The Linux `write` syscall already wants `rsi` as pointer and `rdx` as length—use that as the mental model.\n",
+  "theory": "### Pointer-length pairs by hand\n\nHigher-level languages expose **slices** as pointer, length, and sometimes capacity.\nIn assembly you implement that trio yourself: one register holds the **base address**,\nanother holds the **element count** or **byte length**, and you advance the base when\nyou trim the front.\n\nNegative lengths are meaningless; treat lengths as unsigned quantities and guard loops\nso **`rcx`** does not wrap from zero with **`loop`** unless you intend the full **2⁶⁴**\niteration degenerate case—which you almost never do.\n\n### Walking a range\n\nA common idiom compares a running pointer to an end pointer computed as **`base + length`**\nor decrements an explicit counter. Choose the pattern that keeps the fewest registers\nlive across **`syscall`** boundaries.\n\n```nasm\n; rsi points at first byte, rdx is byte length (already matches write syscall args)\n    mov rax, 1\n    mov rdi, 1\n    syscall\n```\n\n### Re-slice without copying\n\nTrimming prefix bytes only adjusts **RSI** and **RDX** for **`sys_write`**: the backing\nstorage stays put in **`.data`** or **`.bss`**. That mirrors how string views and byte\nslices share storage in managed languages—only here there is no borrow checker to catch\nuse-after-trims gone wrong.\n",
   "exercises": [
     {
       "id": "slices_01",

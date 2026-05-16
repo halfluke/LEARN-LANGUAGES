@@ -1,85 +1,91 @@
 {
   "id": "functions",
   "title": "Functions",
-  "description": "Functions, parameters, and return values in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Functions in C#\n\nTop-level programs can call **`static` local functions** declared later in the file. Use tuples or `out` parameters when modeling multi-return patterns.\n",
+  "description": "def, parameters, return values, and closures",
+  "theory": "### Methods, local functions, and delegates\n\nMethods live on types; you choose `static` for operations that do not need instance state. Parameters default to **pass-by-value**: for reference types the value is the reference; for value types the whole struct is copied. Use `ref`, `in`, and `out` for by-reference semantics—`out` is an alias for output parameters that must be assigned before the method returns.\n\n**Local functions** inside members keep helpers lexically scoped and can capture locals without exposing them on the type.\n\n### Lambda expressions and Func/Action\n\nAnonymous functions (`() => expr` or `delegate` blocks) convert to **delegate** types such as `Func<T>` and `Action`. LINQ depends heavily on delegates; expression trees (`Expression<Func<...>>`) represent code as data for providers like EF Core, but plain delegates execute immediately.\n\n### Async signatures\n\nAsync methods often return `Task` or `Task<T>`. The `async` keyword enables `await` inside the method body; the compiler rewrites the method into a state machine. Prefer “async all the way”—avoid blocking with `.Result` or `.Wait()` on thread-pool backed work in libraries.\n\n```csharp\nusing System;\nusing System.Threading.Tasks;\n\nstatic int Add(in int a, in int b) => a + b;\n\nFunc<int, int, int> addFunc = (x, y) => x + y;\n\nasync Task<int> DelayedIncrement(int x)\n{\n    await Task.Delay(10);\n    return x + 1;\n}\n```\n",
   "exercises": [
     {
       "id": "functions_01",
       "title": "Basic Function",
-      "description": "Create a function greet() that prints Hello. Call it in main.",
+      "description": "Create a function greet() that Console.WriteLines Hello. Call it in main.",
       "starter_code": "\n// Greet();\n\nstatic void Greet() { }",
       "expected_output": "Hello",
       "hints": [
-        "`static void Greet()` then call it."
+        "Declare `static void Greet()` and call it directly from top-level/Main context.",
+        "Keep side effects confined to `Console.WriteLine(\"Hello\")`."
       ],
       "solution": "\nGreet();\n\nstatic void Greet() { Console.WriteLine(\"Hello\"); }"
     },
     {
       "id": "functions_02",
       "title": "Function with Parameters",
-      "description": "Create function greet(name string) that prints Hello, name. Call with \"Alice\".",
+      "description": "Create function greet(name string) that Console.WriteLines Hello, name. Call with \"Alice\".",
       "starter_code": "\n// Greet(\"Alice\");\n\nstatic void Greet(string name) { }",
       "expected_output": "Hello, Alice",
       "hints": [
-        "Use fmt.Printf(\"Hello, %s\\n\", name)",
-        "Pass \"Alice\" as argument"
+        "Use idiomatic interpolated strings `$\"Hello, {name}\"`.",
+        "Parameter type is `string` with **PascalCase** naming by convention."
       ],
       "solution": "\nGreet(\"Alice\");\n\nstatic void Greet(string name) { Console.WriteLine($\"Hello, {name}\"); }"
     },
     {
       "id": "functions_03",
       "title": "Function with Return",
-      "description": "Create function add(a, b int) int that returns a+b. Call with 3 and 4, print result.",
+      "description": "Create function add(a, b int) int that returns a+b. Call with 3 and 4, Console.WriteLine result.",
       "starter_code": "\n// Console.WriteLine(Add(3, 4));\n\nstatic int Add(int a, int b) => 0;",
       "expected_output": "7",
       "hints": [
-        "Use return a + b",
-        "Print the returned value"
+        "Return `int` from `Add(int a, int b)` expression-bodied method.",
+        "`Console.WriteLine` displays the callee’s result."
       ],
       "solution": "\nConsole.WriteLine(Add(3, 4));\n\nstatic int Add(int a, int b) => a + b;"
     },
     {
       "id": "functions_04",
       "title": "Multiple Return Values",
-      "description": "Create function divide(a, b int) (int, error) that returns quotient and nil error, or 0 and error if b is 0. Call with 10 and 3, print result and error.",
+      "description": "Create function divide(a, b int) (int, error) that returns quotient and nil error, or 0 and error if b is 0. Call with 10 and 3, Console.WriteLine result and error.",
       "starter_code": "\n// print Divide(10,3) and nil for Divide(10,0)\n\nstatic int? Divide(int a, int b) => null;",
       "expected_output": "3 <nil>",
       "hints": [
-        "Match Go's `Console.WriteLine(result, err)` with `<nil>` for null."
+        "Model missing-quotient scenarios with nullable `int?` when denominators vanish.",
+        "Print `<nil>` exactly when the checker expects that literal sentinel text.",
+        "Separate successful division from the zero division path before formatting output."
       ],
       "solution": "\nvar r = Divide(10, 3);\nvar e = Divide(10, 0);\nConsole.WriteLine($\"{r} {(e is null ? \"<nil>\" : e.ToString())}\");\n\nstatic int? Divide(int a, int b) => b == 0 ? null : a / b;"
     },
     {
       "id": "functions_05",
       "title": "Variadic Function",
-      "description": "Create function sum(numbers ...int) int that sums all numbers. Call with 1, 2, 3, 4, 5 and print the result.",
+      "description": "Create function sum(numbers ...int) int that sums all numbers. Call with 1, 2, 3, 4, 5 and Console.WriteLine the result.",
       "starter_code": "\n// Console.WriteLine(Sum(1,2,3,4,5));\n\nstatic int Sum(params int[] nums) => 0;",
       "expected_output": "15",
       "hints": [
-        "`params` accepts variable arguments."
+        "Mark the final parameter `params int[] nums` so callers pass arbitrary arity.",
+        "Sum with LINQ `.Sum()`, a `foreach`, or accumulator loop."
       ],
       "solution": "using System.Linq;\n\nConsole.WriteLine(Sum(1, 2, 3, 4, 5));\n\nstatic int Sum(params int[] nums) => nums.Sum();"
     },
     {
       "id": "functions_07",
       "title": "Defer Statement",
-      "description": "Create a function process() that prints \"start\", defers printing \"end\", and prints \"working\". Call it in main.",
+      "description": "Create a function process() that Console.WriteLines \"start\", defers Console.WriteLineing \"end\", and Console.WriteLines \"working\". Call it in main.",
       "starter_code": "\n// Process();\n\nstatic void Process() { /* start, working, defer end */ }",
       "expected_output": "start\nworking\nend",
       "hints": [
-        "`try/finally` after `Process()` prints `end` when the try block completes."
+        "Order side effects explicitly: start → working → end on separate lines.",
+        "Use `try` / `finally` if you want cleanup that always runs."
       ],
       "solution": "\ntry { Process(); }\nfinally { Console.WriteLine(\"end\"); }\n\nstatic void Process()\n{\n    Console.WriteLine(\"start\");\n    Console.WriteLine(\"working\");\n}"
     },
     {
       "id": "functions_06",
       "title": "Closure",
-      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder := makeAdder(), then call adder(5) and adder(10), printing both results.",
+      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder = makeAdder(), then call adder(5) and adder(10), Console.WriteLineing both results.",
       "starter_code": "Func<int, int> makeAdder = () => 0;\n// Console.WriteLine(makeAdder()(5));",
       "expected_output": "5\n15",
       "hints": [
-        "Capture `sum` in a closure."
+        "Return `Func<int, int>` that closes over mutable local state.",
+        "Each invocation should update the accumulator before returning."
       ],
       "solution": "int sum = 0;\nFunc<int, int> makeAdder() => x => { sum += x; return sum; };\nvar adder = makeAdder();\nConsole.WriteLine(adder(5));\nConsole.WriteLine(adder(10));"
     }

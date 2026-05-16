@@ -1,8 +1,8 @@
 {
   "id": "strings",
-  "title": "Strings & Runes",
-  "description": "Learn about string constants, runes, string manipulation, and formatting in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Strings\n\nImmutable `str`, slicing, methods like `.startswith`, and f-strings for formatting.\n",
+  "title": "Strings",
+  "description": "str, formatting, and text processing",
+  "theory": "### Text as immutable sequences\n\n`str` holds Unicode code points; normalize encoding concerns at I/O boundaries\n(decode bytes early, encode late). Strings are immutable: “changing” one builds a\nnew object. `str.join` is the idiomatic way to concatenate many fragments without\nquadratic copies.\n\n### Formatting\n\nf-strings (`f\"{value:!r}\"`) are the default readability win. `str.format` and\n`Template` remain useful for localization pipelines or user-supplied patterns where\nyou want different safety trade-offs.\n\n```python\nparts = [\"hydro\", \"electric\"]\nlabel = \"-\".join(parts)\n\nratio = 0.125\nassert f\"{ratio:.1%}\" == \"12.5%\"\n```\n",
   "exercises": [
     {
       "id": "strings_01",
@@ -11,8 +11,7 @@
       "starter_code": "greeting = \"Hello, Go!\"\n",
       "expected_output": "Hello, Go!",
       "hints": [
-        "Use greeting := \"Hello, Go!\" to declare and assign",
-        "Use print(greeting) to print"
+        "Preserve the greeting variable exactly as seeded in starter (including embedded punctuation), then print it."
       ],
       "solution": "greeting = \"Hello, Go!\"\nprint(greeting)\n"
     },
@@ -23,9 +22,8 @@
       "starter_code": "ch = 'A'\n",
       "expected_output": "Character: A\nCode Point: 65",
       "hints": [
-        "Use ch rune = 'A' or ch := 'A'",
-        "Use fmt.Printf(\"Character: %c\\n\", ch) for the character",
-        "Use fmt.Printf(\"Code Point: %d\\n\", ch) for the Unicode code point"
+        "ord(ch) emits Unicode codepoints for length-1 str objects.",
+        "Two labeled print lines recreate sample stdout."
       ],
       "solution": "ch = 'A'\nprint(f'Character: {ch}')\nprint(f'Code Point: {ord(ch)}')\n"
     },
@@ -36,58 +34,55 @@
       "starter_code": "text = \"Hello, World!\"\n",
       "expected_output": "Contains: true\nReplaced: Hello, Go!\nFirst: a",
       "hints": [
-        "strings.Contains(text, \"Hello\") returns true if found",
-        "strings.Replace(text, \"World\", \"Go\", 1) replaces first occurrence",
-        "strings.Split(\"a,b,c\", \",\") returns []string{\"a\", \"b\", \"c\"}"
+        "\"Hello\" in text checks substring membership.",
+        "Coerce booleans via str(...).lower() before printing textual true.",
+        "replace swaps substrings once; split breaks CSV-like tokens."
       ],
       "solution": "text = \"Hello, World!\"\nprint(\"Contains:\", str(\"Hello\" in text).lower())\nprint(\"Replaced:\", text.replace(\"World\", \"Go\", 1))\nprint(\"First:\", \"a,b,c\".split(\",\")[0])\n"
     },
     {
       "id": "strings_04",
       "title": "String Formatting",
-      "description": "Use fmt.Sprintf to format a string with a name and age, then print it. Also use printf to format a floating point number to 2 decimal places.",
+      "description": "Use print to format a string with a name and age, then print it. Also use printf to format a floating point number to 2 decimal places.",
       "starter_code": "name, age, pi = \"Alice\", 30, 3.14159\n",
       "expected_output": "Alice is 30 years old\nPi is 3.14",
       "hints": [
-        "fmt.Sprintf(\"%s is %d years old\", name, age) creates the formatted string",
-        "Use fmt.Printf(\"Pi is %.2f\\n\", pi) for 2 decimal places"
+        "f\"{name} is {age} years old\" covers the prose line.",
+        ":.2f formats pi precisely."
       ],
       "solution": "name, age, pi = \"Alice\", 30, 3.14159\nprint(f\"{name} is {age} years old\")\nprint(f\"Pi is {pi:.2f}\")\n"
     },
     {
       "id": "strings_05",
       "title": "To Upper and To Lower",
-      "description": "Given s := \"Python Programming\", print it in all uppercase and then all lowercase.",
+      "description": "Given s = \"Python Programming\", print it in all uppercase and then all lowercase.",
       "starter_code": "s = \"Go Programming\"\n",
       "expected_output": "GO PROGRAMMING\ngo programming",
       "hints": [
-        "strings.ToUpper(s)",
-        "strings.ToLower(s)"
+        "str.upper / str.lower return fresh copies."
       ],
       "solution": "s = \"Go Programming\"\nprint(s.upper())\nprint(s.lower())\n"
     },
     {
       "id": "strings_07",
       "title": "Reverse a String",
-      "description": "Given s := \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
+      "description": "Given s = \"hello\", reverse it by converting to list or string reversal, swapping characters, and converting back. Print the reversed string.",
       "starter_code": "s = \"hello\"\n",
       "expected_output": "olleh",
       "hints": [
-        "Use []rune(s) to convert the string",
-        "Swap runes[0] with runes[len-1], runes[1] with len-2, etc.",
-        "Use string(runes) to convert back"
+        "Slice stepping s[::-1] reverses characters compactly."
       ],
       "solution": "s = \"hello\"\nprint(s[::-1])\n"
     },
     {
       "id": "strings_06",
       "title": "String HasPrefix and HasSuffix",
-      "description": "Declare url := \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
+      "description": "Declare url = \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
       "starter_code": "s = \"hello\"\n",
       "expected_output": "true true",
       "hints": [
-        "strings.HasPrefix(url, \"https://\")",
-        "strings.HasSuffix(url, \".com\")"
+        "s.startswith probes prefixes.",
+        "Use in for embedded checks and lower-case textual booleans to match stdout."
       ],
       "solution": "s = \"hello\"\nprint(str(s.startswith(\"he\")).lower(), str(\"ll\" in s).lower())\n"
     }

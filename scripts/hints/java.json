@@ -1,0 +1,683 @@
+{
+  "variables_01": {
+    "hints": [
+      "Declare `int age = 25;` (or `var age = 25;`).",
+      "Print the value with `System.out.println(age);`."
+    ]
+  },
+  "variables_02": {
+    "hints": [
+      "Use `String name` and `double version = 1.21;` with the literals required by `expected_output`.",
+      "Concatenate with a space: `System.out.println(name + \" \" + version);`."
+    ]
+  },
+  "variables_03": {
+    "hints": [
+      "Keep `int x = 100;` and widen for floating-point math if needed; the reference solution prints `100` using `(int)(double) x` or assign `double y = x;`.",
+      "Pick the approach that matches the expected stdout exactly."
+    ]
+  },
+  "variables_04": {
+    "hints": [
+      "The checker expects the literal line `0 0  false` — print that exact string with `System.out.println(...)`.",
+      "(In Java, uninitialized locals are illegal; this exercise uses a fixed output string.)"
+    ]
+  },
+  "variables_05": {
+    "hints": [
+      "Use `final int MAX_SCORE = 100, MIN_SCORE = 0;` (constants are typically `static final` when shared, but locals use `final`).",
+      "Print both separated by a space."
+    ]
+  },
+  "variables_06": {
+    "hints": [
+      "Swap with a temporary: `int t = a; a = b; b = t;` (XOR swap is optional; temp is clearest).",
+      "Print `a` and `b` separated by a space."
+    ]
+  },
+  "variables_07": {
+    "hints": [
+      "The reference prints `\"localhost 8080 true\"` — define `String host`, `int port`, and `boolean debug` and print them, or match that exact output.",
+      "Declare `host`, `port`, and `debug` in separate statements (mixed types cannot share one `var` comma list)."
+    ]
+  },
+  "ownership_01": {
+    "hints": [
+      "Assign `String t = s;` so both refer to the same string instance.",
+      "Use `System.out.print(t);` (no newline)."
+    ]
+  },
+  "ownership_02": {
+    "hints": [
+      "Assign `int[] t = s;` — the second reference aliases the same array object.",
+      "Mutating `t[0]` is visible through `s`; print `s[0]` and `s[1]` concatenated as digits with `System.out.print`."
+    ]
+  },
+  "ownership_03": {
+    "hints": [
+      "Copy the primitive: `int b = a;` then `b++` only changes `b`.",
+      "Print `a` and `b` separated by a space using `System.out.print`."
+    ]
+  },
+  "controlflow_01": {
+    "hints": [
+      "Use `if (age >= 18) { ... } else { ... }` and print `Adult` or `Minor`.",
+      "The starter already sets `age = 20`."
+    ]
+  },
+  "controlflow_02": {
+    "hints": [
+      "Use a classic `for (int i = 1; i <= 5; i++)` and `System.out.println(i);`."
+    ]
+  },
+  "controlflow_03": {
+    "hints": [
+      "Use `switch (day)` with `case` labels and `break;` (or a `switch` expression with arrows in Java 14+).",
+      "Map `2` to `Tuesday`."
+    ]
+  },
+  "controlflow_04": {
+    "hints": [
+      "Create `String[] colors = {\"red\", \"green\", \"blue\"};` and a enhanced `for (String color : colors)` loop.",
+      "Print each color on its own line."
+    ]
+  },
+  "controlflow_05": {
+    "hints": [
+      "Chain conditions with `if / else if` or a nested conditional expression as in the solution.",
+      "For score `85`, the result must be `B`."
+    ]
+  },
+  "controlflow_06": {
+    "hints": [
+      "Loop `1..10` and `continue` when `i % 2 == 0`.",
+      "Print odd numbers only, one per line."
+    ]
+  },
+  "controlflow_07": {
+    "hints": [
+      "Print `1` through `4` — a `for (int i = 1; i < 5; i++)` matches the reference solution.",
+      "Alternatively use `break` once `i == 5` in an infinite `for (;;)` loop."
+    ]
+  },
+  "functions_01": {
+    "hints": [
+      "Implement `static void greet()` calling `System.out.println(\"Hello\");`.",
+      "Invoke `greet();` from `main`."
+    ]
+  },
+  "functions_02": {
+    "hints": [
+      "Method signature `static void greet(String name)` — use `System.out.println(\"Hello, \" + name);`.",
+      "Call `greet(\"Alice\");`."
+    ]
+  },
+  "functions_03": {
+    "hints": [
+      "Return `a + b` from `static int add(int a, int b)`.",
+      "Print `add(3, 4)` from `main`."
+    ]
+  },
+  "functions_04": {
+    "hints": [
+      "The sample returns `Integer` — return `null` when `b == 0`, else `a / b`.",
+      "Print `divide(10,3)` and a second call showing `null` for the zero divisor, e.g. `System.out.println(divide(10, 3) + \" \" + divide(10, 0));`."
+    ]
+  },
+  "functions_05": {
+    "hints": [
+      "Use `static int sumAll(int... nums)` and an enhanced `for` to accumulate.",
+      "Return the total; print `sumAll(1,2,3,4,5)`."
+    ]
+  },
+  "functions_06": {
+    "hints": [
+      "Capture mutable state with `final int[] total = {0};` and return `x -> { total[0] += x; return total[0]; }` as `IntUnaryOperator`.",
+      "Call `applyAsInt` twice: `5` then `10`."
+    ]
+  },
+  "functions_07": {
+    "hints": [
+      "`defer` maps to `try { ... } finally { System.out.println(\"end\"); }` so `\"end\"` prints after `\"working\"`.",
+      "Print `\"start\"` first inside `process()`."
+    ]
+  },
+  "arrays_01": {
+    "hints": [
+      "Use `int[] arr = {1,2,3,4,5};` and a small helper to print `[1 2 3 4 5]` like the solution’s `fmt` method.",
+      "`Arrays.toString` uses commas — bracket spacing must match the exercise."
+    ]
+  },
+  "arrays_02": {
+    "hints": [
+      "Enhanced `for (int v : nums)` with `System.out.println(v);`."
+    ]
+  },
+  "arrays_03": {
+    "hints": [
+      "Use `arr.length` for fixed arrays.",
+      "Print the length."
+    ]
+  },
+  "arrays_04": {
+    "hints": [
+      "After partially filling `new int[5]`, format with the same bracket style as `arrays_01`.",
+      "Zeros appear for unset slots."
+    ]
+  },
+  "arrays_05": {
+    "hints": [
+      "Nested loops: outer over rows, inner over each row’s elements.",
+      "Print one number per line."
+    ]
+  },
+  "arrays_06": {
+    "hints": [
+      "Index with `arr[0]` and `arr[length-1]` (here index `2`).",
+      "Concatenate with a space for `System.out.println`."
+    ]
+  },
+  "arrays_07": {
+    "hints": [
+      "Accumulate with `int sum = 0;` and `for (int v : arr) sum += v;`."
+    ]
+  },
+  "slices_01": {
+    "hints": [
+      "Initialize `int[] s = {1, 2, 3};` or `new int[3]` then assign indices.",
+      "Format output as `[1 2 3]` to match the checker."
+    ]
+  },
+  "slices_02": {
+    "hints": [
+      "Build the full `{1,2,3,4,5}` array (conceptually an append chain in Java: new larger array or `ArrayList`).",
+      "Print `[1 2 3 4 5]` in the bracket style used elsewhere."
+    ]
+  },
+  "slices_03": {
+    "hints": [
+      "Use `ArrayList<Integer>` with initial capacity `3` for `new ArrayList<>(10)` then add three zeros; print `size()` and capacity is not directly exposed — the answer prints `3 10` per reference.",
+      "Follow the provided solution shape."
+    ]
+  },
+  "slices_04": {
+    "hints": [
+      "`String[] fruits = {...};` then `System.out.println(fruits.length);`."
+    ]
+  },
+  "slices_05": {
+    "hints": [
+      "The reference prints `[2 3 4]` — use `Arrays.copyOfRange(n, 1, 4)` or a literal array.",
+      "Formatting matches prior `fmt` helpers."
+    ]
+  },
+  "slices_06": {
+    "hints": [
+      "Print two lines: original `[1 2 3]` then copy `[1 2 3 4]` as in the solution.",
+      "Use the shared bracket formatter pattern."
+    ]
+  },
+  "slices_07": {
+    "hints": [
+      "Combine arrays with `Arrays.copyOf` + `System.arraycopy`, `ArrayList`, or use the merged literal from the reference.",
+      "Output `[1 2 3 4 5]`."
+    ]
+  },
+  "maps_01": {
+    "hints": [
+      "Use `LinkedHashMap<String,Integer>` and `put(\"Alice\", 25); put(\"Bob\", 30);`.",
+      "`System.out.println(ages);` yields `{Alice=25, Bob=30}` insertion order."
+    ]
+  },
+  "maps_02": {
+    "hints": [
+      "Use `HashMap` (or `Map.of` for fixed data) and `scores.get(\"Math\")`.",
+      "Print the `Integer` value `95`."
+    ]
+  },
+  "maps_03": {
+    "hints": [
+      "`names.put(\"1\", \"One\");` etc., then print the map."
+    ]
+  },
+  "maps_04": {
+    "hints": [
+      "After `remove(\"b\")` or building without `b`, print `{a=1, c=3}`.",
+      "The starter may already omit `b` in the solution."
+    ]
+  },
+  "maps_05": {
+    "hints": [
+      "Use `inventory.containsKey(\"bananas\")` with a ternary selecting `\"exists\"` vs `\"not found\"`.",
+      "Print `not found` for the sample data."
+    ]
+  },
+  "maps_06": {
+    "hints": [
+      "Iterate `for (var e : grades.entrySet())` printing `e.getKey() + \" \" + e.getValue()`.",
+      "Preserve insertion order with `LinkedHashMap`."
+    ]
+  },
+  "maps_07": {
+    "hints": [
+      "Print `counts.size()` after three `put` calls."
+    ]
+  },
+  "strings_01": {
+    "hints": [
+      "Set `String greeting` to the exact literal in `expected_output`.",
+      "Print with `System.out.println(greeting);`."
+    ]
+  },
+  "strings_02": {
+    "hints": [
+      "Use `char ch = 'A';` — print `\"Character: \" + ch` and `\"Code Point: \" + (int) ch`.",
+      "`char` is a UTF-16 code unit; for ASCII letters it matches the code point."
+    ]
+  },
+  "strings_03": {
+    "hints": [
+      "Use `text.contains(...)`, `text.replace(\"World\", ...)`, and `\"a,b,c\".split(\",\")[0]`.",
+      "Note `replace` replaces every substring match unless you constrain it — align with `expected_output`."
+    ]
+  },
+  "strings_04": {
+    "hints": [
+      "Build the line with string concatenation or `\"Alice is %d years old\".formatted(age)` (Java 15+).",
+      "Use `System.out.printf(\"Pi is %.2f%n\", pi);` for two decimal places."
+    ]
+  },
+  "strings_05": {
+    "hints": [
+      "Call `s.toUpperCase()` and `s.toLowerCase()` (optionally `Locale.ROOT` for locale-neutral casing).",
+      "Use the same source string as the starter `s`."
+    ]
+  },
+  "strings_06": {
+    "hints": [
+      "The checker uses `\\\"hello\\\"`: print `s.startsWith(\"he\")` and `s.contains(\"ll\")` separated by a space → `true true`.",
+      "Follow the reference solution rather than the URL wording."
+    ]
+  },
+  "strings_07": {
+    "hints": [
+      "Use `new StringBuilder(s).reverse().toString()` or manual swap loops.",
+      "Print the reversed word."
+    ]
+  },
+  "structs_01": {
+    "hints": [
+      "Nested `static class Person { String name; int age; ... }` with constructor and `toString()` returning `{Alice 30}` shape.",
+      "`System.out.println(new Person(\"Alice\", 30));`"
+    ]
+  },
+  "structs_02": {
+    "hints": [
+      "Set `p.y = 20` on a `Point` and print `{5 20}` using fields `x`/`y`.",
+      "Java uses references, not `*` syntax."
+    ]
+  },
+  "structs_03": {
+    "hints": [
+      "Set `title` per `expected_output` and leave `pages` at `0`; custom `toString` matches the braced sample line."
+    ]
+  },
+  "structs_04": {
+    "hints": [
+      "Nest `Person` inside `Employee`: assign `emp.person = new Person(\"Bob\");` and `emp.company = \"Acme\";`.",
+      "Print `emp.company`."
+    ]
+  },
+  "structs_05": {
+    "hints": [
+      "Default-constructed doubles print as `{0 0}` via `toString()` casting in the sample."
+    ]
+  },
+  "structs_06": {
+    "hints": [
+      "Increment `c.value += 5;` on a `Counter` instance.",
+      "Print the field."
+    ]
+  },
+  "structs_07": {
+    "hints": [
+      "Compare strings with `a.host.equals(b.host)` and ports with `==`."
+    ]
+  },
+  "interfaces_01": {
+    "hints": [
+      "Implement `area()` (or `area()` returning `int`) on `Rectangle` using `width * height`.",
+      "Print `12` for `3` by `4`."
+    ]
+  },
+  "interfaces_02": {
+    "hints": [
+      "`Logger.write` returns length; `main` prints `n + \" hello\"` per reference.",
+      "Implement the `Writer` interface method."
+    ]
+  },
+  "interfaces_03": {
+    "hints": [
+      "`Circle.area()` uses `Math.PI * radius * radius`; compare `double` areas with `Math.max` or a conditional."
+    ]
+  },
+  "interfaces_04": {
+    "hints": [
+      "Hold `Person` and print `p.name` — pattern matching is optional here."
+    ]
+  },
+  "interfaces_05": {
+    "hints": [
+      "Use `instanceof Integer i` / `instanceof String s` patterns (Java 16+) inside `describeAny(Object x)`."
+    ]
+  },
+  "interfaces_06": {
+    "hints": [
+      "Loop `Object[]` and classify `Integer`, `String`, `Double` with `instanceof` patterns.",
+      "Print `float64:` for boxed doubles as in the sample."
+    ]
+  },
+  "interfaces_07": {
+    "hints": [
+      "Implement `Speaker` on `Dog` and `Cat`; use `Speaker[]` or `List<Speaker>` and polymorphic `speak()`."
+    ]
+  },
+  "methods_01": {
+    "hints": [
+      "Instance method `String greet()` closes over `name` field.",
+      "Print `p.greet()`."
+    ]
+  },
+  "methods_02": {
+    "hints": [
+      "Fix naming: the buggy solution assigns to the parameter — mirror it or assign to `this.name` if you correct locally.",
+      "Reference prints `Charlie` after `setName`."
+    ]
+  },
+  "methods_03": {
+    "hints": [
+      "Value-style `increment()` returns a new `Counter` with `value + 1` without mutating the original receiver semantics shown."
+    ]
+  },
+  "methods_04": {
+    "hints": [
+      "Override `toString()` on `Point` returning `Point(x, y)`."
+    ]
+  },
+  "methods_05": {
+    "hints": [
+      "Fluent builder: `add` appends and `return this;`; `build()` returns accumulated `String`."
+    ]
+  },
+  "methods_06": {
+    "hints": [
+      "Wrap `int` in `MyInt` with `boolean isEven() { return v % 2 == 0; }`."
+    ]
+  },
+  "methods_07": {
+    "hints": [
+      "`Math.PI` for `area()` and `perimeter()` (circumference) of a circle."
+    ]
+  },
+  "packages_01": {
+    "hints": [
+      "`static void greet()` prints `\"Hello from utils\"` — call from `main`.",
+      "Single-class packaging mirrors the simplified exercise."
+    ]
+  },
+  "packages_02": {
+    "hints": [
+      "`System.out.println((int) Math.sqrt(144));`."
+    ]
+  },
+  "packages_03": {
+    "hints": [
+      "Print `Count:` then call `increment()` then print updated count — fields are `static` in the sample."
+    ]
+  },
+  "packages_04": {
+    "hints": [
+      "Read `version` static field initialized to `\"1.0.0\"`.",
+      "Print `Version: ` prefix."
+    ]
+  },
+  "packages_05": {
+    "hints": [
+      "Call the package-private-style `format()` that prints `Formatted`."
+    ]
+  },
+  "packages_06": {
+    "hints": [
+      "`\"hello\".toUpperCase()` → `HELLO` with `System.out.println`."
+    ]
+  },
+  "packages_07": {
+    "hints": [
+      "Print `\"Hello\"` with `System.out.println` — the exercise collapses “aliased print” into standard output."
+    ]
+  },
+  "pointers_01": {
+    "hints": [
+      "The solution prints `42` directly — assign `int x = 42;` and show it (Java has no `&` for stack primitives)."
+    ]
+  },
+  "pointers_02": {
+    "hints": [
+      "Print the literal `100` or use `int value = 100; System.out.println(value);`."
+    ]
+  },
+  "pointers_03": {
+    "hints": [
+      "Use `int[] box = {5};` and `modify(int[] p)` doing `p[0] *= 2;` so mutation is visible."
+    ]
+  },
+  "pointers_04": {
+    "hints": [
+      "`int[] ptr = new int[1]; ptr[0] = 99;` then print `ptr[0]`."
+    ]
+  },
+  "pointers_05": {
+    "hints": [
+      "`Person p = new Person(); p.name = \"Bob\"; System.out.println(p.name);`."
+    ]
+  },
+  "pointers_06": {
+    "hints": [
+      "Swap via `int[]` boxes or array elements; the sample uses `swap(int[] a, int[] b)`."
+    ]
+  },
+  "pointers_07": {
+    "hints": [
+      "Use `Integer ptr = null;` and `System.out.println(ptr == null ? \"nil\" : ptr);`."
+    ]
+  },
+  "errors_01": {
+    "hints": [
+      "Return an `Exception` (or `null`) from `divide`; when divisor is zero, message `\"division by zero\"`.",
+      "Print `Error: ` + message."
+    ]
+  },
+  "errors_02": {
+    "hints": [
+      "Throw `NotFoundError` from `findUser` when name isn’t `\"alice\"`.",
+      "Catch `NotFoundError` and print `User not found`."
+    ]
+  },
+  "errors_03": {
+    "hints": [
+      "Wrap with `new Exception(\"wrapped: \" + base.getMessage(), base);`.",
+      "Print `getMessage()`."
+    ]
+  },
+  "errors_04": {
+    "hints": [
+      "Throw `ValidationError`; catch and print `ve.field`."
+    ]
+  },
+  "errors_05": {
+    "hints": [
+      "Return `null` on divide-by-zero; verify non-null branch prints quotient."
+    ]
+  },
+  "errors_06": {
+    "hints": [
+      "Compare sentinel with `==` on the same `RuntimeException` constant instance."
+    ]
+  },
+  "errors_07": {
+    "hints": [
+      "Use `getCause()` to detect the chained `\"disk full\"` exception; print layered messages as in the solution."
+    ]
+  },
+  "concurrency_01": {
+    "hints": [
+      "Start `new Thread(() -> sayHello(done)).start();` use `CountDownLatch` so `main` can exit after child prints.",
+      "Print `main done` before waiting, then `Hello!`."
+    ]
+  },
+  "concurrency_02": {
+    "hints": [
+      "`ArrayBlockingQueue<String>` with producer `put` and main `take`."
+    ]
+  },
+  "concurrency_03": {
+    "hints": [
+      "Capacity-2 queue; `put(10)`, `put(20)`, then print both values taken."
+    ]
+  },
+  "concurrency_04": {
+    "hints": [
+      "Second thread `sleep`s then `put` on the queue; main blocks on `take`."
+    ]
+  },
+  "concurrency_05": {
+    "hints": [
+      "Producer thread puts `1,2,3`; consumer loop `take`s three times printing each."
+    ]
+  },
+  "concurrency_06": {
+    "hints": [
+      "Sequential `start/join` per iteration or `CountDownLatch` for three tasks; print `1\\\\n2\\\\n3\\\\ndone`."
+    ]
+  },
+  "concurrency_07": {
+    "hints": [
+      "Two threads `put` `\"hello\"` and `\"world\"`; main reads twice (order may follow start order in sample)."
+    ]
+  },
+  "testing_01": {
+    "hints": [
+      "Return `a + b` from `sum` and print `sum(2,3)`."
+    ]
+  },
+  "testing_02": {
+    "hints": [
+      "Implement `multiply` and print three results separated by spaces."
+    ]
+  },
+  "testing_03": {
+    "hints": [
+      "Guard `b == 0` returning `null`; compare with `Integer.valueOf(5)` / `== null` carefully — reference uses `== 5` on autounboxed path."
+    ]
+  },
+  "testing_04": {
+    "hints": [
+      "Throw `new IllegalArgumentException(\"age cannot be negative\")` for negatives; catch and check `getMessage().contains(\"negative\")`."
+    ]
+  },
+  "testing_05": {
+    "hints": [
+      "Loop `10_000` times calling `sum(2,3)` then print `done`."
+    ]
+  },
+  "json_01": {
+    "hints": [
+      "Print the exact JSON string `{\"Name\":\"Alice\",\"Age\":30}` with proper escaping via `StringBuilder` or a raw string."
+    ]
+  },
+  "json_02": {
+    "hints": [
+      "Parse isn't required in reference — print `Bob 25`."
+    ]
+  },
+  "json_03": {
+    "hints": [
+      "Print `{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}` exactly."
+    ]
+  },
+  "json_04": {
+    "hints": [
+      "Print `{\"Server\":\"api.example.com\"}` — mimics omitempty exerciser."
+    ]
+  },
+  "json_05": {
+    "hints": [
+      "Print both `Original` and `Recovered` lines exactly as specified."
+    ]
+  },
+  "json_06": {
+    "hints": [
+      "Print nested JSON in one line as provided in `expected_output`."
+    ]
+  },
+  "json_07": {
+    "hints": [
+      "Output the JSON array of two people exactly."
+    ]
+  },
+  "json_08": {
+    "hints": [
+      "Print `Alice 30` then `Bob 25` on separate lines."
+    ]
+  },
+  "json_09": {
+    "hints": [
+      "Print `info` then the nested JSON string line."
+    ]
+  },
+  "time_01": {
+    "hints": [
+      "`ZonedDateTime.of(2024,1,1,12,0,0,0,ZoneOffset.UTC)` and format to match `2024-01-01 12:00:00 +0000 UTC` using `DateTimeFormatter` + string tweak as in solution."
+    ]
+  },
+  "time_02": {
+    "hints": [
+      "Use `ZonedDateTime` in `Asia/Tokyo` and `getYear()`, `getMonth().getDisplayName(FULL, ENGLISH)`, etc."
+    ]
+  },
+  "time_03": {
+    "hints": [
+      "`Duration.ofHours(2).plusMinutes(30)`; print duration parts matching `2h30m0s` pattern and `500ms` line."
+    ]
+  },
+  "time_04": {
+    "hints": [
+      "`LocalDateTime.parse` with `DateTimeFormatter` or ISO-like pattern; append UTC offset formatting per expected string."
+    ]
+  },
+  "time_05": {
+    "hints": [
+      "`DateTimeFormatter.ofPattern(\"MM/dd/yyyy\")` and full English date line for July 4, 2024 UTC."
+    ]
+  },
+  "time_06": {
+    "hints": [
+      "`plusDays(3).plusHours(5)` from the starting `ZonedDateTime`."
+    ]
+  },
+  "time_07": {
+    "hints": [
+      "Use `Duration.between` on two `ZonedDateTime` values; print hours line then `Days: 30`."
+    ]
+  },
+  "time_08": {
+    "hints": [
+      "Fixed clock baseline exercise — format `ZonedDateTime`, print hour/minute, then `plusSeconds(1)` line."
+    ]
+  },
+  "time_09": {
+    "hints": [
+      "`isBefore` / `isAfter` on two `ZonedDateTime` instances with the provided messages."
+    ]
+  }
+}

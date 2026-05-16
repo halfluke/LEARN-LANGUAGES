@@ -1,8 +1,8 @@
 {
   "id": "variables",
-  "title": "Variables & Types",
-  "description": "Bindings, types, casts, and constants in C#",
-  "theory": "## Variables & types in C#\n\nLocals use `var` or explicit types. Value types copy by assignment; **`string`** is an immutable reference type with convenient literals. Use **`CultureInfo.InvariantCulture`** when exercises require stable decimal text.\n",
+  "title": "Variables and types",
+  "description": "Names, dynamic typing, and basic conversions",
+  "theory": "### Types, locals, and inference\n\nC# is a statically typed language on the CLR (Common Language Runtime): every expression has a type known at compile time unless you deliberately use dynamic features. Local variables can be declared with an explicit type (`int count = 0`) or with `var` when the right-hand side makes the type obvious (`var name = \"Ada\";`). `var` is still strongly typed—the compiler infers the exact type; it is not a weak or “anything goes” declaration.\n\nValue types (such as `int`, `bool`, `double`, `decimal`, `char`) usually live on the stack when they are locals, while instances of reference types (`string`, `List<int>`, custom classes) are heap allocated and referenced through references. The `decimal` type exists for currency-like exact decimal arithmetic; floats use binary IEEE representations and can surprise you with rounding.\n\nConstants are resolved at compile time: `const int Max = 42;` must be a literal or constexpr-friendly expression. For values computed at startup or configuration, prefer `static readonly` fields or `init`-only properties.\n\n### Culture-stable text\n\nConsole exercises often compare stdout exactly. Use `CultureInfo.InvariantCulture` when formatting numbers or dates that must match a canonical string. Interpolated strings (`$\"{n}\"`) use the current culture by default; call `ToString(IFormatProvider)` or pass a format string when stability matters.\n\n```csharp\nusing System;\nusing System.Globalization;\n\nvar pi = 3.14159;\nConsole.WriteLine(pi.ToString(\"F3\", CultureInfo.InvariantCulture));\n```\n",
   "exercises": [
     {
       "id": "variables_01",
@@ -11,8 +11,8 @@
       "starter_code": "// var age = ...\n// Console.WriteLine(...);\n",
       "expected_output": "25",
       "hints": [
-        "Use `var age = 25;` or `int age = 25;`",
-        "Use `Console.WriteLine(age);`"
+        "Declare an `int` (or use `var` with a numeric literal) for `age`.",
+        "Print with `Console.WriteLine(age)`."
       ],
       "solution": "var age = 25;\nConsole.WriteLine(age);\n"
     },
@@ -23,9 +23,9 @@
       "starter_code": "using System.Globalization;\n// var name = ...\n// double version = ...\n",
       "expected_output": "Rust 1.85",
       "hints": [
-        "var name = \"Rust\";",
-        "double version = 1.85;",
-        "Console.WriteLine($\"{name} {version.ToString(CultureInfo.InvariantCulture)}\");"
+        "`string`/`double` literals work as-is for `name`/`version`.",
+        "Use `CultureInfo.InvariantCulture` with `double.ToString` so fractional formatting stays stable.",
+        "Interpolate everything with `$\"...\"` onto one line separated by a space."
       ],
       "solution": "using System.Globalization;\nvar name = \"Rust\";\ndouble version = 1.85;\nConsole.WriteLine($\"{name} {version.ToString(CultureInfo.InvariantCulture)}\");\n"
     },
@@ -36,19 +36,20 @@
       "starter_code": "int x = 100;\n// double y = ...\n",
       "expected_output": "100",
       "hints": [
-        "`double y = x;`",
-        "`Console.WriteLine(y.ToString(\"0\", System.Globalization.CultureInfo.InvariantCulture));`"
+        "Widen safely with `double y = x` (implicit numeric conversion).",
+        "Suppress trailing decimals with format specifier \"0\" (or \"F0\") plus invariant culture."
       ],
       "solution": "using System.Globalization;\nint x = 100;\ndouble y = x;\nConsole.WriteLine(y.ToString(\"0\", CultureInfo.InvariantCulture));\n"
     },
     {
       "id": "variables_04",
       "title": "Printing default values",
-      "description": "Print `int` zero, `double` zero, an empty string, and `false`, space-separated (same layout as the Go/C# zero-value demo; C# prints `False` with capital F).",
+      "description": "Print `int` zero, `double` zero, an empty string, and `false`, space-separated (same layout as the C#/C# zero-value demo; C# Console.WriteLines `False` with capital F).",
       "starter_code": "// Console.WriteLine(...)\n",
       "expected_output": "0 0  False",
       "hints": [
-        "`Console.WriteLine(string.Format(\"{0} {1} {2} {3}\", 0, 0.0, \"\", false));`"
+        "`default(int)`, `default(double)`, `string.Empty`, and `false` are idiomatic zeros.",
+        "Match spacing exactly—the checker expects booleans formatted like False."
       ],
       "solution": "Console.WriteLine(string.Format(\"{0} {1} {2} {3}\", 0, 0.0, \"\", false));\n"
     },
@@ -59,8 +60,8 @@
       "starter_code": "// const int MaxScore = ...\n",
       "expected_output": "100 0",
       "hints": [
-        "`const int MaxScore = 100;`",
-        "`const int MinScore = 0;`"
+        "Use `const` for compile-time `int` constants like scores.",
+        "Print both on one line with string interpolation."
       ],
       "solution": "const int MaxScore = 100;\nconst int MinScore = 0;\nConsole.WriteLine($\"{MaxScore} {MinScore}\");\n"
     },
@@ -71,8 +72,8 @@
       "starter_code": "// var (host, port, debug) = ...\n",
       "expected_output": "localhost 8080 true",
       "hints": [
-        "`var (host, port, debug) = (\"localhost\", 8080, true);`",
-        "`Console.WriteLine($\"{host} {port} {debug}\");`"
+        "Deconstruct with `(string host, int port, bool debug) = (...)`.",
+        "Booleans default to Title Case; lowercase with `.ToLowerInvariant()` if stdout must say true/false."
       ],
       "solution": "var (host, port, debug) = (\"localhost\", 8080, true);\nConsole.WriteLine($\"{host} {port} {debug.ToString().ToLowerInvariant()}\");\n"
     },
@@ -83,8 +84,8 @@
       "starter_code": "var a = 5;\nvar b = 10;\n// swap\n",
       "expected_output": "10 5",
       "hints": [
-        "`(a, b) = (b, a);` requires `a` and `b` to be assignable — use `var` and reassign pattern or declare as mutable locals.",
-        "Use two ints and tuple swap: `(a, b) = (b, a);`"
+        "Tuple swap is `(a, b) = (b, a)` when `a` and `b` are locals.",
+        "Prefer printing with `$\"{a} {b}\"`."
       ],
       "solution": "var a = 5;\nvar b = 10;\n(a, b) = (b, a);\nConsole.WriteLine($\"{a} {b}\");\n"
     }

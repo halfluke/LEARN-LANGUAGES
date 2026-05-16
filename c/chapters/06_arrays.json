@@ -1,8 +1,8 @@
 {
   "id": "arrays",
   "title": "Arrays",
-  "description": "Fixed-size arrays in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Arrays\n\nFixed-size arrays and pointer decay; watch sizes and NUL terminators.\n",
+  "description": "Fixed-size arrays and pointer decay",
+  "theory": "### Fixed buffers and rank\n\nArray types have compile-time size (except VLAs in C99, which are optional in later standards for freestanding use) or runtime size on the stack as a VLA where supported. The name of an array in most expressions “decays” to a pointer to its first element; `sizeof` on the array object still yields total bytes. Multidimensional arrays are row-major: `int m[3][4]` stores four `int`s per row.\n\n### Indexing and bounds\n\nC does not check array bounds at runtime by default. Out-of-bounds access is undefined behavior—silent corruption, crashes, or exploitable vulnerabilities. Always tie indices to sizes stored in `size_t` and compare carefully with unsigned semantics. For dynamic sizes, either use VLAs where appropriate or allocate a 1D buffer and index manually with `row * width + col`.\n\n### Passing arrays to functions\n\nFunction parameters written as `int a[]` or `int *a` are equivalent at the first dimension—both are pointer types. Specify the leading dimensions for multi-dimensional arrays so the compiler can compute addresses: `void f(int a[3][4]);`.\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int xs[4] = {1, 2, 3, 4};\n    for (size_t i = 0; i < sizeof xs / sizeof xs[0]; ++i) {\n        printf(\"%d \", xs[i]);\n    }\n    putchar('\\n');\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "arrays_01",
@@ -11,31 +11,30 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int arr[5] = {1, 2, 3, 4, 5};\n    // print [1 2 3 4 5]\n    return 0;\n}\n",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "Use var arr [5]int = [5]int{1, 2, 3, 4, 5}",
-        "printf(arr) prints the whole array"
+        "Print `[`, then each `arr[i]` separated by spaces (`putchar(' ')` when `i > 0`), then `]`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int arr[5] = {1, 2, 3, 4, 5};\n    printf(\"[\");\n    for (int i = 0; i < 5; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", arr[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "arrays_02",
       "title": "Array Iteration",
-      "description": "Create array nums := [3]int{10, 20, 30}. Use range to print each element.",
+      "description": "Create array nums = [10, 20, 30}. Use range to print each element.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int nums[] = {10, 20, 30};\n    // loop and printf each\n    return 0;\n}\n",
       "expected_output": "10\n20\n30",
       "hints": [
-        "Use for i, v := range nums { printf(v) }"
+        "`for (size_t i = 0; i < 3; i++) printf(\"%d\\n\", nums[i]);`"
       ],
       "solution": "#include <stdio.h>\n#include <stddef.h>\n\nint main(void) {\n    int nums[] = {10, 20, 30};\n    for (size_t i = 0; i < 3; i++) printf(\"%d\\n\", nums[i]);\n    return 0;\n}\n"
     },
     {
       "id": "arrays_03",
       "title": "Array Length",
-      "description": "Create arr := [4]int{1, 2, 3, 4}. Print the length using len(arr).",
+      "description": "Create arr = [1, 2, 3, 4}. Print the length using len(arr).",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int arr[] = {1, 2, 3, 4};\n    // printf len\n    return 0;\n}\n",
       "expected_output": "4",
       "hints": [
-        "Use len(arr) to get array length",
-        "printf(len(arr))"
+        "Length: `sizeof arr / sizeof arr[0]` (only for actual array objects, not pointer parameters).",
+        "`printf(\"%zu\\n\", ...)` with a `size_t` count."
       ],
       "solution": "#include <stdio.h>\n#include <stddef.h>\n\nint main(void) {\n    int arr[] = {1, 2, 3, 4};\n    printf(\"%zu\\n\", sizeof arr / sizeof arr[0]);\n    return 0;\n}\n"
     },
@@ -46,8 +45,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int arr[5] = {10, 20};\n    // print [10 20 0 0 0]\n    return 0;\n}\n",
       "expected_output": "[10 20 0 0 0]",
       "hints": [
-        "Use arr := [5]int{10, 20}",
-        "Rest get zero values"
+        "`int arr[5] = {10, 20};` zero-fills the rest; print with the same bracket style as `arrays_01`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int arr[5] = {10, 20};\n    printf(\"[\");\n    for (int i = 0; i < 5; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", arr[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
@@ -58,32 +56,30 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int matrix[2][2] = {{1, 2}, {3, 4}};\n    // print each element\n    return 0;\n}\n",
       "expected_output": "1\n2\n3\n4",
       "hints": [
-        "Use matrix := [2][2]int{{1, 2}, {3, 4}}",
-        "Use nested range or direct indexing"
+        "Use nested `for` loops over rows and columns: `printf(\"%d\\n\", matrix[r][c]);`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int matrix[2][2] = {{1, 2}, {3, 4}};\n    for (int r = 0; r < 2; r++)\n        for (int c = 0; c < 2; c++)\n            printf(\"%d\\n\", matrix[r][c]);\n    return 0;\n}\n"
     },
     {
       "id": "arrays_07",
       "title": "Array Sum",
-      "description": "Create arr := [5]int{10, 20, 30, 40, 50}. Compute the sum of all elements and print it.",
+      "description": "Create arr = [10, 20, 30, 40, 50}. Compute the sum of all elements and print it.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int arr[] = {10, 20, 30, 40, 50};\n    // sum and print\n    return 0;\n}\n",
       "expected_output": "150",
       "hints": [
-        "Initialize a sum variable to 0",
-        "Use range to iterate and accumulate: sum += v"
+        "`int sum = 0;` then accumulate in a bounded `for` over five elements.",
+        "`printf(\"%d\\n\", sum);`"
       ],
       "solution": "#include <stdio.h>\n#include <stddef.h>\n\nint main(void) {\n    int arr[] = {10, 20, 30, 40, 50};\n    int sum = 0;\n    for (size_t i = 0; i < 5; i++) sum += arr[i];\n    printf(\"%d\\n\", sum);\n    return 0;\n}\n"
     },
     {
       "id": "arrays_06",
       "title": "Array Element Access",
-      "description": "Create arr := [3]int{100, 200, 300}. Print the first element (index 0) and last element (index 2).",
+      "description": "Create arr = [100, 200, 300}. Print the first element (index 0) and last element (index 2).",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int arr[] = {100, 200, 300};\n    // arr[0] and arr[2]\n    return 0;\n}\n",
       "expected_output": "100 300",
       "hints": [
-        "arr[0] is first, arr[2] is last",
-        "printf(arr[0], arr[2])"
+        "`printf(\"%d %d\\n\", arr[0], arr[2]);` for first and last elements."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int arr[] = {100, 200, 300};\n    printf(\"%d %d\\n\", arr[0], arr[2]);\n    return 0;\n}\n"
     }

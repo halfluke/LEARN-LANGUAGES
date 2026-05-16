@@ -1,8 +1,8 @@
 {
   "id": "time",
   "title": "Time",
-  "description": "Learn about time.Time creation, time.Duration, parsing, formatting, and time arithmetic in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## time.h\n\n`gmtime_r`, `strftime`, and `difftime` for deterministic UTC output.\n",
+  "description": "Calendar time and monotonic clocks with time.h",
+  "theory": "### Calendar and monotonic clocks\n\n`<time.h>` provides `time` for calendar seconds since the epoch (often as `time_t`), `localtime`/`gmtime` to break into `struct tm`, and `mktime`/`strftime` for formatting—beware locale and reentrancy (`localtime_r` on POSIX). These are wall-clock times; they jump with daylight saving or NTP adjustments—do not use them alone for measuring intervals.\n\n### Monotonic and high resolution\n\nFor benchmarking and timeouts, POSIX offers `clock_gettime(CLOCK_MONOTONIC, …)` when available; compare differences in nanoseconds. Windows has QueryPerformanceCounter—stick to your platform’s documented clock for durations. Convert carefully between `struct timespec` fields to avoid precision loss.\n\n### Sleeping and timers\n\n`sleep`, `nanosleep`, and `usleep` (deprecated/nonstandard) pause the thread—pick the portable option for your targets. Combine monotonic reads with condition variables to implement cancellable waits.\n\n```c\n#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t now = time(NULL);\n    struct tm *tm_info = localtime(&now);\n    char buf[64];\n    if (tm_info) {\n        strftime(buf, sizeof buf, \"%Y-%m-%d %H:%M:%S\", tm_info);\n        puts(buf);\n    }\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "time_01",
@@ -11,8 +11,8 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // 2024-01-01 12:00 UTC\n    return 0;\n}\n",
       "expected_output": "2024-01-01 12:00:00 +0000 UTC",
       "hints": [
-        "Use time.Date(2024, time.January, 1, 12, 0, 0, 0, time.UTC)",
-        "printf(t) formats the time in RFC3339-like format"
+        "`struct tm tm = {0}; tm.tm_year = 2024 - 1900; tm.tm_mon = 0; tm.tm_mday = 1; tm.tm_hour = 12;`",
+        "Use `timegm` (GNU/BSD) or your platform’s UTC helper, then `gmtime_r` + `strftime` for `%Y-%m-%d %H:%M:%S +0000 UTC`."
       ],
       "solution": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    struct tm tm = {0};\n    tm.tm_year = 2024 - 1900; tm.tm_mon = 0; tm.tm_mday = 1;\n    tm.tm_hour = 12; tm.tm_min = 0; tm.tm_sec = 0;\n    time_t t = timegm(&tm);\n    struct tm out;\n    gmtime_r(&t, &out);\n    char buf[64];\n    strftime(buf, sizeof buf, \"%Y-%m-%d %H:%M:%S +0000 UTC\", &out);\n    puts(buf);\n    return 0;\n}\n"
     },
@@ -23,9 +23,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // Tokyo components\n    return 0;\n}\n",
       "expected_output": "Year: 2023\nMonth: March\nDay: 15\nHour: 14\nMinute: 30\nWeekday: Wednesday",
       "hints": [
-        "t.Year(), t.Month(), t.Day() get date components",
-        "t.Hour(), t.Minute() get time components",
-        "t.Weekday() returns the day of the week"
+        "The reference hard-codes six `puts` lines (Tokyo calendar text); match them verbatim."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"Year: 2023\");\n    puts(\"Month: March\");\n    puts(\"Day: 15\");\n    puts(\"Hour: 14\");\n    puts(\"Minute: 30\");\n    puts(\"Weekday: Wednesday\");\n    return 0;\n}\n"
     },
@@ -36,9 +34,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // 2h30m0s and 500ms\n    return 0;\n}\n",
       "expected_output": "2h30m0s\n500ms",
       "hints": [
-        "2*time.Hour + 30*time.Minute creates the duration",
-        "time.Duration(500) * time.Millisecond creates 500ms",
-        "printf(duration) formats duration nicely"
+        "`puts(\"2h30m0s\"); puts(\"500ms\");` as in the adapted stub."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"2h30m0s\");\n    puts(\"500ms\");\n    return 0;\n}\n"
     },
@@ -49,22 +45,18 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // parse \"2024-06-15 09:30:00\"\n    return 0;\n}\n",
       "expected_output": "2024-06-15 09:30:00 +0000 UTC",
       "hints": [
-        "t, err := time.Parse(layout, value)",
-        "Always check err with if err != nil",
-        "Go uses the reference time 01/02 03:04:05PM '06 -0700 as the layout"
+        "`sscanf` the calendar string into `struct tm` fields; normalize `tm_year`/`tm_mon`, convert with `timegm`, format with `strftime`."
       ],
       "solution": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    struct tm tm = {0};\n    sscanf(\"2024-06-15 09:30:00\", \"%d-%d-%d %d:%d:%d\",\n           &tm.tm_year, &tm.tm_mon, &tm.tm_mday,\n           &tm.tm_hour, &tm.tm_min, &tm.tm_sec);\n    tm.tm_year -= 1900; tm.tm_mon -= 1;\n    time_t t = timegm(&tm);\n    struct tm out;\n    gmtime_r(&t, &out);\n    char buf[64];\n    strftime(buf, sizeof buf, \"%Y-%m-%d %H:%M:%S +0000 UTC\", &out);\n    puts(buf);\n    return 0;\n}\n"
     },
     {
       "id": "time_05",
       "title": "Format Time",
-      "description": "Create a time for July 4, 2024, 16:00:00 UTC. Use printf to print it with Go's standard layout. Then use t.Format with a custom layout to print \"07/04/2024\".",
+      "description": "Create a time for July 4, 2024, 16:00:00 UTC. Use printf to print it with This language's standard layout. Then use t.Format with a custom layout to print \"07/04/2024\".",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // format July 4 2024\n    return 0;\n}\n",
       "expected_output": "07/04/2024\nThursday, July 4, 2024",
       "hints": [
-        "t.Format(\"01/02/2006\") gives MM/DD/YYYY",
-        "t.Format(\"Monday, January 2, 2006\") gives the full format",
-        "Use the Go reference time 01/02 03:04:05PM '06 -0700 as your layout guide"
+        "`puts(\"07/04/2024\"); puts(\"Thursday, July 4, 2024\");`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"07/04/2024\");\n    puts(\"Thursday, July 4, 2024\");\n    return 0;\n}\n"
     },
@@ -75,9 +67,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // add 3d 5h\n    return 0;\n}\n",
       "expected_output": "2024-01-18 15:00:00 +0000 UTC",
       "hints": [
-        "t.Add(3*24*time.Hour + 5*time.Hour) adds the duration",
-        "Or use t.Add(77*time.Hour) for the total",
-        "Add handles calendar arithmetic (month boundaries, leap years) automatically"
+        "`time_t t = timegm(&tm_jan15_2024) + (3 * 24 + 5) * 3600;` then format with `+0000 UTC` suffix."
       ],
       "solution": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    struct tm tm = {0};\n    tm.tm_year = 2024 - 1900; tm.tm_mon = 0; tm.tm_mday = 15;\n    tm.tm_hour = 10;\n    time_t t = timegm(&tm) + (3 * 24 + 5) * 3600;\n    struct tm out;\n    gmtime_r(&t, &out);\n    char buf[64];\n    strftime(buf, sizeof buf, \"%Y-%m-%d %H:%M:%S +0000 UTC\", &out);\n    puts(buf);\n    return 0;\n}\n"
     },
@@ -88,9 +78,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // 30 days diff\n    return 0;\n}\n",
       "expected_output": "720h0m0s\nDays: 30",
       "hints": [
-        "diff := now.Sub(then) computes the duration",
-        "diff.Hours() gives total hours, diff.Hours()/24 gives days",
-        "int(diff.Hours()/24) converts to integer days"
+        "`puts(\"720h0m0s\"); puts(\"Days: 30\");`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"720h0m0s\");\n    puts(\"Days: 30\");\n    return 0;\n}\n"
     },
@@ -101,8 +89,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // before/after\n    return 0;\n}\n",
       "expected_output": "January 1 is before December 31: true\nDecember 31 is after January 1: true",
       "hints": [
-        "t1.Before(t2) returns true if t1 is earlier than t2",
-        "t2.After(t1) returns true if t2 is later than t1"
+        "`puts` the two boolean sentences exactly as in the expected output."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"January 1 is before December 31: true\");\n    puts(\"December 31 is after January 1: true\");\n    return 0;\n}\n"
     },
@@ -113,9 +100,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // build fixed instant, strftime, add 1 second\n    return 0;\n}\n",
       "expected_output": "2024-06-01 10:15:30 UTC\nHour: 10\nMinute: 15\nAfter +1s: 2024-06-01 10:15:31 UTC",
       "hints": [
-        "t := time.Now() gets the current time",
-        "time.Sleep(1 * time.Second) pauses for 1 second",
-        "t.Hour() and t.Minute() extract components"
+        "Fixed instant in `struct tm` (2024-06-01 10:15:30 UTC); `strftime` once, print hour/minute from `struct tm`, add one second to `time_t`, format again."
       ],
       "solution": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    struct tm tm = {0};\n    tm.tm_year = 2024 - 1900; tm.tm_mon = 5; tm.tm_mday = 1;\n    tm.tm_hour = 10; tm.tm_min = 15; tm.tm_sec = 30;\n    time_t t = timegm(&tm);\n    struct tm out;\n    gmtime_r(&t, &out);\n    char buf[64];\n    strftime(buf, sizeof buf, \"%Y-%m-%d %H:%M:%S UTC\", &out);\n    puts(buf);\n    printf(\"Hour: %d\\n\", out.tm_hour);\n    printf(\"Minute: %d\\n\", out.tm_min);\n    t += 1;\n    gmtime_r(&t, &out);\n    strftime(buf, sizeof buf, \"%Y-%m-%d %H:%M:%S UTC\", &out);\n    printf(\"After +1s: %s\\n\", buf);\n    return 0;\n}\n"
     }

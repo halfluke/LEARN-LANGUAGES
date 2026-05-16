@@ -1,41 +1,45 @@
 {
   "id": "concurrency",
-  "title": "Concurrency",
-  "description": "Goroutines and channels in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Concurrency\n\n**`Task`**, **`async`/`await`**, and **`System.Threading.Channels.Channel`** mirror goroutines/channels at a high level.\n",
+  "title": "Async and tasks",
+  "description": "Tasks, async/await, and parallel work in C#",
+  "theory": "### Threads, tasks, and the thread pool\n\n`Task` represents potentially asynchronous work. `async`/`await` composes asynchronous operations without blocking a thread for I/O waits. CPU-bound work can be offloaded with `Task.Run` (sparingly—profile first).\n\n### Synchronization\n\n`lock` provides mutual exclusion around a reference object; **never** lock on `string` literals or `Type` objects shared across assemblies. `Monitor`, `Mutex`, `SemaphoreSlim`, and concurrent collections help with more complex coordination.\n\n### async pitfalls\n\nAvoid `async void` except for event handlers—it crashes the process on unobserved exceptions. `ConfigureAwait` matters for library code consumed from UI threads when you must resume on a captured context.\n\n```csharp\nusing System;\nusing System.Threading;\nusing System.Threading.Tasks;\n\nasync Task<int> DoubleAsync(int x)\n{\n    await Task.Yield();\n    return x * 2;\n}\n\nclass Counter\n{\n    private int _n;\n    private readonly object _gate = new();\n\n    public void Inc()\n    {\n        lock (_gate) { _n++; }\n    }\n}\n```\n",
   "exercises": [
     {
       "id": "concurrency_01",
-      "title": "Goroutine",
+      "title": "thread",
       "description": "Launch go sayHello(). Print main done. Use time.Sleep to let Task run.",
       "starter_code": "using System.Threading.Tasks;\n\n// Task.Run + main done\n\nstatic void SayHello() { }",
       "expected_output": "main done\nHello!",
       "hints": [
-        "go sayHello()",
-        "time.Sleep(100 * time.Millisecond)"
+        "Offload work with `Task.Run`/`Task` factories when exercises simulate background calls.",
+        "`await Task.Delay(...)` asynchronously yields better than blocking `Thread.Sleep` in modern code.",
+        "Synchronously wait only when the sandbox lacks `async Main` (`GetAwaiter().GetResult()` as last resort)."
       ],
       "solution": "using System.Threading.Tasks;\n\nvar t = Task.Run(async () => { await Task.Delay(100); SayHello(); });\nConsole.WriteLine(\"main done\");\nt.GetAwaiter().GetResult();\n\nstatic void SayHello() => Console.WriteLine(\"Hello!\");"
     },
     {
       "id": "concurrency_02",
       "title": "Channel",
-      "description": "Create ch := make(chan string). Send \"ping\" to ch in Task, receive and print.",
+      "description": "Create ch = a queue. Send \"ping\" to ch in Task, receive and Console.WriteLine.",
       "starter_code": "using System.Threading.Channels;\n// ping channel",
       "expected_output": "ping",
       "hints": [
-        "go func() { ch <- \"ping\" }()",
-        "msg := <-ch; Console.WriteLine(msg)"
+        "`System.Threading.Channels.Channel.CreateUnbounded<T>()` models async-friendly queues.",
+        "Pair `await Writer.WriteAsync` with `await Reader.ReadAsync`.",
+        "Complete writers so readers observe termination cleanly."
       ],
       "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<string>();\nvar worker = Task.Run(async () => { await ch.Writer.WriteAsync(\"ping\"); ch.Writer.Complete(); });\nConsole.WriteLine(await ch.Reader.ReadAsync());\nawait worker;"
     },
     {
       "id": "concurrency_03",
       "title": "Buffered Channel",
-      "description": "Create a buffered channel with capacity 2. Send 10 and 20 without blocking. Then receive and print both.",
+      "description": "Create a buffered channel with capacity 2. Send 10 and 20 without blocking. Then receive and Console.WriteLine both.",
       "starter_code": "using System.Threading.Channels;\n// bounded 10 20",
       "expected_output": "10 20",
       "hints": [
-        "ch <- 10; ch <- 20; then <-ch; <-ch"
+        "Bounded producers use `Channel.CreateBounded<int>(capacity)`.",
+        "`TryWrite` succeeds without blocking until capacity is saturated.",
+        "Drain asynchronously or synchronously consistent with scaffold expectations."
       ],
       "solution": "using System.Threading.Channels;\n\nvar ch = Channel.CreateBounded<int>(2);\nch.Writer.TryWrite(10);\nch.Writer.TryWrite(20);\nch.Writer.Complete();\nConsole.Write(ch.Reader.ReadAsync().AsTask().GetAwaiter().GetResult());\nConsole.Write(\" \");\nConsole.Write(ch.Reader.ReadAsync().AsTask().GetAwaiter().GetResult());"
     },
@@ -46,8 +50,9 @@
       "starter_code": "using System.Threading.Channels;\n// delay 10ms from ch1",
       "expected_output": "from ch1",
       "hints": [
-        "go func() { time.Sleep(10*time.Millisecond); ch1 <- \"from ch1\" }()",
-        "select { case msg := <-ch1: ... }"
+        "Delay senders via `await Task.Delay` before publishing into the shared channel.",
+        "Consumer awaits the first incoming message asynchronously.",
+        "Keep channel lifetimes/disposals tidy to avoid dangling writers."
       ],
       "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<string>();\nvar worker = Task.Run(async () => { await Task.Delay(10); await ch.Writer.WriteAsync(\"from ch1\"); ch.Writer.Complete(); });\nConsole.Write(await ch.Reader.ReadAsync());\nawait worker;"
     },
@@ -58,32 +63,34 @@
       "starter_code": "using System.Threading.Channels;\n// 1 2 3",
       "expected_output": "1\n2\n3",
       "hints": [
-        "for n := range ch prints until closed"
+        "Producer enumerates payloads, completes the writer, then consumer uses `await foreach` on `.ReadAllAsync()`.",
+        "Ensures orderly shutdown similar to iterating until channel closure elsewhere."
       ],
       "solution": "using System.Threading.Channels;\nusing System.Threading.Tasks;\n\nvar ch = Channel.CreateUnbounded<int>();\nvar prod = Task.Run(async () => { foreach (var n in new[] {1,2,3}) await ch.Writer.WriteAsync(n); ch.Writer.Complete(); });\nawait foreach (var n in ch.Reader.ReadAllAsync()) Console.WriteLine(n);\nawait prod;"
     },
     {
       "id": "concurrency_07",
       "title": "Fan-In Pattern",
-      "description": "Create two Tasks that each send a string to a shared channel. Use a third Task to fan-in (read) from the channel and print received values. Close the channel when both senders are done.",
+      "description": "Create two Tasks that each send a string to a shared channel. Use a third Task to fan-in (read) from the channel and Console.WriteLine received values. Close the channel when both senders are done.",
       "starter_code": "// fan-in hello world sorted",
       "expected_output": "hello\nworld",
       "hints": [
-        "Use wg.Add(2) for the two sender goroutines",
-        "defer wg.Done() in each goroutine",
-        "In a third goroutine, defer close(ch) after wg.Wait()",
-        "Range over ch to collect all values"
+        "Coordinate parallel producers writing into a locked `List<string>` or concurrent bag.",
+        "Sort before printing when output order must normalize racing completions.",
+        "Consider `ConcurrentQueue<T>`/`lock` scopes for illustrative mutual exclusion."
       ],
       "solution": "using System.Threading.Tasks;\nusing System.Collections.Generic;\n\nvar list = new List<string>();\nvar gate = new object();\nTask.Run(() => { lock (gate) list.Add(\"hello\"); }).Wait();\nTask.Run(() => { lock (gate) list.Add(\"world\"); }).Wait();\nlist.Sort();\nforeach (var s in list) Console.WriteLine(s);"
     },
     {
       "id": "concurrency_06",
       "title": "WaitGroup",
-      "description": "Use sync.WaitGroup to launch 3 Tasks that each print their number, then wait for all to complete before printing \"done\".",
+      "description": "Use sync.WaitGroup to launch 3 Tasks that each Console.WriteLine their number, then wait for all to complete before Console.WriteLineing \"done\".",
       "starter_code": "// sequential tasks 1 2 3 done",
       "expected_output": "1\n2\n3\ndone",
       "hints": [
-        "wg.Add(1); defer wg.Done(); wg.Wait()"
+        "Fan-out work with multiple `Task` instances; synchronize completion via `await Task.WhenAll`.",
+        "Alternatively sequential `.Wait()` per task when simplifying for stdout ordering.",
+        "Emit the final done line only after worker tasks finish printing."
       ],
       "solution": "using System.Threading.Tasks;\n\nfor (var i = 1; i <= 3; i++) { var j = i; Task.Run(() => Console.WriteLine(j)).Wait(); }\nConsole.WriteLine(\"done\");"
     }

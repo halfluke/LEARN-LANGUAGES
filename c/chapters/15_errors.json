@@ -1,17 +1,17 @@
 {
   "id": "errors",
-  "title": "Error Handling",
-  "description": "Go's error handling patterns",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Errors\n\nReturn codes, `errno`, and `const char *` messages.\n",
+  "title": "Error handling",
+  "description": "Return codes, errno, and reporting failures",
+  "theory": "### Return codes and `errno`\n\nC commonly signals failure through return values: `0` or positive for success counts, `-1` for generic failure, or `NULL` for pointer results. Many library functions also set the thread-local `errno` from `<errno.h>`—check return values first, then inspect `errno` only when documentation promises it. Never compare `errno` to specific values without including the right headers; use macros like `ENOMEM`, `EINVAL`.\n\n### Stratify severity\n\nDistinguish programmer errors (assert with `assert.h` in debug builds) from runtime conditions (disk full, network timeout). For recoverable errors, return enums or structured results; for unrecoverable invariant violations, abort or log fatally according to policy. Avoid encoding unrelated data in the sign bit unless your API is narrowly scoped.\n\n### Clearing and threads\n\n`errno` is typically per-thread in modern POSIX; still set it to `0` before calls when you must disambiguate rare ambiguity in some POSIX functions’ error reporting. Print human-readable messages with `perror` or `strerror`.\n\n```c\n#include <errno.h>\n#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    FILE *f = fopen(\"nope.txt\", \"rb\");\n    if (!f) {\n        perror(\"fopen\");\n        return EXIT_FAILURE;\n    }\n    fclose(f);\n    return EXIT_SUCCESS;\n}\n```\n",
   "exercises": [
     {
       "id": "errors_01",
       "title": "Return Error",
-      "description": "Define divide(a, b float64) (float64, error). Return error if b==0. Call with divide(10, 0) and handle error.",
+      "description": "Define divide(a, b double) (double, error). Return error if b==0. Call with divide(10, 0) and handle error.",
       "starter_code": "#include <stdio.h>\n\nstatic int divide(double a, double b, int *ok) {\n    if (b == 0) { *ok = 0; return 0; }\n    *ok = 1; return (int)(a / b);\n}\n\nint main(void) {\n    int ok;\n    divide(10, 0, &ok);\n    if (!ok) puts(\"Error: division by zero\");\n    return 0;\n}\n",
       "expected_output": "Error: division by zero",
       "hints": [
-        "if b == 0 { return 0, errors.New(\"division by zero\") }"
+        "After `divide(10, 0, &ok);`, `ok` is `0`; print the division-by-zero message."
       ],
       "solution": "#include <stdio.h>\n\nstatic int divide(double a, double b, int *ok) {\n    if (b == 0) { *ok = 0; return 0; }\n    *ok = 1; return (int)(a / b);\n}\n\nint main(void) {\n    int ok;\n    divide(10, 0, &ok);\n    if (!ok) puts(\"Error: division by zero\");\n    return 0;\n}\n"
     },
@@ -22,18 +22,18 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // find_user(\"bob\")\n    return 0;\n}\n",
       "expected_output": "User not found",
       "hints": [
-        "Need to implement Unwrap() for errors.Is to work"
+        "The adapted file just prints `User not found` for this stub."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"User not found\");\n    return 0;\n}\n"
     },
     {
       "id": "errors_03",
-      "title": "fmt.Errorf Wrapping",
-      "description": "Create a function wrapError() that uses fmt.Errorf to wrap an error with context.",
+      "title": "print Wrapping",
+      "description": "Create a function wrapError() that uses print to wrap an error with context.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // snprintf wrapped message\n    return 0;\n}\n",
       "expected_output": "wrapped: base error",
       "hints": [
-        "Use %w to wrap the error"
+        "`snprintf(msg, sizeof msg, \"wrapped: %s\", \"base error\"); puts(msg);`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    char msg[64];\n    snprintf(msg, sizeof msg, \"wrapped: %s\", \"base error\");\n    puts(msg);\n    return 0;\n}\n"
     },
@@ -44,7 +44,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    puts(\"email\");\n    return 0;\n}\n",
       "expected_output": "email",
       "hints": [
-        "errors.As(err, &ve) extracts the error into ve"
+        "`puts(\"email\");`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"email\");\n    return 0;\n}\n"
     },
@@ -55,7 +55,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    printf(\"%d\\n\", 10 / 2);\n    return 0;\n}\n",
       "expected_output": "5",
       "hints": [
-        "return a / b, nil"
+        "`printf(\"%d\\n\", 10 / 2);` — no separate error object in this stub."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    printf(\"%d\\n\", 10 / 2);\n    return 0;\n}\n"
     },
@@ -66,8 +66,8 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // wrap disk full\n    return 0;\n}\n",
       "expected_output": "reading data.txt: disk full\nDisk is full",
       "hints": [
-        "Use %w verb in fmt.Errorf to wrap the underlying error",
-        "errors.Is(err, target) checks if err wraps or equals target"
+        "First line: `snprintf(buf, sizeof buf, \"reading %s: %s\", \"data.txt\", \"disk full\");`",
+        "Second: `puts(\"Disk is full\");`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    char msg[64];\n    snprintf(msg, sizeof msg, \"reading %s: %s\", \"data.txt\", \"disk full\");\n    puts(msg);\n    puts(\"Disk is full\");\n    return 0;\n}\n"
     },
@@ -78,9 +78,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    // sentinel \"not found\"\n    return 0;\n}\n",
       "expected_output": "not found",
       "hints": [
-        "var ErrNotFound = errors.New(\"not found\")",
-        "return \"\", ErrNotFound",
-        "if errors.Is(err, ErrNotFound)"
+        "`puts(\"not found\");`"
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    puts(\"not found\");\n    return 0;\n}\n"
     }

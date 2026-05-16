@@ -1,8 +1,8 @@
 {
   "id": "functions",
   "title": "Functions",
-  "description": "Functions, parameters, and return values in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Functions\n\nFile-scope `static` helpers, prototypes, and `struct` parameters.\n",
+  "description": "Prototypes, parameters, return values, and linkage",
+  "theory": "### Declarations, definitions, and linkage\n\nFunctions are the primary unit of reuse. A declaration (prototype) tells the compiler the name, return type, and parameter types so calls type-check before the definition is seen. The definition supplies the body. At file scope, `static` functions are private to the translation unit; non-`static` functions have external linkage and can be called from other object files if linked together.\n\nThe execution environment starts in `main`; hosted implementations accept `int main(void)` or `int main(int argc, char *argv[])`. Parameters are passed by value: structs are copied unless you pass pointers. For “output” parameters, callers pass addresses. Variadic functions (`printf` style) use `<stdarg.h>`; the callee must know types through a fixed argument or format string—there is no type-safe varargs in C.\n\n### Inlining and optimization\n\n`inline` (C99) is a hint; the definition often lives in a header if you need the compiler to inline across translation units (with `static inline` or `extern inline` patterns depending on your toolchain rules). `restrict` (C99) promises non-aliasing through particular pointers, enabling stronger optimizations—only use it when you can prove aliasing does not occur.\n\n```c\n#include <stdio.h>\n\nstatic int add(int a, int b) { return a + b; }\n\nint main(void) {\n    printf(\"%d\\n\", add(2, 3));\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "functions_01",
@@ -11,7 +11,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic void greet(void) { }\n\nint main(void) {\n    // greet();\n    return 0;\n}\n",
       "expected_output": "Hello",
       "hints": [
-        "Define `greet` before `main`."
+        "Implement `static void greet(void)` using `printf(\"Hello\\n\");` or `puts(\"Hello\");`.",
+        "Call `greet();` from `main`."
       ],
       "solution": "#include <stdio.h>\n\nstatic void greet(void) { printf(\"Hello\\n\"); }\n\nint main(void) { greet(); return 0; }\n"
     },
@@ -22,8 +23,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic void greet(const char *name) { }\n\nint main(void) { return 0; }\n",
       "expected_output": "Hello, Alice",
       "hints": [
-        "Use fmt.Printf(\"Hello, %s\\n\", name)",
-        "Pass \"Alice\" as argument"
+        "In `greet(const char *name)`, use `printf(\"Hello, %s\\n\", name);`.",
+        "Call `greet(\"Alice\");`."
       ],
       "solution": "#include <stdio.h>\n\nstatic void greet(const char *name) { printf(\"Hello, %s\\n\", name); }\n\nint main(void) { greet(\"Alice\"); return 0; }\n"
     },
@@ -34,8 +35,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic int add(int a, int b) { return 0; }\n\nint main(void) {\n    // printf(\"%d\\n\", add(3, 4));\n    return 0;\n}\n",
       "expected_output": "7",
       "hints": [
-        "Use return a + b",
-        "Print the returned value"
+        "`static int add(int a, int b) { return a + b; }`",
+        "`printf(\"%d\\n\", add(3, 4));`"
       ],
       "solution": "#include <stdio.h>\n\nstatic int add(int a, int b) { return a + b; }\n\nint main(void) {\n    printf(\"%d\\n\", add(3, 4));\n    return 0;\n}\n"
     },
@@ -46,9 +47,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic int divide(int a, int b, int *ok) {\n    if (b == 0) { *ok = 0; return 0; }\n    *ok = 1; return a / b;\n}\n\nint main(void) {\n    return 0;\n}",
       "expected_output": "3 <nil>",
       "hints": [
-        "func divide(a, b int) (int, error)",
-        "Check if b == 0 and return errors.New(\"division by zero\")",
-        "Print result, err"
+        "The `int *ok` out-parameter is the error channel: `b == 0` must set `*ok = 0`.",
+        "`int r = divide(10, 3, &ok); printf(\"%d \", r);` then call `divide(10, 0, &ok);` and `if (!ok) printf(\"<nil>\");`."
       ],
       "solution": "#include <stdio.h>\n\nstatic int divide(int a, int b, int *ok) {\n    if (b == 0) { *ok = 0; return 0; }\n    *ok = 1; return a / b;\n}\n\nint main(void) {\n    int ok;\n    int r = divide(10, 3, &ok);\n    printf(\"%d \", r);\n    divide(10, 0, &ok);\n    if (!ok) printf(\"<nil>\");\n    return 0;\n}"
     },
@@ -59,7 +59,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic int sum(const int *nums, int n) { return 0; }\n\nint main(void) {\n    // printf(\"%d\\n\", sum(nums, 5));\n    return 0;\n}\n",
       "expected_output": "15",
       "hints": [
-        "Pass pointer + length instead of variadic."
+        "`static int sum(const int *nums, int n)` should loop `i < n` and accumulate.",
+        "`int nums[] = {1,2,3,4,5}; printf(\"%d\\n\", sum(nums, 5));`"
       ],
       "solution": "#include <stdio.h>\n\nstatic int sum(const int *nums, int n) {\n    int t = 0;\n    for (int i = 0; i < n; i++) t += nums[i];\n    return t;\n}\n\nint main(void) {\n    int nums[] = {1, 2, 3, 4, 5};\n    printf(\"%d\\n\", sum(nums, 5));\n    return 0;\n}"
     },
@@ -70,18 +71,20 @@
       "starter_code": "#include <stdio.h>\n\nstatic void process(void) { /* start, working, end */ }\n\nint main(void) {\n    // process();\n    return 0;\n}\n",
       "expected_output": "start\nworking\nend",
       "hints": [
-        "`atexit` registers cleanup at process exit (differs from Go defer but models cleanup)."
+        "`atexit(print_end);` registers `print_end` to run after `main` returns.",
+        "Print `start`, register the handler, then `working` so `end` appears last."
       ],
       "solution": "#include <stdio.h>\n#include <stdlib.h>\n\nstatic void print_end(void) { printf(\"end\\n\"); }\n\nstatic void process(void) {\n    printf(\"start\\n\");\n    atexit(print_end);\n    printf(\"working\\n\");\n}\n\nint main(void) { process(); return 0; }"
     },
     {
       "id": "functions_06",
       "title": "Closure",
-      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder := makeAdder(), then call adder(5) and adder(10), printing both results.",
+      "description": "Create function makeAdder() that returns a function that adds to a running total. Create adder = makeAdder(), then call adder(5) and adder(10), printing both results.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\nstatic int adder(int x) { return 0; }\n\n    return 0;\n}\n",
       "expected_output": "5\n15",
       "hints": [
-        "File-scope state models the closure capture."
+        "Use a `static int` at file scope as the captured total for repeated `adder` calls.",
+        "Each call adds `x` and returns the running sum (`5` then `15`)."
       ],
       "solution": "#include <stdio.h>\n\nstatic int g_sum = 0;\n\nstatic int adder(int x) {\n    g_sum += x;\n    return g_sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", adder(5));\n    printf(\"%d\\n\", adder(10));\n    return 0;\n}"
     }

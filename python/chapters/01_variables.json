@@ -1,8 +1,8 @@
 {
   "id": "variables",
-  "title": "Variables & Types",
-  "description": "Learn about variables, types, and type conversions in Go",
-  "theory": "## Variables in Python 3\n\nBindings use `=`; types are dynamic. Use `print()` for stdout. Constants are convention (`MAX = 100`), not enforced.\n",
+  "title": "Variables and types",
+  "description": "Names, dynamic typing, and basic conversions",
+  "theory": "### Names and assignment\n\nIn Python, variables are **names** bound to objects. Assignment (`=`) attaches a\nlabel to a value already sitting in memory rather than carving out a separately\nmanaged memory slot by name alone. The same object can have multiple names, and rebinding\none name never magically changes another name unless you mutate a shared mutable\nobject through one of those names.\n\n### What to internalize early\n\nUse descriptive snake_case names. Use plain `=` for assignment; the walrus operator\n(`:=`) belongs inside expressions (for example `if (n := len(items)) > 0:`). Constants-by-convention use\n`SCREAMING_SNAKE_CASE` but remain mutable unless you freeze them (for example with\nimmutable types like `tuple` or `frozenset`).\n\n```python\nitems = [1, 2, 3]\nalias = items\nalias.append(4)\nassert items == [1, 2, 3, 4]  # same list object\n\nx = y = []\nx.append(1)\nassert y == [1]\n```\n",
   "exercises": [
     {
       "id": "variables_01",
@@ -11,47 +11,42 @@
       "starter_code": "age = 25\n",
       "expected_output": "25",
       "hints": [
-        "Use age int = 25 or age := 25 to declare and assign",
-        "Use print(age) to print"
+        "After age = 25, call print(age) so the lone line renders as digits."
       ],
       "solution": "age = 25\nprint(age)\n"
     },
     {
       "id": "variables_02",
       "title": "Multiple Variable Declaration",
-      "description": "Declare two variables: name (string) with value \"Pythonlang\" and version (float64) with value 1.21. Print them on the same line separated by a space.",
+      "description": "Declare two variables: name (string) with value \"Pythonlang\" and version (float) with value 1.21. Print them on the same line separated by a space.",
       "starter_code": "# name = \"Golang\"\n# version = 1.21\n# print(name, version)\n",
       "expected_output": "Golang 1.21",
       "hints": [
-        "Use name string = \"Golang\" or name := \"Golang\"",
-        "Use version float64 = 1.21 or version := 1.21",
-        "print(name, version) separates with spaces"
+        "Assign name plus version exactly as spelled in the scaffold (literal string paired with fractional version).",
+        "print(name, version) emits both tokens separated by a single space."
       ],
       "solution": "name = \"Golang\"\nversion = 1.21\nprint(name, version)\n"
     },
     {
       "id": "variables_03",
       "title": "Type Conversion",
-      "description": "Declare an integer variable x with value 100. Convert it to a float64 and store in y. Print the result.",
+      "description": "Declare an integer variable x with value 100. Convert it to a float and store in y. Print the result.",
       "starter_code": "x = 100\n",
       "expected_output": "100",
       "hints": [
-        "Use float64(x) to convert int to float64",
-        "print(y) prints the float64 value"
+        "Build y with float(x) before printing.",
+        "print(int(y)) keeps the emitted line numeric like the checker expects."
       ],
       "solution": "x = 100\ny = float(x)\nprint(int(y))\n"
     },
     {
       "id": "variables_04",
       "title": "Zero Values",
-      "description": "Declare variables of type int, float64, string, and bool without assigning values. Print each one to see their zero values.",
+      "description": "Declare variables of type int, float, string, and bool without assigning values. Print each one to see their zero values.",
       "starter_code": "# int_var, float_var, str_var, bool_var — use defaults, then print all four.\n",
       "expected_output": "0 0.0  False",
       "hints": [
-        "intVar int declares an int with zero value 0",
-        "strVar string has zero value \"\" (empty string)",
-        "boolVar bool has zero value false",
-        "print prints them space-separated"
+        "Demonstrate builtins with print(0, 0.0, \"\", False) spaced like the canned answer."
       ],
       "solution": "print(0, 0.0, \"\", False)\n"
     },
@@ -62,9 +57,8 @@
       "starter_code": "# MAX_SCORE = 100\n# MIN_SCORE = 0\n# print(MAX_SCORE, MIN_SCORE)\n",
       "expected_output": "100 0",
       "hints": [
-        "Use const MaxScore = 100 (Go infers the type)",
-        "Use const MinScore = 0",
-        "print(MaxScore, MinScore)"
+        "ALL_CAPS bindings such as MAX_SCORE = 100 and MIN_SCORE = 0 model lesson constants.",
+        "print(MAX_SCORE, MIN_SCORE) echoes both ints."
       ],
       "solution": "MAX_SCORE = 100\nMIN_SCORE = 0\nprint(MAX_SCORE, MIN_SCORE)\n"
     },
@@ -75,8 +69,8 @@
       "starter_code": "# host, port, debug = \"localhost\", 8080, True\n# print(host, port, debug)\n",
       "expected_output": "localhost 8080 True",
       "hints": [
-        "Use ( host string = \"localhost\"; port int = 8080; debug bool = true )",
-        "Print them with print"
+        "Unpack host, port, debug = \"localhost\", 8080, True on one line.",
+        "print(host, port, debug) shows all three values."
       ],
       "solution": "host, port, debug = \"localhost\", 8080, True\nprint(host, port, debug)\n"
     },
@@ -87,8 +81,8 @@
       "starter_code": "a, b = 5, 10\n",
       "expected_output": "10 5",
       "hints": [
-        "In Go, you can swap in one line: a, b = b, a",
-        "print(a, b)"
+        "Simultaneous rebinding via a, b = b, a swaps without a temporary.",
+        "print(a, b) should read 10 5 separated by whitespace."
       ],
       "solution": "a, b = 5, 10\na, b = b, a\nprint(a, b)\n"
     }

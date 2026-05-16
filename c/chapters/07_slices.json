@@ -1,8 +1,8 @@
 {
   "id": "slices",
-  "title": "Slices",
-  "description": "Dynamic slices in Go - like arrays but growable",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Pointer + length\n\nPass `(ptr, len)` pairs; never walk past `len`.\n",
+  "title": "Pointers and array views",
+  "description": "Pointers, lengths, and subranges in C",
+  "theory": "### Pointer-length pairs\n\nC has no built-in slice type. The idiomatic stand-in is a pointer to the first element together with a length (often `size_t`) or a pointer one past the last valid element. This pattern appears in APIs that must view a substring of a buffer without copying, or when parsing protocols. The length prevents silent overruns when discipline is maintained—callers must not lie about extents.\n\n### Functions over ranges\n\nStandard library functions such as `memcpy`, `memmove`, `memcmp`, and `memset` take a byte count. String functions like `strncmp` stop at `n` characters or the first `\\0`. Prefer these when you have explicit sizes; unbounded `strcpy` is dangerous on untrusted input. When you expose a “slice” in your own API, document whether the range is `[start, count)` or `[first, last)`.\n\n### Safer iteration\n\nLoop with indices bounded by the recorded length, or maintain `const unsigned char *cur` and `const unsigned char *end`. This mirrors iterators in other languages but stays explicit in C.\n\n```c\n#include <stddef.h>\n#include <stdio.h>\n\nvoid print_ints(const int *base, size_t n) {\n    for (size_t i = 0; i < n; ++i) {\n        printf(\"%d \", base[i]);\n    }\n}\n```\n",
   "exercises": [
     {
       "id": "slices_01",
@@ -11,79 +11,76 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int s[3] = {1, 2, 3};\n    // print [1 2 3]\n    return 0;\n}\n",
       "expected_output": "[1 2 3]",
       "hints": [
-        "Use make([]int, 3)",
-        "slice[0] = 1, etc."
+        "`int s[3] = {1,2,3};` — print `[` then elements with spaces, then `]`, mirroring slice formatting."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int s[3] = {1, 2, 3};\n    printf(\"[\");\n    for (int i = 0; i < 3; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", s[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_02",
       "title": "Append to Slice",
-      "description": "Create slice nums := []int{1, 2}. Append 3, 4, 5. Print result.",
+      "description": "Create slice nums = list[1, 2}. Append 3, 4, 5. Print result.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int nums[] = {1, 2, 3, 4, 5};\n    // print\n    return 0;\n}\n",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "Use append(nums, 3, 4, 5...)"
+        "Starter already has five elements; reuse the bracket-print loop with `n == 5`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int nums[] = {1, 2, 3, 4, 5};\n    printf(\"[\");\n    for (int i = 0; i < 5; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", nums[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_03",
       "title": "Slice Length and Capacity",
-      "description": "Create slice s := make([]int, 3, 10). Print its len and cap.",
+      "description": "Create slice s = make([]int, 3, 10). Print its len and cap.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int backing[10] = {0};\n    int len = 3;\n    // print len cap\n    return 0;\n}\n",
       "expected_output": "3 10",
       "hints": [
-        "Use len(s) and cap(s)",
-        "printf(len(s), cap(s))"
+        "Logical length is `3`, backing capacity is `10`: `printf(\"%d %d\\n\", len, 10);`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int backing[10] = {0};\n    int len = 3;\n    printf(\"%d %d\\n\", len, 10);\n    return 0;\n}\n"
     },
     {
       "id": "slices_04",
       "title": "Slice Literals",
-      "description": "Create slice fruits := []string{\"apple\", \"banana\", \"cherry\"}. Print its length.",
+      "description": "Create slice fruits = list[\"apple\", \"banana\", \"cherry\"}. Print its length.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *fruits[] = {\"apple\", \"banana\", \"cherry\"};\n    // len\n    return 0;\n}\n",
       "expected_output": "3",
       "hints": [
-        "Use len(fruits)"
+        "`sizeof fruits / sizeof fruits[0]` counts string pointers.",
+        "`printf(\"%zu\\n\", ...);`"
       ],
       "solution": "#include <stdio.h>\n#include <stddef.h>\n\nint main(void) {\n    const char *fruits[] = {\"apple\", \"banana\", \"cherry\"};\n    printf(\"%zu\\n\", sizeof fruits / sizeof fruits[0]);\n    return 0;\n}\n"
     },
     {
       "id": "slices_05",
       "title": "Slicing a Slice",
-      "description": "Create slice n := []int{1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
+      "description": "Create slice n = list[1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int n[] = {1, 2, 3, 4, 5};\n    // n[1..4)\n    return 0;\n}\n",
       "expected_output": "[2 3 4]",
       "hints": [
-        "Use n[1:4] to get elements from index 1 to 3",
-        "slice[start:end] is exclusive on end"
+        "Indices `1` through `3` inclusive: `for (int i = 1; i < 4; i++)`.",
+        "Format as `[2 3 4]` with spaces between numbers."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int n[] = {1, 2, 3, 4, 5};\n    printf(\"[\");\n    for (int i = 1; i < 4; i++) {\n        if (i > 1) putchar(' ');\n        printf(\"%d\", n[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_07",
       "title": "Append Slices",
-      "description": "Create two slices: a := []int{1, 2} and b := []int{3, 4, 5}. Append all elements of b to a and print the result.",
+      "description": "Create two slices: a = list[1, 2} and b = list[3, 4, 5}. Append all elements of b to a and print the result.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int a[] = {1, 2, 3, 4, 5};\n    // print\n    return 0;\n}\n",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "Use append(a, b...) to append all elements of slice b to a",
-        "The ... expands the slice into individual arguments"
+        "The merged `int a[] = {1,2,3,4,5};` is already concatenated; print it like other slice exercises."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int a[] = {1, 2, 3, 4, 5};\n    printf(\"[\");\n    for (int i = 0; i < 5; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", a[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     },
     {
       "id": "slices_06",
       "title": "Copy Slice",
-      "description": "Create slice original := []int{1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
+      "description": "Create slice original = list[1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int original[] = {1, 2, 3};\n    // copy and append\n    return 0;\n}\n",
       "expected_output": "[1 2 3]\n[1 2 3 4]",
       "hints": [
-        "copy := make([]int, len(original))",
-        "copy(copy, original)",
-        "Then append to copy"
+        "`#include <string.h>` — `memcpy(copy, original, sizeof original);` then assign the fourth slot.",
+        "Print the 3-element original line, then the 4-element copy line, each in `[ ... ]` form."
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    int original[] = {1, 2, 3};\n    int copy[4];\n    memcpy(copy, original, sizeof original);\n    copy[3] = 4;\n    printf(\"[\");\n    for (int i = 0; i < 3; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", original[i]);\n    }\n    puts(\"]\");\n    printf(\"[\");\n    for (int i = 0; i < 4; i++) {\n        if (i) putchar(' ');\n        printf(\"%d\", copy[i]);\n    }\n    puts(\"]\");\n    return 0;\n}\n"
     }

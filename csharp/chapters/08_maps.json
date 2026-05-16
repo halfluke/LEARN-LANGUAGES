@@ -1,8 +1,8 @@
 {
   "id": "maps",
-  "title": "Maps",
-  "description": "Hash maps (dictionaries) in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Associative containers\n\nUse **`Dictionary<,>`** for hash maps and **`SortedDictionary<,>`** when sorted iteration matters for deterministic output.\n",
+  "title": "Dictionaries",
+  "description": "Dictionary and sorted collections",
+  "theory": "### Dictionary and friends\n\n`Dictionary<TKey, TValue>` is the hash-table workhorse: average O(1) lookups, keyed equality uses `IEqualityComparer<TKey>` when supplied. For concurrent scenarios, `ConcurrentDictionary<TKey, TValue>` provides thread-safe updates without external locking for many common operations.\n\n`ImmutableDictionary` in `System.Collections.Immutable` is excellent for **stable snapshots** you share across threads: updates return new collections while sharing structure internally.\n\n### Patterns with dictionaries\n\nTry patterns (`dict.TryGetValue`) avoid double lookups. `GetValueOrDefault` simplifies optional keys. When keys are case-insensitive strings, pass `StringComparer.OrdinalIgnoreCase` into alternate constructors.\n\nMany frameworks deserialize JSON objects into `Dictionary<string, JsonElement>` or strongly typed models via `System.Text.Json`—pick clarity and validation requirements accordingly.\n\n```csharp\nusing System;\nusing System.Collections.Generic;\n\nvar scores = new Dictionary<string, int>\n{\n    [\"ada\"] = 100,\n    [\"linus\"] = 98\n};\n\nif (scores.TryGetValue(\"ada\", out var v))\n    Console.WriteLine(v);\n```\n",
   "exercises": [
     {
       "id": "maps_01",
@@ -11,75 +11,79 @@
       "starter_code": "using System.Collections.Generic;\n\nvar ages = new Dictionary<string, int>();\n// Alice 25, Bob 30; Go-style map[...]",
       "expected_output": "map[Alice:25 Bob:30]",
       "hints": [
-        "Sort keys so output matches Go's `map[Alice:25 Bob:30]`."
+        "Use `SortedDictionary<string,int>` when output must mimic lexicographically sorted dumps.",
+        "Build map-style strings with prefixes like `map[` plus ordered `Key:Value` fragments.",
+        "Prefer collection initializer syntax `{ [\"Alice\"] = 25 }`."
       ],
       "solution": "using System.Linq;\nusing System.Collections.Generic;\n\nvar ages = new SortedDictionary<string, int> { [\"Alice\"] = 25, [\"Bob\"] = 30 };\nvar parts = ages.Select(kv => $\"{kv.Key}:{kv.Value}\");\nConsole.WriteLine(\"map[\" + string.Join(\" \", parts) + \"]\");"
     },
     {
       "id": "maps_02",
       "title": "Map Lookup",
-      "description": "Create map scores := map[string]int{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
+      "description": "Create map scores = Dictionary{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and Console.WriteLine the score.",
       "starter_code": "using System.Collections.Generic;\n\nvar scores = new Dictionary<string, int> { [\"Math\"] = 95, [\"Physics\"] = 88 };\n// scores[\"Math\"]",
       "expected_output": "95",
       "hints": [
-        "Use scores[\"Math\"] to get value",
-        "Console.WriteLine(scores[\"Math\"])"
+        "Indexer access `scores[\"Math\"]` throws if absent—fine when keys are guaranteed."
       ],
       "solution": "using System.Collections.Generic;\n\nvar scores = new Dictionary<string, int> { [\"Math\"] = 95, [\"Physics\"] = 88 };\nConsole.WriteLine(scores[\"Math\"]);"
     },
     {
       "id": "maps_03",
       "title": "Add to Map",
-      "description": "Create empty map names := make(map[string]string). Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
+      "description": "Create empty map names = empty Dictionary. Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
       "starter_code": "using System.Collections.Generic;\n\nvar names = new SortedDictionary<string, string>();\n// \"1\"->\"One\", \"2\"->\"Two\"",
       "expected_output": "map[1:One 2:Two]",
       "hints": [
-        "names[\"1\"] = \"One\""
+        "Empty dictionaries still support initializer syntax before printing.",
+        "Sorted keys stabilize exercise output."
       ],
       "solution": "using System.Linq;\nusing System.Collections.Generic;\n\nvar names = new SortedDictionary<string, string> { [\"1\"] = \"One\", [\"2\"] = \"Two\" };\nvar parts = names.Select(kv => $\"{kv.Key}:{kv.Value}\");\nConsole.Write(\"map[\" + string.Join(\" \", parts) + \"]\");"
     },
     {
       "id": "maps_04",
       "title": "Delete from Map",
-      "description": "Create map data := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
+      "description": "Create map data = Dictionary{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then Console.WriteLine the map.",
       "starter_code": "using System.Collections.Generic;\n\nvar data = new SortedDictionary<string, int> { [\"a\"] = 1, [\"b\"] = 2, [\"c\"] = 3 };\n// remove \"b\"",
       "expected_output": "map[a:1 c:3]",
       "hints": [
-        "Use delete(data, \"b\")"
+        "Remove entries with `.Remove(\"b\")` on `SortedDictionary`/`.dictionary`.",
+        "Rebuild string output after mutation to reflect deletions."
       ],
       "solution": "using System.Linq;\nusing System.Collections.Generic;\n\nvar data = new SortedDictionary<string, int> { [\"a\"] = 1, [\"c\"] = 3 };\nvar parts = data.Select(kv => $\"{kv.Key}:{kv.Value}\");\nConsole.Write(\"map[\" + string.Join(\" \", parts) + \"]\");"
     },
     {
       "id": "maps_05",
       "title": "Check Key Existence",
-      "description": "Create map inventory := map[string]int{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
+      "description": "Create map inventory = Dictionary{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and Console.WriteLine exists or not found.",
       "starter_code": "using System.Collections.Generic;\n\nvar inventory = new Dictionary<string, int> { [\"apples\"] = 5, [\"oranges\"] = 3 };\n// bananas?",
       "expected_output": "not found",
       "hints": [
-        "Use value, exists := inventory[\"bananas\"]",
-        "Check the exists variable"
+        "Existence probing uses `.ContainsKey` or `TryGetValue`.",
+        "Emit exists vs not found exactly per the checker’s expected wording."
       ],
       "solution": "using System.Collections.Generic;\n\nvar inventory = new Dictionary<string, int> { [\"apples\"] = 5, [\"oranges\"] = 3 };\nConsole.WriteLine(inventory.ContainsKey(\"bananas\") ? \"exists\" : \"not found\");"
     },
     {
       "id": "maps_07",
       "title": "Map Length",
-      "description": "Create map counts := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
+      "description": "Create map counts = Dictionary{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
       "starter_code": "using System.Collections.Generic;\n\nvar counts = new Dictionary<string, int> { [\"one\"] = 1, [\"two\"] = 2, [\"three\"] = 3 };\n// Count",
       "expected_output": "3",
       "hints": [
-        "Use len(counts) to get the number of key-value pairs"
+        "`.Count` returns `Dictionary`/collection cardinality."
       ],
       "solution": "using System.Collections.Generic;\n\nvar counts = new Dictionary<string, int> { [\"one\"] = 1, [\"two\"] = 2, [\"three\"] = 3 };\nConsole.WriteLine(counts.Count);"
     },
     {
       "id": "maps_06",
       "title": "Iterate Map",
-      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "description": "Create map grades = Dictionary{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
       "starter_code": "using System.Collections.Generic;\n\nvar grades = new SortedDictionary<string, int> { [\"A\"] = 90, [\"B\"] = 80, [\"C\"] = 70 };\n// foreach",
       "expected_output": "A 90\nB 80\nC 70",
       "hints": [
-        "Use for key, value := range grades"
+        "Iterate `(Key, Value)` pairs with `foreach` over `SortedDictionary` for deterministic order.",
+        "Emit `KEY VALUE` pairs separated by newlines."
       ],
       "solution": "using System.Collections.Generic;\n\nforeach (var kv in new SortedDictionary<string, int> { [\"A\"] = 90, [\"B\"] = 80, [\"C\"] = 70 })\n    Console.WriteLine($\"{kv.Key} {kv.Value}\");"
     }

@@ -1,17 +1,18 @@
 {
   "id": "errors",
-  "title": "Error Handling",
-  "description": "Go's error handling patterns",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Exceptions\n\n`try`/`catch`, custom exceptions, and `getCause()` for wrapped errors.\n",
+  "title": "Errors and exceptions",
+  "description": "Raising, catching, and modeling failure in Java",
+  "theory": "\n### Exceptions as control flow signals\nJava distinguishes checked exceptions (must be declared or caught) from runtime exceptions and errors. Overusing checked exceptions can push `throws` clauses through many layers; use them when callers can plausibly recover or must handle failure explicitly.\n\nUnchecked exceptions (`IllegalArgumentException`, `IllegalStateException`) document programmer mistakes or unrecoverable situations; reserve them for truly exceptional conditions, not ordinary control flow.\n\n### Resources and suppression\nTry-with-resources composes cleanly with catch blocks; the primary exception wins, and any close-time failures add suppressed exceptions you can inspect later.\n\n```java\ntry {\n    risky();\n} catch (IOException e) {\n    throw new UncheckedIOException(\"operation failed\", e);\n}\n```\n",
   "exercises": [
     {
       "id": "errors_01",
       "title": "Return Error",
-      "description": "Define divide(a, b float64) (float64, error). Return error if b==0. Call with divide(10, 0) and handle error.",
+      "description": "Define divide(a, b double) (double, error). Return error if b==0. Call with divide(10, 0) and handle error.",
       "starter_code": "public class Main {\n    static Double divide(double a, double b) { return null; }\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "Error: division by zero",
       "hints": [
-        "if b == 0 { return 0, errors.New(\"division by zero\") }"
+        "Return an `Exception` (or `null`) from `divide`; when divisor is zero, message `\"division by zero\"`.",
+        "Print `Error: ` + message."
       ],
       "solution": "public class Main {\n    static Exception divide(double a, double b) {\n        if (b == 0) return new Exception(\"division by zero\");\n        return null;\n    }\n    public static void main(String[] args) {\n        Exception err = divide(10, 0);\n        if (err != null) System.out.println(\"Error: \" + err.getMessage());\n    }\n}\n"
     },
@@ -22,18 +23,20 @@
       "starter_code": "public class Main {\n    static class NotFoundError extends Exception {}\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "User not found",
       "hints": [
-        "Need to implement Unwrap() for errors.Is to work"
+        "Throw `NotFoundError` from `findUser` when name isn’t `\"alice\"`.",
+        "Catch `NotFoundError` and print `User not found`."
       ],
       "solution": "public class Main {\n    static class NotFoundError extends Exception {\n        NotFoundError(String key) { super(\"not found: \" + key); }\n    }\n    static void findUser(String name) throws NotFoundError {\n        if (!name.equals(\"alice\")) throw new NotFoundError(name);\n    }\n    public static void main(String[] args) {\n        try { findUser(\"bob\"); }\n        catch (NotFoundError e) { System.out.println(\"User not found\"); }\n    }\n}\n"
     },
     {
       "id": "errors_03",
-      "title": "fmt.Errorf Wrapping",
-      "description": "Create a function wrapError() that uses fmt.Errorf to wrap an error with context.",
+      "title": "System.out.println Wrapping",
+      "description": "Create a function wrapError() that uses System.out.println to wrap an error with context.",
       "starter_code": "public class Main {\n    static Exception wrapError() { return null; }\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "wrapped: base error",
       "hints": [
-        "Use %w to wrap the error"
+        "Wrap with `new Exception(\"wrapped: \" + base.getMessage(), base);`.",
+        "Print `getMessage()`."
       ],
       "solution": "public class Main {\n    static Exception wrapError() {\n        Exception base = new Exception(\"base error\");\n        return new Exception(\"wrapped: \" + base.getMessage(), base);\n    }\n    public static void main(String[] args) { System.out.println(wrapError().getMessage()); }\n}\n"
     },
@@ -44,7 +47,7 @@
       "starter_code": "public class Main {\n    static class ValidationError extends Exception { String field; }\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "email",
       "hints": [
-        "errors.As(err, &ve) extracts the error into ve"
+        "Throw `ValidationError`; catch and print `ve.field`."
       ],
       "solution": "public class Main {\n    static class ValidationError extends Exception {\n        String field;\n        ValidationError(String field, String msg) { super(msg); this.field = field; }\n    }\n    static ValidationError validate() { return new ValidationError(\"email\", \"invalid email\"); }\n    public static void main(String[] args) {\n        try { throw validate(); }\n        catch (ValidationError ve) { System.out.println(ve.field); }\n    }\n}\n"
     },
@@ -55,7 +58,7 @@
       "starter_code": "public class Main {\n    static Integer safeDivide(int a, int b) { return null; }\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "5",
       "hints": [
-        "return a / b, nil"
+        "Return `null` on divide-by-zero; verify non-null branch prints quotient."
       ],
       "solution": "public class Main {\n    static Integer safeDivide(int a, int b) {\n        if (b == 0) return null;\n        return a / b;\n    }\n    public static void main(String[] args) {\n        Integer result = safeDivide(10, 2);\n        if (result == null) System.out.println(\"Error:\");\n        else System.out.println(result);\n    }\n}\n"
     },
@@ -66,8 +69,7 @@
       "starter_code": "public class Main {\n    static Exception errDiskFull;\n    static Exception readFile(String name) { return null; }\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "reading data.txt: disk full\nDisk is full",
       "hints": [
-        "Use %w verb in fmt.Errorf to wrap the underlying error",
-        "errors.Is(err, target) checks if err wraps or equals target"
+        "Use `getCause()` to detect the chained `\"disk full\"` exception; print layered messages as in the solution."
       ],
       "solution": "public class Main {\n    static final Exception errDiskFull = new Exception(\"disk full\");\n    static Exception readFile(String name) {\n        return new Exception(\"reading \" + name + \": disk full\", errDiskFull);\n    }\n    public static void main(String[] args) {\n        Exception err = readFile(\"data.txt\");\n        System.out.println(err.getMessage());\n        if (err.getCause() == errDiskFull) System.out.println(\"Disk is full\");\n    }\n}\n"
     },
@@ -78,9 +80,7 @@
       "starter_code": "public class Main {\n    static Exception ERR_NOT_FOUND;\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "not found",
       "hints": [
-        "ErrNotFound = errors.New(\"not found\")",
-        "return \"\", ErrNotFound",
-        "if errors.Is(err, ErrNotFound)"
+        "Compare sentinel with `==` on the same `RuntimeException` constant instance."
       ],
       "solution": "public class Main {\n    static final RuntimeException ERR_NOT_FOUND = new RuntimeException(\"not found\");\n    static Exception getItem(int id) {\n        if (id < 0) return ERR_NOT_FOUND;\n        return null;\n    }\n    public static void main(String[] args) {\n        if (getItem(-1) == ERR_NOT_FOUND) System.out.println(\"not found\");\n    }\n}\n"
     }

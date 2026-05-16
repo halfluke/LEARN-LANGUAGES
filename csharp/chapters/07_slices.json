@@ -1,8 +1,8 @@
 {
   "id": "slices",
-  "title": "Slices",
-  "description": "Dynamic slices in Go - like arrays but growable",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Spans and ranges\n\nRust slices map well to **`ReadOnlySpan<T>`** and **range syntax** (`arr[1..^1]`).\n",
+  "title": "Spans and arrays",
+  "description": "Arrays, spans, and ranges in C#",
+  "theory": "### Span, Memory, and ranges\n\nC# models **windows into contiguous memory** with `Span<T>` and `ReadOnlySpan<T>` for synchronous stack-friendly code, and `Memory<T>` / `ReadOnlyMemory<T>` for async pipelines. These types unify arrays, stack buffers, and slices of unmanaged memory without copying.\n\nThe **range syntax** (`start..end`, `^n` from end) pairs with `Span<T>` and arrays to project sub-windows. For UTF-16 text, `ReadOnlySpan<char>` is the efficient surface many modern APIs accept.\n\n### LINQ vs allocation\n\n`Enumerable.Skip`/`Take` on arrays allocates iterators. When you already have contiguous storage, slicing with spans avoids intermediate sequence objects and reduces pressure on the GC.\n\n```csharp\nusing System;\n\nvar text = \"abcdef\";\n\nReadOnlySpan<char> span = text.AsSpan();\n\nReadOnlySpan<char> mid = span[1..4];\n\nConsole.WriteLine(mid.ToString());\n\nint[] a = { 10, 20, 30, 40, 50 };\n\nSpan<int> s = a.AsSpan(1, 3);\n```\n",
   "exercises": [
     {
       "id": "slices_01",
@@ -11,79 +11,81 @@
       "starter_code": "var s = new int[3];\n// assign 1,2,3 and print",
       "expected_output": "[1 2 3]",
       "hints": [
-        "Use make([]int, 3)",
-        "slice[0] = 1, etc."
+        "Fixed buffers use stack arrays or `new int[length]` assignments.",
+        "Print bracketed projections using `string.Join`."
       ],
       "solution": "var s = new int[3];\ns[0] = 1; s[1] = 2; s[2] = 3;\nConsole.WriteLine($\"[{string.Join(\" \", s)}]\");"
     },
     {
       "id": "slices_02",
       "title": "Append to Slice",
-      "description": "Create slice nums := []int{1, 2}. Append 3, 4, 5. Print result.",
+      "description": "Create slice nums = list[1, 2}. Append 3, 4, 5. Print result.",
       "starter_code": "using System.Collections.Generic;\n\nvar nums = new List<int> { 1, 2 };\n// append 3,4,5",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "Use append(nums, 3, 4, 5...)"
+        "Reach for `List<int>` semantics with `.Add`/`.AddRange` for amortized resizing.",
+        "Clone into display layout matching earlier exercises."
       ],
       "solution": "using System.Collections.Generic;\n\nvar nums = new List<int> { 1, 2 };\nnums.AddRange(new[] { 3, 4, 5 });\nConsole.WriteLine($\"[{string.Join(\" \", nums)}]\");"
     },
     {
       "id": "slices_03",
       "title": "Slice Length and Capacity",
-      "description": "Create slice s := make([]int, 3, 10). Print its len and cap.",
+      "description": "Create slice s = make([]int, 3, 10). Print its len and cap.",
       "starter_code": "using System.Collections.Generic;\n\nvar s = new List<int>(10);\n// grow to len 3, print Count and Capacity",
       "expected_output": "3 10",
       "hints": [
-        "Use len(s) and cap(s)",
-        "Console.WriteLine(len(s), cap(s))"
+        "After filling three sentinel entries, `.Count` reports logical length.",
+        "`List<T>.Capacity` mirrors the preallocation story from other tracks."
       ],
       "solution": "using System.Collections.Generic;\n\nvar s = new List<int>(10);\ns.Add(0); s.Add(0); s.Add(0);\nConsole.WriteLine($\"{s.Count} {s.Capacity}\");"
     },
     {
       "id": "slices_04",
       "title": "Slice Literals",
-      "description": "Create slice fruits := []string{\"apple\", \"banana\", \"cherry\"}. Print its length.",
+      "description": "Create slice fruits = list[\"apple\", \"banana\", \"cherry\"}. Print its length.",
       "starter_code": "var fruits = new[] { \"apple\", \"banana\", \"cherry\" };\n// Console.WriteLine(fruits.Length);",
       "expected_output": "3",
       "hints": [
-        "Use len(fruits)"
+        "Array literals behave like contiguous sequences; `.Length` is the quick count."
       ],
       "solution": "var fruits = new[] { \"apple\", \"banana\", \"cherry\" };\nConsole.WriteLine(fruits.Length);"
     },
     {
       "id": "slices_05",
       "title": "Slicing a Slice",
-      "description": "Create slice n := []int{1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
+      "description": "Create slice n = list[1,2,3,4,5}. Slice it to get [2,3,4] (elements at index 1,2,3). Print result.",
       "starter_code": "var n = new[] { 1, 2, 3, 4, 5 };\n// slice indices 1..3",
       "expected_output": "[2 3 4]",
       "hints": [
-        "Use n[1:4] to get elements from index 1 to 3",
-        "slice[start:end] is exclusive on end"
+        "LINQ `.Skip`/`.Take` mirror half-open slicing when you dislike manual indices.",
+        "Alternatively leverage range syntax `.AsSpan()[start..end]` for zero-extra-allocation slicing.",
+        "Remember to import `System.Linq` when chaining LINQ operators."
       ],
       "solution": "var n = new[] { 1, 2, 3, 4, 5 };\nvar sliced = n.Skip(1).Take(3).ToArray();\nConsole.WriteLine($\"[{string.Join(\" \", sliced)}]\");"
     },
     {
       "id": "slices_07",
       "title": "Append Slices",
-      "description": "Create two slices: a := []int{1, 2} and b := []int{3, 4, 5}. Append all elements of b to a and print the result.",
+      "description": "Create two slices: a = list[1, 2} and b = list[3, 4, 5}. Append all elements of b to a and Console.WriteLine the result.",
       "starter_code": "using System.Collections.Generic;\n\nvar a = new List<int> { 1, 2 };\nvar b = new[] { 3, 4, 5 };\n// append all of b",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "Use append(a, b...) to append all elements of slice b to a",
-        "The ... expands the slice into individual arguments"
+        "Mutate the accumulator `List<int>` via `.AddRange`.",
+        "Pretty-print `[ … ]` with `string.Join` after expansion."
       ],
       "solution": "using System.Collections.Generic;\n\nvar a = new List<int> { 1, 2 };\na.AddRange(new[] { 3, 4, 5 });\nConsole.WriteLine($\"[{string.Join(\" \", a)}]\");"
     },
     {
       "id": "slices_06",
       "title": "Copy Slice",
-      "description": "Create slice original := []int{1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
+      "description": "Create slice original = list[1, 2, 3}. Make an independent copy and append 4 to the copy. Print both.",
       "starter_code": "var original = new[] { 1, 2, 3 };\n// copy, append 4, print both",
       "expected_output": "[1 2 3]\n[1 2 3 4]",
       "hints": [
-        "copy := make([]int, len(original))",
-        "copy(copy, original)",
-        "Then append to copy"
+        "`Clone()` (cast back to `int[]`) or `[..collection]` spreads copy payloads.",
+        "Keep `original` untouched while mutating only the duplicated buffer.",
+        "Prefer `Concat`/`Append`-then-`ToArray()` when LINQ chaining reads clearer."
       ],
       "solution": "using System.Linq;\n\nvar original = new[] { 1, 2, 3 };\nvar copy = (int[])original.Clone();\ncopy = copy.Append(4).ToArray();\nConsole.WriteLine($\"[{string.Join(\" \", original)}]\");\nConsole.WriteLine($\"[{string.Join(\" \", copy)}]\");"
     }

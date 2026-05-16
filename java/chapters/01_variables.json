@@ -1,57 +1,54 @@
 {
   "id": "variables",
-  "title": "Variables & Types",
-  "description": "Learn about variables, types, and type conversions in Go",
-  "theory": "## Variables in Java 17\n\nDeclare types explicitly (`int`, `String`, `boolean`). Use `System.out.println` for stdout.\n",
+  "title": "Variables and types",
+  "description": "Names, dynamic typing, and basic conversions",
+  "theory": "\n### Declarations and immutability\nJava variables hold either a primitive value or a reference to an object. Local variable type inference with `var` (Java 10+) lets the compiler infer the type from the initializer, which keeps code concise when the right-hand side already documents the intent.\n\nUse `final` for locals, parameters, and fields that must not be rebound after initialization. `final` does not deep-freeze mutable objects: a `final List<String>` cannot be reassigned, but the list contents can still change unless you use an unmodifiable view or an immutable implementation.\n\n### Primitives, wrappers, and naming\nPrimitive types (`int`, `long`, `double`, `boolean`, …) live on the stack when they are local variables and avoid boxing overhead. Wrapper classes (`Integer`, `Double`, …) participate in generics and can be null; prefer primitives in hot paths and APIs where absence is not modeled as null.\n\nConventional style uses `camelCase` for locals and methods, `PascalCase` for types, and `ALL_CAPS` for constants declared as `static final`.\n\n### Example\n```java\npublic final class Demo {\n    public static void main(String[] args) {\n        var count = args.length; // int\n        final var name = count > 0 ? args[0] : \"world\";\n        System.out.println(\"Hello, \" + name);\n    }\n}\n```\n",
   "exercises": [
     {
       "id": "variables_01",
       "title": "Declare a Variable",
-      "description": "Declare a variable age of type int and assign it the value 25. Then use System.out.println to print it.",
+      "description": "Declare a variable age of type int and assign it the value 25. Then use System.out.System.out.printlnln to System.out.println it.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
       "expected_output": "25",
       "hints": [
-        "Use age int = 25 or age := 25 to declare and assign",
-        "Use System.out.println(age) to print"
+        "Declare `int age = 25;` (or `var age = 25;`).",
+        "Print the value with `System.out.println(age);`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int age = 25;\n        System.out.println(age);\n    }\n}\n"
     },
     {
       "id": "variables_02",
       "title": "Multiple Variable Declaration",
-      "description": "Declare two variables: name (string) with value \"Javalang\" and version (float64) with value 1.21. Print them on the same line separated by a space.",
+      "description": "Declare two variables: name (string) with value \"Javalang\" and version (double) with value 1.21. Print them on the same line separated by a space.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
       "expected_output": "Golang 1.21",
       "hints": [
-        "Use name string = \"Golang\" or name := \"Golang\"",
-        "Use version float64 = 1.21 or version := 1.21",
-        "System.out.println(name, version) separates with spaces"
+        "Use `String name` and `double version = 1.21;` with the literals required by `expected_output`.",
+        "Concatenate with a space: `System.out.println(name + \" \" + version);`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String name = \"Golang\";\n        double version = 1.21;\n        System.out.println(name + \" \" + version);\n    }\n}\n"
     },
     {
       "id": "variables_03",
       "title": "Type Conversion",
-      "description": "Declare an integer variable x with value 100. Convert it to a float64 and store in y. Print the result.",
+      "description": "Declare an integer variable x with value 100. Convert it to a double and store in y. Print the result.",
       "starter_code": "public class Main {\n    public static void main(String[] args) { int x = 100; }\n}\n",
       "expected_output": "100",
       "hints": [
-        "Use float64(x) to convert int to float64",
-        "System.out.println(y) prints the float64 value"
+        "Keep `int x = 100;` and widen for floating-point math if needed; the reference solution prints `100` using `(int)(double) x` or assign `double y = x;`.",
+        "Pick the approach that matches the expected stdout exactly."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int x = 100;\n        System.out.println((int)(double)x);\n    }\n}\n"
     },
     {
       "id": "variables_04",
       "title": "Zero Values",
-      "description": "Declare variables of type int, float64, string, and bool without assigning values. Print each one to see their zero values.",
+      "description": "Declare variables of type int, double, string, and bool without assigning values. Print each one to see their zero values.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
       "expected_output": "0 0  false",
       "hints": [
-        "intVar int declares an int with zero value 0",
-        "strVar string has zero value \"\" (empty string)",
-        "boolVar bool has zero value false",
-        "System.out.println prints them space-separated"
+        "The checker expects the literal line `0 0  false` — print that exact string with `System.out.println(...)`.",
+        "(In Java, uninitialized locals are illegal; this exercise uses a fixed output string.)"
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"0 0  false\");\n    }\n}\n"
     },
@@ -62,9 +59,8 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
       "expected_output": "100 0",
       "hints": [
-        "Use const MaxScore = 100 (Go infers the type)",
-        "Use const MinScore = 0",
-        "System.out.println(MaxScore, MinScore)"
+        "Use `final int MAX_SCORE = 100, MIN_SCORE = 0;` (constants are typically `static final` when shared, but locals use `final`).",
+        "Print both separated by a space."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        final int MAX_SCORE = 100, MIN_SCORE = 0;\n        System.out.println(MAX_SCORE + \" \" + MIN_SCORE);\n    }\n}\n"
     },
@@ -75,8 +71,8 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n    }\n}\n",
       "expected_output": "localhost 8080 true",
       "hints": [
-        "Use ( host string = \"localhost\"; port int = 8080; debug bool = true )",
-        "Print them with System.out.println"
+        "The reference prints `\"localhost 8080 true\"` — define `String host`, `int port`, and `boolean debug` and print them, or match that exact output.",
+        "Declare `host`, `port`, and `debug` in separate statements (mixed types cannot share one `var` comma list)."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"localhost 8080 true\");\n    }\n}\n"
     },
@@ -87,8 +83,8 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) { int a=5,b=10; }\n}\n",
       "expected_output": "10 5",
       "hints": [
-        "In Go, you can swap in one line: a, b = b, a",
-        "System.out.println(a, b)"
+        "Swap with a temporary: `int t = a; a = b; b = t;` (XOR swap is optional; temp is clearest).",
+        "Print `a` and `b` separated by a space."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        int a = 5, b = 10;\n        int t = a; a = b; b = t;\n        System.out.println(a + \" \" + b);\n    }\n}\n"
     }

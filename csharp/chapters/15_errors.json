@@ -1,17 +1,18 @@
 {
   "id": "errors",
-  "title": "Error Handling",
-  "description": "Go's error handling patterns",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Errors\n\nUse exceptions for exceptional paths; **`try`/`catch`**, custom exception types, and `when` filters.\n",
+  "title": "Errors and exceptions",
+  "description": "Raising, catching, and modeling failure in C#",
+  "theory": "### Exceptions on the CLR\n\nC# favors **exceptions** for exceptional failure: stack-unwinding runs `finally` blocks and `using` disposals. **Do not** use exceptions for ordinary control flow in hot loops—it is slower and obscures intent.\n\nDerive from `Exception` for domain errors when you need rich context; built-in types like `ArgumentOutOfRangeException` communicate misuse clearly.\n\n### Modern patterns\n\n`OperationCanceledException` integrates with `CancellationToken` for cooperative cancellation—do not swallow it in generic catch blocks.\n\nSome codebases layer a **Result**-style pattern for expected failures while still using exceptions for truly unexpected states. The `try`/`catch`/`finally` structure composes with `using` and `await using` for deterministic cleanup.\n\n```csharp\nusing System;\nusing System.Threading;\nusing System.Threading.Tasks;\n\nasync Task<int> FetchAsync(CancellationToken ct)\n{\n    await Task.Delay(100, ct);\n    return 7;\n}\n\ntry\n{\n    await FetchAsync(CancellationToken.None);\n}\ncatch (OperationCanceledException)\n{\n    // cooperative cancellation path\n}\n```\n",
   "exercises": [
     {
       "id": "errors_01",
       "title": "Return Error",
-      "description": "Define divide(a, b float64) (float64, error). Return error if b==0. Call with divide(10, 0) and handle error.",
+      "description": "Define divide(a, b double) (double, error). Return error if b==0. Call with divide(10, 0) and handle error.",
       "starter_code": "static double? Divide(double a, double b) => b == 0 ? null : a / b;",
       "expected_output": "Error: division by zero",
       "hints": [
-        "if b == 0 { return 0, errors.New(\"division by zero\") }"
+        "Nullable `double?` models optional success values without throwing.",
+        "`if (result is null)` gates user-facing error banners."
       ],
       "solution": "var err = Divide(10, 0);\nif (err is null) Console.WriteLine(\"Error: division by zero\");\n\nstatic double? Divide(double a, double b) => b == 0 ? null : a / b;"
     },
@@ -22,18 +23,21 @@
       "starter_code": "class NotFoundError : Exception { public NotFoundError(string k) : base(\"not found: \" + k) { } }",
       "expected_output": "User not found",
       "hints": [
-        "Need to implement Unwrap() for errors.Is to work"
+        "Derive from `Exception` for domain failures; constructors chain `base(message)`.",
+        "`catch (NotFoundError)` isolates narrowly typed failures.",
+        "`when` clauses filter sentinel messages if necessary."
       ],
       "solution": "try { FindUser(\"bob\"); } catch (NotFoundError) { Console.WriteLine(\"User not found\"); }\n\nvoid FindUser(string name) { if (name != \"alice\") throw new NotFoundError(name); }\n\nclass NotFoundError : Exception { public NotFoundError(string k) : base(\"not found: \" + k) { } }"
     },
     {
       "id": "errors_03",
-      "title": "fmt.Errorf Wrapping",
-      "description": "Create a function wrapError() that uses fmt.Errorf to wrap an error with context.",
+      "title": "Console.WriteLine Wrapping",
+      "description": "Create a function wrapError() that uses Console.WriteLine to wrap an error with context.",
       "starter_code": "// wrap base error",
       "expected_output": "wrapped: base error",
       "hints": [
-        "Use %w to wrap the error"
+        "Inner exceptions mimic wrapped errors: `new Exception(\"context\", inner)`.",
+        "Surface readable `.Message` for console verification."
       ],
       "solution": "var baseErr = new Exception(\"base error\");\nvar err = new Exception(\"wrapped: \" + baseErr.Message, baseErr);\nConsole.WriteLine(err.Message);"
     },
@@ -44,7 +48,9 @@
       "starter_code": "class ValidationError : Exception { public string Field; public ValidationError(string f) : base(\"invalid email\") => Field = f; }",
       "expected_output": "email",
       "hints": [
-        "errors.As(err, &ve) extracts the error into ve"
+        "Attach metadata via custom exception fields (`public string Field`).",
+        "Catch exact type rather than blindly string parsing.",
+        "`AggregateException` drills may require `.Flatten()`—not here unless starter indicates."
       ],
       "solution": "try { throw new ValidationError(\"email\"); }\ncatch (ValidationError ve) { Console.WriteLine(ve.Field); }\n\nclass ValidationError : Exception { public string Field; public ValidationError(string f) : base(\"invalid email\") => Field = f; }"
     },
@@ -55,7 +61,8 @@
       "starter_code": "static int SafeDivide(int a, int b) => a / b;",
       "expected_output": "5",
       "hints": [
-        "return a / b, nil"
+        "`static int` helpers stay non-null when failures are not modeled for this stdout drill.",
+        "Print successful computation output directly."
       ],
       "solution": "Console.WriteLine(SafeDivide(10, 2));\n\nstatic int SafeDivide(int a, int b) => a / b;"
     },
@@ -66,8 +73,8 @@
       "starter_code": "var err = new Exception(\"reading data.txt: disk full\", new Exception(\"disk full\"));",
       "expected_output": "reading data.txt: disk full\nDisk is full",
       "hints": [
-        "Use %w verb in fmt.Errorf to wrap the underlying error",
-        "errors.Is(err, target) checks if err wraps or equals target"
+        "Walk `.InnerException` chain to correlate nested failure reasons.",
+        "Message composition mirrors layering (`reading file: disk full`)."
       ],
       "solution": "var err = new Exception(\"reading data.txt: disk full\", new Exception(\"disk full\"));\nConsole.WriteLine(err.Message);\nif (err.InnerException?.Message == \"disk full\") Console.WriteLine(\"Disk is full\");"
     },
@@ -78,9 +85,8 @@
       "starter_code": "const string ErrNotFound = \"not found\";\n// compare",
       "expected_output": "not found",
       "hints": [
-        "var ErrNotFound = errors.New(\"not found\")",
-        "return \"\", ErrNotFound",
-        "if errors.Is(err, ErrNotFound)"
+        "`const string` sentinel names compare cleanly in `catch` filters.",
+        "Throw `InvalidOperationException` (or derive) bearing sentinel `.Message`."
       ],
       "solution": "const string ErrNotFound = \"not found\";\nstring GetItem(int id) => id < 0 ? throw new InvalidOperationException(ErrNotFound) : \"item\";\ntry { GetItem(-1); } catch (InvalidOperationException e) when (e.Message == ErrNotFound) { Console.WriteLine(ErrNotFound); }"
     }

@@ -1,8 +1,8 @@
 {
   "id": "packages",
   "title": "Packages",
-  "description": "Learn about package declaration, importing, exporting, and init functions in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Packages (concept)\n\nReal projects use packages and imports; exercises use `static` methods in `Main` as stand-ins.\n",
+  "description": "package declarations, imports, and visibility",
+  "theory": "\n### Namespaces and visibility\nPackages group related types and control access: `public` types are visible everywhere their module exports allow; package-private types are confined to their package. Mirror your module structure with directory layout (`com/example/app/Main.java` for `package com.example.app;`).\n\nWildcard imports (`import java.util.*;`) reduce import churn but can obscure names; many teams prefer explicit imports for readability in reviews.\n\n### Modules (JPMS)\n`module-info.java` declares module names, exports, and `requires` clauses. Even if you stay on the classpath during migration, understanding modules helps when adopting libraries that are modular JARs.\n\n```java\npackage com.example.greet;\n\npublic final class Greeter {\n    public String hello(String name) {\n        return \"Hello, \" + name;\n    }\n}\n```\n",
   "exercises": [
     {
       "id": "packages_01",
@@ -11,8 +11,8 @@
       "starter_code": "public class Main {\n    static void greet() {}\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "Hello from utils",
       "hints": [
-        "Use package utils at the top of utils.go",
-        "Define func Greet() that prints a message"
+        "`static void greet()` prints `\"Hello from utils\"` — call from `main`.",
+        "Single-class packaging mirrors the simplified exercise."
       ],
       "solution": "public class Main {\n    static void greet() { System.out.println(\"Hello from utils\"); }\n    public static void main(String[] args) { greet(); }\n}\n"
     },
@@ -23,9 +23,7 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "12",
       "hints": [
-        "Use import \"math\" to import the math package",
-        "Call math.Sqrt(144)",
-        "Use System.out.println to print the result"
+        "`System.out.println((int) Math.sqrt(144));`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println((int) Math.sqrt(144));\n    }\n}\n"
     },
@@ -36,8 +34,7 @@
       "starter_code": "public class Main {\n    static int count;\n    static void increment() {}\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "Count: 0\nIncremented: 1",
       "hints": [
-        "Export by capitalizing: Count, Increment (Go exports anything starting with uppercase)",
-        "In main, use counter.Count and counter.Increment()"
+        "Print `Count:` then call `increment()` then print updated count — fields are `static` in the sample."
       ],
       "solution": "public class Main {\n    static int count;\n    static void increment() { count++; }\n    public static void main(String[] args) {\n        System.out.println(\"Count: \" + count);\n        increment();\n        System.out.println(\"Incremented: \" + count);\n    }\n}\n"
     },
@@ -48,9 +45,8 @@
       "starter_code": "public class Main {\n    static String version;\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "Version: 1.0.0",
       "hints": [
-        "Declare Version string in config package",
-        "Define func init() that assigns \"1.0.0\" to Version",
-        "init() runs automatically before main() when the package is imported"
+        "Read `version` static field initialized to `\"1.0.0\"`.",
+        "Print `Version: ` prefix."
       ],
       "solution": "public class Main {\n    static String version = \"1.0.0\";\n    public static void main(String[] args) {\n        System.out.println(\"Version: \" + version);\n    }\n}\n"
     },
@@ -61,32 +57,29 @@
       "starter_code": "public class Main {\n    static void format() {}\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "Formatted",
       "hints": [
-        "Define func Format() and func format() in formatter package",
-        "Only Format is accessible from main"
+        "Call the package-private-style `format()` that prints `Formatted`."
       ],
       "solution": "public class Main {\n    static void format() { System.out.println(\"Formatted\"); }\n    static void formatInternal() { System.out.println(\"internal\"); }\n    public static void main(String[] args) { format(); }\n}\n"
     },
     {
       "id": "packages_07",
       "title": "Import Alias",
-      "description": "Import the fmt package with the alias io, then use io.Println to print \"Hello\".",
+      "description": "Import the fmt package with the alias io, then use io.Println to System.out.println \"Hello\".",
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "Hello",
       "hints": [
-        "Use import io \"fmt\" to create an alias",
-        "Use io.Println(\"Hello\") instead of System.out.println"
+        "Print `\"Hello\"` with `System.out.println` — the exercise collapses “aliased print” into standard output."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello\");\n    }\n}\n"
     },
     {
       "id": "packages_06",
       "title": "Multiple Imports",
-      "description": "Import both fmt and strings packages. Use System.out.println with strings.ToUpper to print \"hello\" in uppercase.",
+      "description": "Import both fmt and strings packages. Use System.out.System.out.printlnln with strings.ToUpper to System.out.println \"hello\" in uppercase.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "HELLO",
       "hints": [
-        "strings.ToUpper(\"hello\") returns \"HELLO\"",
-        "System.out.println(strings.ToUpper(\"hello\"))"
+        "`\"hello\".toUpperCase()` → `HELLO` with `System.out.println`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"hello\".toUpperCase());\n    }\n}\n"
     }

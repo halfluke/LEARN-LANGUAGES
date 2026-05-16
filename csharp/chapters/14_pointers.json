@@ -1,8 +1,8 @@
 {
   "id": "pointers",
-  "title": "Pointers",
-  "description": "Learn about pointers, memory addresses, and how to work with reference types in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Unsafe and pointers\n\nMost code stays managed; **`unsafe`**, **`fixed`**, and **`nint`** exist for interop and performance.\n",
+  "title": "Unsafe code",
+  "description": "unsafe, pointers, and interop in C#",
+  "theory": "### References first\n\nMost C# code expresses indirection with managed references (`ref`, `out`, `in`) instead of raw pointers. These participate in the type system and are tracked by the GC when pointing to managed objects.\n\n### Unsafe code\n\n`unsafe` contexts allow pointer arithmetic (`T*`), `stackalloc` in wider scenarios, and interop with native libraries. You must enable unsafe code in the project file for those blocks. Keep unsafe regions small and well-encapsulated—usually behind interop layers.\n\n### Fixed and pinning\n\nTaking the address of a managed object’s data may require `fixed` to **pin** the object so the GC cannot move it while native code runs. P/Invoke declarations (`LibraryImport` / `DllImport`) marshal blittable types efficiently; strings and arrays may require marshalling attributes.\n\n```csharp\nusing System;\n\nclass Scalars\n{\n    public static void Bump(ref int x) => x++;\n\n    public static unsafe void PrintAddress(int* p) =>\n        Console.WriteLine((nuint)p);\n}\n```\n",
   "exercises": [
     {
       "id": "pointers_01",
@@ -11,43 +11,45 @@
       "starter_code": "using System;\n\nunsafe { int x = 42; int* ptr = &x; /* Console.WriteLine(*ptr); */ }",
       "expected_output": "42",
       "hints": [
-        "`unsafe` block required for pointers in C#."
+        "Wrap fixed blocks/`unsafe { int* ptr = &x; }` per project AllowUnsafeBlocks settings.",
+        "Dereference with `*ptr` for scalar printing when address text is undesired."
       ],
       "solution": "using System;\n\nunsafe\n{\n    int x = 42;\n    int* ptr = &x;\n    Console.WriteLine(*ptr);\n}"
     },
     {
       "id": "pointers_02",
       "title": "Dereference a Pointer",
-      "description": "Create a pointer to an int and use the * operator to access and print the value it points to.",
+      "description": "Create a pointer to an int and use the * operator to access and Console.WriteLine the value it points to.",
       "starter_code": "using System;\n\nunsafe { int value = 100; /* dereference */ }",
       "expected_output": "100",
       "hints": [
-        "Use ptr := &value to create a pointer",
-        "Use *ptr to dereference and get the value"
+        "Same `unsafe`/address-of pattern reinforces pointer basics.",
+        "Ensure `/unsafe` is enabled wherever required by the harness."
       ],
       "solution": "using System;\n\nunsafe\n{\n    int value = 100;\n    int* ptr = &value;\n    Console.WriteLine(*ptr);\n}"
     },
     {
       "id": "pointers_03",
       "title": "Pass Pointer to Function",
-      "description": "Write a function 'modify' that takes a pointer to int and doubles its value. Call it with a variable and print the result.",
+      "description": "Write a function 'modify' that takes a pointer to int and doubles its value. Call it with a variable and Console.WriteLine the result.",
       "starter_code": "// Modify(ref num);\n\nstatic void Modify(ref int p) { }",
       "expected_output": "10",
       "hints": [
-        "Inside modify, use *p = *p * 2 to double the value",
-        "Call modify(&num) to pass the address"
+        "Managed-friendly alternative: pass `ref int` so callee mutates callers without raw pointers.",
+        "Prefer `static void Modify(ref int p)` doubling in-place."
       ],
       "solution": "int num = 5;\nModify(ref num);\nConsole.WriteLine(num);\n\nstatic void Modify(ref int p) => p *= 2;"
     },
     {
       "id": "pointers_04",
       "title": "Use the new Keyword",
-      "description": "Use the 'new' keyword to allocate a new int pointer, assign a value to it, and print the dereferenced value.",
+      "description": "Use the 'new' keyword to allocate a new int pointer, assign a value to it, and Console.WriteLine the dereferenced value.",
       "starter_code": "using System;\n\nunsafe { /* int* ptr = new int; */ }",
       "expected_output": "99",
       "hints": [
-        "Use new(int) to allocate a new pointer",
-        "Use *ptr = 99 to assign a value"
+        "Pin unmanaged memory (`Marshal.AllocHGlobal`) when simulating heap pointers.",
+        "Always balance allocations with `.FreeHGlobal` in real programs.",
+        "Prefer `sizeof(int)` for clarity when requesting native buffers."
       ],
       "solution": "using System;\n\nunsafe\n{\n    int* ptr = (int*)System.Runtime.InteropServices.Marshal.AllocHGlobal(sizeof(int));\n    *ptr = 99;\n    Console.WriteLine(*ptr);\n    System.Runtime.InteropServices.Marshal.FreeHGlobal((IntPtr)ptr);\n}"
     },
@@ -58,32 +60,32 @@
       "starter_code": "// ref Person\n\nclass Person { public string Name = \"\"; }",
       "expected_output": "Bob",
       "hints": [
-        "p := &Person{Name: \"Bob\"}",
-        "Use p.Name to access field through pointer"
+        "Reference types/`class Person` idiomatically use managed references—not `*`—when possible.",
+        "Use object initializer syntax `{ Name = \"Bob\" }` when constructing instances."
       ],
       "solution": "var p = new Person { Name = \"Bob\" };\nConsole.WriteLine(p.Name);\n\nclass Person { public string Name = \"\"; }"
     },
     {
       "id": "pointers_07",
       "title": "Nil Pointer Check",
-      "description": "Declare a pointer to int named ptr without initializing it. Check if it is nil and print \"nil\" or the dereferenced value.",
+      "description": "Declare a pointer to int named ptr without initializing it. Check if it is nil and Console.WriteLine \"nil\" or the dereferenced value.",
       "starter_code": "using System;\n\nunsafe { int* ptr = null; /* check */ }",
       "expected_output": "nil",
       "hints": [
-        "Use var ptr *int to declare a nil pointer",
-        "Use if ptr == nil to check"
+        "Compare unmanaged pointers against `null` before dereferencing.",
+        "Print literal nil when graders expect pointer-absent text."
       ],
       "solution": "using System;\n\nunsafe\n{\n    int* ptr = null;\n    Console.WriteLine(ptr == null ? \"nil\" : ptr->ToString());\n}"
     },
     {
       "id": "pointers_06",
       "title": "Swap with Pointers",
-      "description": "Write a function swap(a, b *int) that swaps the values at the two pointers. Call with x:=5, y:=10 and print after swapping.",
+      "description": "Write a function swap(a, b *int) that swaps the values at the two pointers. Call with x:=5, y:=10 and Console.WriteLine after swapping.",
       "starter_code": "// Swap(ref x, ref y);\n\nstatic void Swap(ref int a, ref int b) { }",
       "expected_output": "10 5",
       "hints": [
-        "temp := *a; *a = *b; *b = temp",
-        "Call swap(&x, &y)"
+        "Swap via `(a, b) = (b, a)` with `ref` parameters or traditional temp variable juggling.",
+        "Keep method `static void Swap(ref int a, ref int b)` for readability."
       ],
       "solution": "int x = 5, y = 10;\nSwap(ref x, ref y);\nConsole.WriteLine($\"{x} {y}\");\n\nstatic void Swap(ref int a, ref int b) { (a, b) = (b, a); }"
     }

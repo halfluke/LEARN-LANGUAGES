@@ -1,8 +1,8 @@
 {
   "id": "pointers",
-  "title": "Pointers",
-  "description": "Learn about pointers, memory addresses, and how to work with reference types in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References\n\nLists and mutable objects model indirection; avoid printing `id()` unless the exercise asks for identity.\n",
+  "title": "References and identity",
+  "description": "Object identity, aliasing, and optional None",
+  "theory": "### References without pointer syntax\n\nPython hides addresses behind references. Use `id(obj)` when you need identity,\nand `is` (not `==`) to test whether two names refer to the **same** object.\nSmall integers and interned strings may be cached—do not rely on accidental\nidentity for equality logic.\n\n### Mutability pitfalls\n\nMutable defaults and shared containers are the usual footguns. Immutable objects\n(numbers, strings, tuples of immutables) hash safely and behave like values for\ndict keys and set membership.\n\n```python\na = []\nb = a\nassert a is b\n\nx = 256\ny = 256\nassert x is y  # CPython may intern small ints — do not depend on this casually\n\nt1 = (1, \"ok\")\nt2 = (1, \"ok\")\nassert t1 is not t2 and t1 == t2\n```\n",
   "exercises": [
     {
       "id": "pointers_01",
@@ -11,8 +11,7 @@
       "starter_code": "x = 42\n# print the int value shown in the lesson (42)\n",
       "expected_output": "42",
       "hints": [
-        "Use ptr *int to declare a pointer to int",
-        "Use ptr = &x to assign the address of x to ptr"
+        "printing 42 fulfills exercise despite surrounding commentary."
       ],
       "solution": "print(42)\n"
     },
@@ -23,8 +22,7 @@
       "starter_code": "value = 100\n",
       "expected_output": "100",
       "hints": [
-        "Use ptr := &value to create a pointer",
-        "Use *ptr to dereference and get the value"
+        "print(value) directly reveals bound integer digits."
       ],
       "solution": "value = 100\nprint(value)\n"
     },
@@ -35,8 +33,8 @@
       "starter_code": "def modify(p):\n    pass\n\nnum = 5\n",
       "expected_output": "10",
       "hints": [
-        "Inside modify, use *p = *p * 2 to double the value",
-        "Call modify(&num) to pass the address"
+        "Wrap ints in singleton lists like [5] to mutate across function frames.",
+        "modify multiplies slot zero before observing num[0]."
       ],
       "solution": "def modify(p):\n    p[0] *= 2\n\nnum = [5]\nmodify(num)\nprint(num[0])\n"
     },
@@ -47,8 +45,7 @@
       "starter_code": "ptr = [0]\n",
       "expected_output": "99",
       "hints": [
-        "Use new(int) to allocate a new pointer",
-        "Use *ptr = 99 to assign a value"
+        "Set ptr literal [99]; print(ptr[0]) reads stored cell."
       ],
       "solution": "ptr = [99]\nprint(ptr[0])\n"
     },
@@ -59,8 +56,7 @@
       "starter_code": "class Person:\n    def __init__(self, name): self.name = name\n\n",
       "expected_output": "Bob",
       "hints": [
-        "p := &Person{Name: \"Bob\"}",
-        "Use p.Name to access field through pointer"
+        "Instantiate Person with name keyword then print attributes."
       ],
       "solution": "class Person:\n    def __init__(self, name): self.name = name\n\np = Person(\"Bob\")\nprint(p.name)\n"
     },
@@ -71,8 +67,7 @@
       "starter_code": "ptr = None\n",
       "expected_output": "nil",
       "hints": [
-        "Use ptr *int to declare a nil pointer",
-        "Use if ptr == nil to check"
+        "\"nil\" sentinel prints when bindings equal None."
       ],
       "solution": "ptr = None\nprint(\"nil\" if ptr is None else ptr)\n"
     },
@@ -83,8 +78,7 @@
       "starter_code": "def swap(a, b):\n    pass\n\n",
       "expected_output": "10 5",
       "hints": [
-        "temp := *a; *a = *b; *b = temp",
-        "Call swap(&x, &y)"
+        "Swap single-element wrappers using tuple unpacking on indices."
       ],
       "solution": "def swap(a, b):\n    a[0], b[0] = b[0], a[0]\n\nx, y = [5], [10]\nswap(x, y)\nprint(x[0], y[0])\n"
     }

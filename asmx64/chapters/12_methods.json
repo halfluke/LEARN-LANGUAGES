@@ -2,7 +2,7 @@
   "id": "methods",
   "title": "Method-style calls",
   "description": "Passing a receiver pointer in `rdi` like the System V C++ ABI",
-  "theory": "## Receiver in `rdi`\n\nMany ABIs pass the **this** pointer as the first argument. Here small procedures read from the object pointer in `rdi` and issue `write`.\n",
+  "theory": "### Code plus explicit `this`\n\nThere are no methods in the language sense. You simulate them with **plain functions**\nthat take an extra argument—the address of the “receiver” struct—in **`rdi`** following\nthe AMD64 ABI, or whichever register your mini-convention uses consistently.\n\nThis mirrors what C++ lowers to before vtables enter the picture: **`adjust_field`** is\njust a named block ending in **`ret`**, and the “object” is memory you pass by pointer.\n\n```nasm\n; void bump(ptr) — ptr in rdi, increments dword at offset 0\nbump:\n    inc dword [rdi]\n    ret\n```\n\n### Shared helpers versus monolithic `_start`\n\nFactoring **`write_line`**-style helpers keeps **`_start`** readable and matches how real\nprograms isolate syscalls behind tiny wrappers. Document which registers each helper\npreserves so callers know what remains valid across **`call`**.\n",
   "exercises": [
     {
       "id": "methods_01",

@@ -1,53 +1,51 @@
 {
   "id": "concurrency",
   "title": "Concurrency",
-  "description": "Goroutines and channels in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Threads\n\n`Thread`, `ExecutorService`, and joining tasks for deterministic stdout.\n",
+  "description": "Threads, locks, and coordinating work in Java",
+  "theory": "\n### Threads, pools, and safe publication\nUse `ExecutorService` or its factory helpers to bound concurrency instead of creating unbounded `new Thread(...)` storms. Share data across threads through immutable objects, `volatile` fields when appropriate for visibility, `java.util.concurrent` locks and atomics, or higher-level concurrent collections.\n\nDocument thread-safety promises: many standard collections are not safe for concurrent mutation without external synchronization.\n\n### Structured tasks and async composition\n`CompletableFuture` chains dependent async work with explicit executors when you need to keep bounded parallelism. For CPU-bound divide-and-conquer problems, `ForkJoinPool` can help, but measure before assuming speedups.\n\nOn **Java 21+**, `Executors.newVirtualThreadPerTaskExecutor()` and structured concurrency previews further simplify I/O-heavy fan-out; on **Java 17**, bounded thread pools remain the portable default.\n\n```java\nExecutorService pool = Executors.newFixedThreadPool(4);\ntry {\n    var f1 = pool.submit(this::downloadA);\n    var f2 = pool.submit(this::downloadB);\n    combine(f1.get(), f2.get());\n} finally {\n    pool.shutdown();\n}\n```\n",
   "exercises": [
     {
       "id": "concurrency_01",
-      "title": "Goroutine",
-      "description": "Launch Java sayHello(). Print main done. Use time.Sleep to let Javaroutine run.",
+      "title": "thread",
+      "description": "Launch Java sayHello(). Print main done. Use time.Sleep to let thread run.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "main done\nHello!",
       "hints": [
-        "go sayHello()",
-        "time.Sleep(100 * time.Millisecond)"
+        "Start `new Thread(() -> sayHello(done)).start();` use `CountDownLatch` so `main` can exit after child prints.",
+        "Print `main done` before waiting, then `Hello!`."
       ],
       "solution": "import java.util.concurrent.CountDownLatch;\n\npublic class Main {\n    static void sayHello(CountDownLatch done) {\n        try { Thread.sleep(50); } catch (InterruptedException e) {}\n        System.out.println(\"Hello!\");\n        done.countDown();\n    }\n    public static void main(String[] args) throws Exception {\n        CountDownLatch done = new CountDownLatch(1);\n        new Thread(() -> sayHello(done)).start();\n        System.out.println(\"main done\");\n        done.await();\n    }\n}\n"
     },
     {
       "id": "concurrency_02",
       "title": "Channel",
-      "description": "Create ch := make(chan string). Send \"ping\" to ch in Javaroutine, receive and print.",
+      "description": "Create ch = a queue. Send \"ping\" to ch in thread, receive and System.out.println.",
       "starter_code": "import java.util.concurrent.ArrayBlockingQueue;\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "ping",
       "hints": [
-        "go func() { ch <- \"ping\" }()",
-        "msg := <-ch; System.out.println(msg)"
+        "`ArrayBlockingQueue<String>` with producer `put` and main `take`."
       ],
       "solution": "import java.util.concurrent.ArrayBlockingQueue;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ArrayBlockingQueue<String> ch = new ArrayBlockingQueue<>(1);\n        new Thread(() -> { try { ch.put(\"ping\"); } catch (InterruptedException e) {} }).start();\n        System.out.println(ch.take());\n    }\n}\n"
     },
     {
       "id": "concurrency_03",
       "title": "Buffered Channel",
-      "description": "Create a buffered channel with capacity 2. Send 10 and 20 without blocking. Then receive and print both.",
+      "description": "Create a buffered channel with capacity 2. Send 10 and 20 without blocking. Then receive and System.out.println both.",
       "starter_code": "import java.util.concurrent.ArrayBlockingQueue;\npublic class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "10 20",
       "hints": [
-        "ch <- 10; ch <- 20; then <-ch; <-ch"
+        "Capacity-2 queue; `put(10)`, `put(20)`, then print both values taken."
       ],
       "solution": "import java.util.concurrent.ArrayBlockingQueue;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ArrayBlockingQueue<Integer> ch = new ArrayBlockingQueue<>(2);\n        ch.put(10);\n        ch.put(20);\n        System.out.println(ch.take() + \" \" + ch.take());\n    }\n}\n"
     },
     {
       "id": "concurrency_04",
       "title": "Select Statement",
-      "description": "Create two channels ch1 and ch2. Send to ch1 in Javaroutine after 10ms. Use select to receive whichever comes first.",
+      "description": "Create two channels ch1 and ch2. Send to ch1 in thread after 10ms. Use select to receive whichever comes first.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "from ch1",
       "hints": [
-        "go func() { time.Sleep(10*time.Millisecond); ch1 <- \"from ch1\" }()",
-        "select { case msg := <-ch1: ... }"
+        "Second thread `sleep`s then `put` on the queue; main blocks on `take`."
       ],
       "solution": "import java.util.concurrent.ArrayBlockingQueue;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ArrayBlockingQueue<String> ch1 = new ArrayBlockingQueue<>(1);\n        new Thread(() -> {\n            try { Thread.sleep(10); ch1.put(\"from ch1\"); } catch (InterruptedException e) {}\n        }).start();\n        System.out.println(ch1.take());\n    }\n}\n"
     },
@@ -58,32 +56,29 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "1\n2\n3",
       "hints": [
-        "for n := range ch prints until closed"
+        "Producer thread puts `1,2,3`; consumer loop `take`s three times printing each."
       ],
       "solution": "import java.util.concurrent.ArrayBlockingQueue;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ArrayBlockingQueue<Integer> ch = new ArrayBlockingQueue<>(3);\n        new Thread(() -> { for (int n : new int[]{1,2,3}) try { ch.put(n); } catch (InterruptedException e) {} }).start();\n        for (int i = 0; i < 3; i++) System.out.println(ch.take());\n    }\n}\n"
     },
     {
       "id": "concurrency_07",
       "title": "Fan-In Pattern",
-      "description": "Create two Javaroutines that each send a string to a shared channel. Use a third Javaroutine to fan-in (read) from the channel and print received values. Close the channel when both senders are done.",
+      "description": "Create two threads that each send a string to a shared channel. Use a third thread to fan-in (read) from the channel and System.out.println received values. Close the channel when both senders are done.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "hello\nworld",
       "hints": [
-        "Use wg.Add(2) for the two sender goroutines",
-        "defer wg.Done() in each goroutine",
-        "In a third goroutine, defer close(ch) after wg.Wait()",
-        "Range over ch to collect all values"
+        "Two threads `put` `\"hello\"` and `\"world\"`; main reads twice (order may follow start order in sample)."
       ],
       "solution": "import java.util.concurrent.ArrayBlockingQueue;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ArrayBlockingQueue<String> ch = new ArrayBlockingQueue<>(2);\n        Thread t1 = new Thread(() -> {\n            try { ch.put(\"hello\"); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }\n        });\n        Thread t2 = new Thread(() -> {\n            try { ch.put(\"world\"); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }\n        });\n        t1.start();\n        t1.join();\n        t2.start();\n        t2.join();\n        System.out.println(ch.take());\n        System.out.println(ch.take());\n    }\n}\n"
     },
     {
       "id": "concurrency_06",
       "title": "WaitGroup",
-      "description": "Use sync.WaitGroup to launch 3 Javaroutines that each print their number, then wait for all to complete before printing \"done\".",
+      "description": "Use sync.WaitGroup to launch 3 threads that each System.out.println their number, then wait for all to complete before System.out.printlning \"done\".",
       "starter_code": "public class Main {\n    public static void main(String[] args) {}\n}\n",
       "expected_output": "1\n2\n3\ndone",
       "hints": [
-        "wg.Add(1); defer wg.Done(); wg.Wait()"
+        "Sequential `start/join` per iteration or `CountDownLatch` for three tasks; print `1\\\\n2\\\\n3\\\\ndone`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) throws Exception {\n        for (int i = 1; i <= 3; i++) {\n            int n = i;\n            Thread t = new Thread(() -> System.out.println(n));\n            t.start();\n            t.join();\n        }\n        System.out.println(\"done\");\n    }\n}\n"
     }

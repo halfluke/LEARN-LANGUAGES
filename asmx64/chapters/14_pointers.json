@@ -2,7 +2,7 @@
   "id": "pointers",
   "title": "Pointers & memory",
   "description": "Loads, stores, and indirection in 64-bit mode",
-  "theory": "## Addresses\n\nUse `lea` for addresses without touching memory; use `mov` with brackets to **dereference**. Keep pointer size at **64 bits** unless you intentionally work in 32-bit domains.\n",
+  "theory": "### Addresses with `lea` versus `mov`\n\n**`lea reg, [base + index*scale + disp]`** computes an address without accessing memory.\n**`mov reg, [addr]`** dereferences. Confusing the two is like mixing up **`&x`** and **`x`**:\nboth are legitimate, but only one loads the value.\n\nPointer-sized quantities are **64 bits** (`qword`). When you store an address of a label,\nuse **`dq label`** in **`.data`** and load it with **`mov rax, qword [rel ptr]`**.\n\n### Stores and reloads\n\n```nasm\nsection .bss\n    slot: resb 1\nsection .data\n    pslot: dq slot\nsection .text\n    mov rax, qword [rel pslot]\n    mov byte [rax], 'Z'\n```\n\n### Aliasing and TBAs\n\nTwo pointers that resolve to the same address alias the same memory. The CPU will happily\nperform stores you did not logically expect if you computed two different paths to one\nbacking object—exactly why higher-level languages spend so much effort modeling aliasing.\n",
   "exercises": [
     {
       "id": "pointers_01",

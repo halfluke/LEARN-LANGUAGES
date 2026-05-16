@@ -1,17 +1,18 @@
 {
   "id": "testing",
   "title": "Testing",
-  "description": "Writing tests in Go with the testing package",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Testing\n\nReal code uses xUnit/NUnit; stdout exercises here mirror assertions as printable outcomes.\n",
+  "description": "Writing and running tests with the standard library",
+  "theory": "### xUnit-style building blocks\n\n.NET testing commonly uses **xUnit**, **NUnit**, or **MSTest**. `[Fact]` marks a single test; `[Theory]` pairs `[InlineData]` or member data with parameters. Assertions come from `Assert.*` helpers or fluent libraries like FluentAssertions.\n\n### Isolation and fakes\n\nPrefer testing through small, injectable dependencies (constructor injection) so you can substitute fakes in tests. `Microsoft.Extensions.DependencyInjection` is the typical container in ASP.NET Core apps.\n\n### Coverage and determinism\n\nUse deterministic clocks or seeds when testing time or randomness. Separate pure logic from IO so tests stay fast and reliable.\n\n```csharp\nusing Xunit;\n\nnamespace Tests;\n\npublic class MathTests\n{\n    [Fact]\n    public void Adds()\n    {\n        Assert.Equal(4, 2 + 2);\n    }\n\n    [Theory]\n    [InlineData(1, 2, 3)]\n    [InlineData(-1, 1, 0)]\n    public void AddsMany(int a, int b, int sum) =>\n        Assert.Equal(sum, a + b);\n}\n```\n",
   "exercises": [
     {
       "id": "testing_01",
       "title": "Basic test (stdout)",
-      "description": "Implement `Sum` and print `Sum(2, 3)` (same intent as the Rust `#[test]` exercise).",
+      "description": "Implement `Sum` and Console.WriteLine `Sum(2, 3)` (same intent as the Rust `#[test]` exercise).",
       "starter_code": "static int Sum(int a, int b) => 0;\nConsole.WriteLine(Sum(2, 3));\n",
       "expected_output": "5",
       "hints": [
-        "Return `a + b` from `Sum`."
+        "Implement `Sum` as pure `static int`.",
+        "Emit results through `Console.WriteLine` matching automated stdout checks."
       ],
       "solution": "static int Sum(int a, int b) => a + b;\nConsole.WriteLine(Sum(2, 3));\n"
     },
@@ -22,7 +23,8 @@
       "starter_code": "static int Multiply(int a, int b) => 0;\n// Console.WriteLine($\"{Multiply(2,3)} {Multiply(0,5)} {Multiply(-1,4)}\");\n",
       "expected_output": "6 0 -4",
       "hints": [
-        "Return `a * b`."
+        "Return `a * b` from `Multiply` for each table row.",
+        "Single-line interpolation keeps formatting aligned with graders."
       ],
       "solution": "static int Multiply(int a, int b) => a * b;\nConsole.WriteLine($\"{Multiply(2, 3)} {Multiply(0, 5)} {Multiply(-1, 4)}\");\n"
     },
@@ -33,29 +35,32 @@
       "starter_code": "static int? Divide(int a, int b) => default;\n// if (...) Console.Write(\"ok\");\n",
       "expected_output": "ok",
       "hints": [
-        "Return `null` when `b == 0`."
+        "Return `int? null` whenever division by zero lurks.",
+        "Pattern-match `is null` and compare concrete ints for affirmative prints."
       ],
       "solution": "static int? Divide(int a, int b) => b == 0 ? null : a / b;\nif (Divide(10, 2) == 5 && Divide(10, 0) is null) Console.Write(\"ok\");\n"
     },
     {
       "id": "testing_04",
       "title": "Error message check (stdout)",
-      "description": "If `Validate(-5)` returns an error message containing `negative`, print `yes`; else print `no`.",
+      "description": "If `Validate(-5)` returns an error message containing `negative`, Console.WriteLine `yes`; else Console.WriteLine `no`.",
       "starter_code": "static string Validate(int age) => \"\";\n// Console.Write(...)\n",
       "expected_output": "yes",
       "hints": [
-        "Return `\"age cannot be negative\"` when `age < 0`."
+        "`string.Contains(\"negative\", StringComparison.Ordinal)` validates message substrings reliably.",
+        "Return descriptive messages from validation helpers."
       ],
       "solution": "static string Validate(int age) => age < 0 ? \"age cannot be negative\" : \"ok\";\nConsole.Write(Validate(-5).Contains(\"negative\") ? \"yes\" : \"no\");\n"
     },
     {
       "id": "testing_05",
       "title": "Hot path loop (stdout)",
-      "description": "After calling `Sum(2,3)` ten thousand times in a loop, print `done`.",
+      "description": "After calling `Sum(2,3)` ten thousand times in a loop, Console.WriteLine `done`.",
       "starter_code": "static int Sum(int a, int b) => a + b;\n// for (...)\nConsole.Write(\"done\");\n",
       "expected_output": "done",
       "hints": [
-        "Keep `Sum` trivial; the loop is the point."
+        "Micro-benchmark loops should discard results (`_ = …`) unless needed.",
+        "`10_000` underscore separators aid readability."
       ],
       "solution": "static int Sum(int a, int b) => a + b;\nfor (var i = 0; i < 10_000; i++) _ = Sum(2, 3);\nConsole.Write(\"done\");\n"
     }

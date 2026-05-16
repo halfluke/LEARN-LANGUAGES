@@ -2,7 +2,7 @@
   "id": "arrays",
   "title": "Arrays in .data",
   "description": "Contiguous bytes and indexed addressing modes",
-  "theory": "## Contiguous storage\n\nArrays in assembly are mostly **labels + stride**. Use `base + index*scale + disp` addressing (`[arr + rbx]`) to walk elements.\n",
+  "theory": "### Contiguous bytes, words, and quadwords\n\nAn **array** in assembly is mostly an address plus a stride. You define storage with\n**`db`**, **`dw`**, **`dd`**, or **`dq`** and refer to elements with indexed addressing\nmodes such as **`byte [array + rcx]`** or **`qword [array + rcx*8]`**.\n\nThe **`equ`** pseudo-op is handy for sizes (`len equ $ - msg`) but remember **`$`**\nevaluates at assembly time, so it captures the distance from the label’s base address\nat the point where it appears in the source.\n\n### Indexing and bounds\n\nHardware does not check array bounds: an out-of-range index silently reads or clobbers\nadjacent memory. In learning exercises you compute indices carefully; in production you\nprove them safe in a higher layer or insert explicit checks.\n\n```nasm\nsection .data\n    scores: db 10, 20, 30\n\nsection .text\n; rcx = logical index 0..2\n    movzx eax, byte [rel scores + rcx]\n```\n\n### Alignment and performance\n\nNatural alignment (`dd` on 4-byte boundaries, `dq` on 8-byte boundaries) avoids split\naccess penalties on some cores. NASM lays out items sequentially; insert explicit **`align`**\ndirectives when you care about cache-line or SIMD alignment even in userspace samples.\n",
   "exercises": [
     {
       "id": "arrays_01",

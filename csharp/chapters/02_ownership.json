@@ -1,39 +1,42 @@
 {
   "id": "ownership",
-  "title": "Values, copies, and references (Go)",
-  "description": "Go has garbage collection and no Rust-style ownership, but values vs pointers still shape how data is shared.",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References vs values in C#\n\nC# is GC-backed like Go. **`string`** is a reference type but behaves like a value for equality on content; small **`struct`** types copy by value. Use this chapter to connect Rust’s move/clone vocabulary to C#’s rules.\n",
+  "title": "References vs values",
+  "description": "Value types, reference types, and garbage collection in C#",
+  "theory": "### Value vs reference semantics\n\nC# does not use Rust-style ownership moves on ordinary class instances. Instead, assignment of a reference type copies the *reference* (a small pointer-like value), so two variables can alias the same object on the heap. Value types copy their entire payload unless you pass them with `ref`, `in`, or `out`.\n\nstructs are value types; **mutating methods** on a struct often require the instance to be a variable, not a temporary, because mutating a copy would hide bugs. **readonly struct** and `readonly` members communicate immutability intent and help the compiler optimize.\n\n### Garbage collection and lifetime\n\nYou rarely `free` memory by hand. The garbage collector reclaims unreachable objects. That means “ownership” in a C# course is really **resource discipline**: avoid keeping large graphs reachable longer than needed, dispose `IDisposable` where appropriate, and understand that `using` statements translate to deterministic cleanup for unmanaged handles.\n\n### Boxing and copies\n\nPutting a value type into a location typed as `object` or an interface it implements causes **boxing**, which allocates on the heap. Modern APIs prefer generics (`List<int>`) to avoid repeated boxing. Where you need both performance and abstraction, `Span<T>` and generic constraints help.\n\n```csharp\nusing System;\nusing System.Collections.Generic;\n\nvar numbers = new List<int> { 1, 2, 3 }; // no boxing for int elements\n\nobject boxed = 42; // int boxed as object\n\nSpan<int> stackInts = stackalloc int[3];\nstackInts[0] = 7;\n```\n",
   "exercises": [
     {
       "id": "ownership_01",
       "title": "String reassignment",
-      "description": "Assign `s := \"hi\"`, assign `t := s`, print `t` with `fmt.Print` (no newline).",
+      "description": "Assign `s = \"hi\"`, assign `t = s`, Console.WriteLine `t` with `Console.WriteLine` (no newline).",
       "starter_code": "var s = \"hi\";\n// var t = s;\n// Console.Write(t);",
       "expected_output": "hi",
       "hints": [
-        "`string` assignment copies the reference; content is immutable."
+        "`string` is immutable; assigning `t = s` copies the reference, not heap bytes.",
+        "Use `Console.Write` without a newline when the exercise expects glued output."
       ],
       "solution": "var s = \"hi\";\nvar t = s;\nConsole.Write(t);"
     },
     {
       "id": "ownership_02",
       "title": "Slice header copy",
-      "description": "Create `s := []int{1, 2}`, assign `t := s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `fmt.Print` (no space, no newline) → `92`.",
+      "description": "Create `s = list[1, 2}`, assign `t = s`, set `t[0] = 9`, Console.WriteLine `s[0]` and `s[1]` concatenated as digits with `Console.WriteLine` (no space, no newline) → `92`.",
       "starter_code": "var s = new[] { 1, 2 };\n// var t = s;\n// t[0] = 9;\n// Console.Write($\"{s[0]}{s[1]}\");",
       "expected_output": "92",
       "hints": [
-        "Arrays are reference types."
+        "Arrays/`int[]` are reference types—aliasing reflects mutations through either variable.",
+        "Format digits with interpolated strings or chained `Console.Write`."
       ],
       "solution": "var s = new[] { 1, 2 };\nvar t = s;\nt[0] = 9;\nConsole.Write($\"{s[0]}{s[1]}\");"
     },
     {
       "id": "ownership_03",
       "title": "Int copy",
-      "description": "`a := 3`, `b := a`, increment `b` with `b++`, print `a` and `b` space-separated with `fmt.Print` (no trailing newline).",
+      "description": "`a = 3`, `b = a`, increment `b` with `b++`, Console.WriteLine `a` and `b` space-separated with `Console.WriteLine` (no trailing newline).",
       "starter_code": "var a = 3;\n// var b = a;\n// b++;\n// Console.Write($\"{a} {b}\");",
       "expected_output": "3 4",
       "hints": [
-        "`int` copies by value."
+        "`int` assigns by value—mutating `b` never changes `a`.",
+        "Postfix `++` updates the local integer copy."
       ],
       "solution": "var a = 3;\nvar b = a;\nb++;\nConsole.Write($\"{a} {b}\");"
     }

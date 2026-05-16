@@ -1,39 +1,42 @@
 {
   "id": "ownership",
-  "title": "Values, copies, and references (Go)",
-  "description": "Go has garbage collection and no Rust-style ownership, but values vs pointers still shape how data is shared.",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Aliasing in C\n\nPointers can alias the same storage; integers copy by value. Be explicit about who owns `malloc`’d memory.\n",
+  "title": "Aliasing and memory",
+  "description": "Pointers, copies, and who owns heap data in C",
+  "theory": "### Responsibility without a checker\n\nC has no ownership or borrow checker. You—the programmer—decide who allocates memory, who may access it, and who must free it. A pointer is merely an address; the compiler does not verify that it remains valid. That makes discipline essential: establish clear conventions for “caller allocates / callee fills” versus “callee allocates / caller frees,” and document lifetimes in function comments when the protocol is non-obvious.\n\nStack allocation is cheap and automatic: arrays and structs with automatic storage vanish when the block ends. Heap allocation via `malloc`, `calloc`, and `realloc` from `<stdlib.h>` survives until `free` is called; forgetting to free causes leaks, double-free is undefined behavior, and use-after-free is a classic security and stability bug.\n\n### Patterns that scale\n\nTo mimic “single owner,” pair every successful `malloc` with exactly one `free` on all code paths—use early returns carefully and consider a single cleanup label at the bottom of functions for complex control flow. When multiple parts of a program need read-only access, share `const` pointers; when mutation must be coordinated, serialize access with mutexes or clear thread roles. Resource Acquisition Is Initialization (RAII) is not built in, but you can approximate it with careful struct lifetimes and init/destroy function pairs.\n\n### Debugging ownership issues\n\nTools such as Valgrind, AddressSanitizer (ASan), and LeakSanitizer catch many heap mistakes at runtime. Defensive coding—initializing pointers to `NULL`, null-checking before dereference, and zeroing freed pointers in long-lived structures—reduces accidental reuse.\n\n```c\n#include <stdlib.h>\n\nvoid example(void) {\n    int *p = malloc(sizeof *p * 4);\n    if (!p) return;\n    p[0] = 1;\n    free(p);\n    p = NULL;\n}\n```\n",
   "exercises": [
     {
       "id": "ownership_01",
       "title": "String reassignment",
-      "description": "Assign `s := \"hi\"`, assign `t := s`, print `t` with `fmt.Print` (no newline).",
+      "description": "Assign `s = \"hi\"`, assign `t = s`, print `t` with `print` (no newline).",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    const char *s = \"hi\";\n    // const char *t = s;\n    // printf(\"%s\", t);\n    return 0;\n}\n",
       "expected_output": "hi",
       "hints": [
-        "Both pointers refer to the same string literal."
+        "`const char *t = s;` copies the pointer; both refer to the same `\"hi\"` literal.",
+        "`printf(\"%s\", t);` — no newline if the grader expects bare `hi`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *s = \"hi\";\n    const char *t = s;\n    printf(\"%s\", t);\n    return 0;\n}\n"
     },
     {
       "id": "ownership_02",
       "title": "Slice header copy",
-      "description": "Create `s := []int{1, 2}`, assign `t := s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `fmt.Print` (no space, no newline) → `92`.",
+      "description": "Create `s = list[1, 2}`, assign `t = s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `print` (no space, no newline) → `92`.",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int s[] = {1, 2};\n    int *t = s;\n    // t[0] = 9;\n    // printf(\"%d%d\", s[0], s[1]);\n    return 0;\n}\n",
       "expected_output": "92",
       "hints": [
-        "`t` aliases the array."
+        "`int *t = s;` means `t` aliases the same storage as `s`.",
+        "After `t[0] = 9;`, print `printf(\"%d%d\", s[0], s[1]);` for `92`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int s[] = {1, 2};\n    int *t = s;\n    t[0] = 9;\n    printf(\"%d%d\", s[0], s[1]);\n    return 0;\n}\n"
     },
     {
       "id": "ownership_03",
       "title": "Int copy",
-      "description": "`a := 3`, `b := a`, increment `b` with `b++`, print `a` and `b` space-separated with `fmt.Print` (no trailing newline).",
+      "description": "`a = 3`, `b = a`, increment `b` with `b++`, print `a` and `b` space-separated with `print` (no trailing newline).",
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int a = 3;\n    int b = a;\n    // b++;\n    // printf(\"%d %d\", a, b);\n    return 0;\n}\n",
       "expected_output": "3 4",
       "hints": [
-        "Only `b` changes."
+        "`int b = a;` copies the value; only `b++` changes `b`.",
+        "`printf(\"%d %d\", a, b);` → `3 4`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int a = 3;\n    int b = a;\n    b++;\n    printf(\"%d %d\", a, b);\n    return 0;\n}\n"
     }

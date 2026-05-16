@@ -1,0 +1,705 @@
+{
+  "arrays_01": {
+    "hints": [
+      "Replace placeholder values with ints 1..5 in arr.",
+      "Emit the bracketed spacer string exactly via print('[1 2 3 4 5]')."
+    ]
+  },
+  "arrays_02": {
+    "hints": [
+      "for v in nums walks Python lists sequentially.",
+      "print(v) one per iteration matches newline-separated expectations."
+    ]
+  },
+  "arrays_03": {
+    "hints": [
+      "len(arr) exposes element cardinality.",
+      "print(len(arr)) answers the tally question."
+    ]
+  },
+  "arrays_04": {
+    "hints": [
+      "Concatenate literals with [10, 20] + [0] * 3 to prefill blanks.",
+      "print('[10 20 0 0 0]') mirrors scripted harness wording."
+    ]
+  },
+  "arrays_05": {
+    "hints": [
+      "Nest loops: outer rows, inner vals.",
+      "print(val) on the inner iteration yields four sequential lines."
+    ]
+  },
+  "arrays_06": {
+    "hints": [
+      "Index with 0-based offsets.",
+      "print(arr[0], arr[2]) surfaces first and last entries."
+    ]
+  },
+  "arrays_07": {
+    "hints": [
+      "sum(arr) aggregates the provided ints.",
+      "print(sum(arr)) emits 150 for this fixture."
+    ]
+  },
+  "concurrency_01": {
+    "hints": [
+      "Print main acknowledgement before threading kicks off background work.",
+      "Thread(target=say_hello) plus start/join aligns Hello after main banner.",
+      "Brief sleep staggers greetings so joins observe completion."
+    ]
+  },
+  "concurrency_02": {
+    "hints": [
+      "queue.Queue provides thread-safe FIFO mailboxes.",
+      "Sender thread executes put(\"ping\") before main thread calls get blocking print."
+    ]
+  },
+  "concurrency_03": {
+    "hints": [
+      "Bounded Queue(maxsize=2) admits two enqueue operations inline.",
+      "Sequential get emits both integers space-separated."
+    ]
+  },
+  "concurrency_04": {
+    "hints": [
+      "Spawn delayed producer posting into ch1 after sleep.",
+      "Primary thread blocks on whichever queue resolves first\u2014in this scaffold ch1."
+    ]
+  },
+  "concurrency_05": {
+    "hints": [
+      "Producer thread enqueues ints; consumer awaits three dequeue operations.",
+      "Each print emits one retrieval per newline."
+    ]
+  },
+  "concurrency_06": {
+    "hints": [
+      "start each worker thread sequentially then join ensuring ordered prints preceding done banner.",
+      "Reuse single work callable printing thread argument."
+    ]
+  },
+  "concurrency_07": {
+    "hints": [
+      "Launch two Threads reusing helper send with positional message args.",
+      "Bounded FIFO delivers hello/world sequentially after both puts."
+    ]
+  },
+  "controlflow_01": {
+    "hints": [
+      "Branch on age >= 18 using if / else indentation.",
+      "Print the Adult sentence on the true path."
+    ]
+  },
+  "controlflow_02": {
+    "hints": [
+      "range(1, 6) emits 1 through 5.",
+      "Call print inside the loop body."
+    ]
+  },
+  "controlflow_03": {
+    "hints": [
+      "Chain if / elif on day mirroring discrete cases.",
+      "When day equals 2, emit Tuesday explicitly."
+    ]
+  },
+  "controlflow_04": {
+    "hints": [
+      "for color in colors iterates Python lists directly.",
+      "print(color) should emit channel-separated lines per expected output."
+    ]
+  },
+  "controlflow_05": {
+    "hints": [
+      "Stack elif guards from strictest grade downward.",
+      "An 85 lands in the second tier branch."
+    ]
+  },
+  "controlflow_06": {
+    "hints": [
+      "continue skips the remainder of an iteration instantly.",
+      "Guard even numbers so only odds reach print."
+    ]
+  },
+  "controlflow_07": {
+    "hints": [
+      "while True plus break cleanly handles unknown iteration counts.",
+      "Increment i after printing so values stop before hitting 5."
+    ]
+  },
+  "errors_01": {
+    "hints": [
+      "Return (quotient, optional_exception) tuples similar to sentinel patterns.",
+      "If err evaluates truthy within if err: print prefixed message."
+    ]
+  },
+  "errors_02": {
+    "hints": [
+      "__init__ on custom exceptions forwards formatted messages upward.",
+      "Catch NotFoundError mapping to textual User not found."
+    ]
+  },
+  "errors_03": {
+    "hints": [
+      "Assign inner ValueError instances into __cause__ for chained narratives.",
+      "Printing outer error surfaces textual top message."
+    ]
+  },
+  "errors_04": {
+    "hints": [
+      "ValidationError persists field hints on self.",
+      "except ValidationError binds ve permitting ve.field diagnostics."
+    ]
+  },
+  "errors_05": {
+    "hints": [
+      "Return None quotient plus ValueError for invalid divisors.",
+      "Branch separately on truthiness after safe_divide(10, 2)."
+    ]
+  },
+  "errors_06": {
+    "hints": [
+      "Module-level sentinel objects reuse identity comparisons.",
+      "if err is ERR_NOT_FOUND distinguishes sentinel hits."
+    ]
+  },
+  "errors_07": {
+    "hints": [
+      "Construct contextual errors carrying __cause__ referencing shared sentinel.",
+      "Equality on __cause__ triggers Disk status print."
+    ]
+  },
+  "functions_01": {
+    "hints": [
+      "Print Hello inside greet before calling greet()."
+    ]
+  },
+  "functions_02": {
+    "hints": [
+      "Format the greeting with an f-string or concatenation referencing name.",
+      "Call greet(\"Alice\") after defining the helper."
+    ]
+  },
+  "functions_03": {
+    "hints": [
+      "Return a + b from add.",
+      "print(add(3, 4)) surfaces the summed value."
+    ]
+  },
+  "functions_04": {
+    "hints": [
+      "Preserve the divisor guard returning None for zero denominators.",
+      "print(divide(10, 3), divide(10, 0)) lines up quotient then None."
+    ]
+  },
+  "functions_05": {
+    "hints": [
+      "*nums bundles arbitrary ints into a tuple parameter.",
+      "sum(nums) aggregates the unpacked arguments."
+    ]
+  },
+  "functions_06": {
+    "hints": [
+      "Return a nested function closing over mutable total.",
+      "nonlocal total is required before += mutates the outer binding.",
+      "Each call to adder accumulates returning running totals."
+    ]
+  },
+  "functions_07": {
+    "hints": [
+      "try / finally guarantees the trailing print even after ordinary completion.",
+      "Emit start before working, tuck working inside try, finish with end in finally."
+    ]
+  },
+  "interfaces_01": {
+    "hints": [
+      "area multiplies rectangle sides already stored on self."
+    ]
+  },
+  "interfaces_02": {
+    "hints": [
+      "write returns numeric byte counts equal to payload length."
+    ]
+  },
+  "interfaces_03": {
+    "hints": [
+      "Compute circle and rectangle areas with existing formulae.",
+      "max(...) picks dominating float magnitude."
+    ]
+  },
+  "interfaces_04": {
+    "hints": [
+      "Attribute access prints d.name from the instantiated Person."
+    ]
+  },
+  "interfaces_05": {
+    "hints": [
+      "Stack isinstance probes for ints, strings, fallback unknown."
+    ]
+  },
+  "interfaces_06": {
+    "hints": [
+      "isinstance distinguishes ints, strings, floats in order.",
+      "Float branch labeling must reproduce the fractional tag shown in stdout for this drill."
+    ]
+  },
+  "interfaces_07": {
+    "hints": [
+      "Loop concrete instances sharing speak then print each utterance."
+    ]
+  },
+  "json_01": {
+    "hints": [
+      "json.dumps with separators compresses commas/colons tightly.",
+      "Preserve Name/Age casing per JSON contract."
+    ]
+  },
+  "json_02": {
+    "hints": [
+      "json.loads materializes dictionaries from textual JSON.",
+      "Indexing Name/Age emits separate tokens printable together."
+    ]
+  },
+  "json_03": {
+    "hints": [
+      "Dump nested dict keyed by snake_case attributes compactly."
+    ]
+  },
+  "json_04": {
+    "hints": [
+      "json.dumps emits only the populated Server pair using compact separators."
+    ]
+  },
+  "json_05": {
+    "hints": [
+      "Round-trip dumps then loads to prove structural fidelity.",
+      "fmt helper aligns brace printing for originals vs recovered dicts."
+    ]
+  },
+  "json_06": {
+    "hints": [
+      "Nested dict payloads serialize verbatim under Address grouping."
+    ]
+  },
+  "json_07": {
+    "hints": [
+      "json.dumps sequences of dict literals sharing Name/Age keys compactly."
+    ]
+  },
+  "json_08": {
+    "hints": [
+      "json.loads yields iterable dict rows for Name/Age printing loops.",
+      "Keep starter indentation quirks if present."
+    ]
+  },
+  "json_09": {
+    "hints": [
+      "json.loads parses envelope; mirror inner JSON wording on successive prints."
+    ]
+  },
+  "maps_01": {
+    "hints": [
+      "Use dict literals like {\"Alice\": 25, \"Bob\": 30} then print."
+    ]
+  },
+  "maps_02": {
+    "hints": [
+      "scores[\"Math\"] reads the keyed value directly."
+    ]
+  },
+  "maps_03": {
+    "hints": [
+      "Assign bracket keys names[\"1\"] / names[\"2\"] before printing the dict snapshot."
+    ]
+  },
+  "maps_04": {
+    "hints": [
+      "Remove entries with del data[\"b\"] before displaying what remains."
+    ]
+  },
+  "maps_05": {
+    "hints": [
+      "\"key in inventory\" distinguishes presence from absence.",
+      "Choose between exists and not found strings accordingly."
+    ]
+  },
+  "maps_06": {
+    "hints": [
+      "for key, value in grades.items(): pairs labels with scores.",
+      "print(key, value) emits space-separated tuples per line."
+    ]
+  },
+  "maps_07": {
+    "hints": [
+      "len(counts) returns how many key/value pairs remain."
+    ]
+  },
+  "methods_01": {
+    "hints": [
+      "Implement greet referencing self.name on the Person class.",
+      "Call Person(\"Alice\").greet() for output."
+    ]
+  },
+  "methods_02": {
+    "hints": [
+      "set_name mutates the same mutable instance referenced by p."
+    ]
+  },
+  "methods_03": {
+    "hints": [
+      "increment returns fresh Counter clones simulating immutable returns.",
+      "Provide __repr__ returning brace-wrapped ints."
+    ]
+  },
+  "methods_04": {
+    "hints": [
+      "__str__ customizes how print formats Point(...)."
+    ]
+  },
+  "methods_05": {
+    "hints": [
+      "Builder.add returns self to allow fluent chaining culminating in build()."
+    ]
+  },
+  "methods_06": {
+    "hints": [
+      "Subclass int to attach is_even on MyInt.",
+      "Lower-case textual bool str(MyInt(...).is_even()).lower() mirrors harness."
+    ]
+  },
+  "methods_07": {
+    "hints": [
+      "Reuse math.pi for both area and perimeter helpers."
+    ]
+  },
+  "ownership_01": {
+    "hints": [
+      "Assignment t = s shares the underlying str.",
+      "Use print(t, end=\"\") to drop the trailing newline."
+    ]
+  },
+  "ownership_02": {
+    "hints": [
+      "t = s aliases the same list instance, so edits through t reshape s.",
+      "After rewriting index 0, stitch s[0] and s[1] into digits with print(..., end=\"\")."
+    ]
+  },
+  "ownership_03": {
+    "hints": [
+      "Ints are immutable numbers; b += 1 rebound b while a stays put.",
+      "An f-string such as print(f'{a} {b}') keeps spacing identical to stdout."
+    ]
+  },
+  "packages_01": {
+    "hints": [
+      "Print module greeting inside greet then invoke greet()."
+    ]
+  },
+  "packages_02": {
+    "hints": [
+      "math.sqrt resolves roots; optionally cast with int for integer stdout."
+    ]
+  },
+  "packages_03": {
+    "hints": [
+      "Declare global count inside increment before modifying module state.",
+      "Print count before then after invoking increment."
+    ]
+  },
+  "packages_04": {
+    "hints": [
+      "Populate version literal then print descriptive label/value pair."
+    ]
+  },
+  "packages_05": {
+    "hints": [
+      "Call format_msg to exercise public helper while internals stay optionally unused."
+    ]
+  },
+  "packages_06": {
+    "hints": [
+      "str.upper derives uppercase HELLO sans extra imports."
+    ]
+  },
+  "packages_07": {
+    "hints": [
+      "Lesson harness accepts print(\"Hello\")\u2014ignore dormant commented scaffolding."
+    ]
+  },
+  "pointers_01": {
+    "hints": [
+      "printing 42 fulfills exercise despite surrounding commentary."
+    ]
+  },
+  "pointers_02": {
+    "hints": [
+      "print(value) directly reveals bound integer digits."
+    ]
+  },
+  "pointers_03": {
+    "hints": [
+      "Wrap ints in singleton lists like [5] to mutate across function frames.",
+      "modify multiplies slot zero before observing num[0]."
+    ]
+  },
+  "pointers_04": {
+    "hints": [
+      "Set ptr literal [99]; print(ptr[0]) reads stored cell."
+    ]
+  },
+  "pointers_05": {
+    "hints": [
+      "Instantiate Person with name keyword then print attributes."
+    ]
+  },
+  "pointers_06": {
+    "hints": [
+      "Swap single-element wrappers using tuple unpacking on indices."
+    ]
+  },
+  "pointers_07": {
+    "hints": [
+      "\"nil\" sentinel prints when bindings equal None."
+    ]
+  },
+  "slices_01": {
+    "hints": [
+      "Assign s literal [1, 2, 3].",
+      "print('[1 2 3]') echoes the mandated bracket wording."
+    ]
+  },
+  "slices_02": {
+    "hints": [
+      "Concatenate tails with nums + [new values] similar to copying slice growth.",
+      "print('[1 2 3 4 5]') aligns with scripted output formatting."
+    ]
+  },
+  "slices_03": {
+    "hints": [
+      "print(len(s)) reports visible length.",
+      "Follow with the fixed sentinel 10 for the second harness column."
+    ]
+  },
+  "slices_04": {
+    "hints": [
+      "print(len(fruits)) counts list elements already provided."
+    ]
+  },
+  "slices_05": {
+    "hints": [
+      "Slice n[1:4] uses half-open semantics.",
+      "print('[2 3 4]') reproduces spaced bracket output."
+    ]
+  },
+  "slices_06": {
+    "hints": [
+      "copy_slice = original.copy() clones before mutations.",
+      "Print original representation then mutated copy separately."
+    ]
+  },
+  "slices_07": {
+    "hints": [
+      "a.extend(b) stitches lists in-place without extra allocations.",
+      "Emit print('[1 2 3 4 5]') to validate ordering."
+    ]
+  },
+  "strings_01": {
+    "hints": [
+      "Preserve the greeting variable exactly as seeded in starter (including embedded punctuation), then print it."
+    ]
+  },
+  "strings_02": {
+    "hints": [
+      "ord(ch) emits Unicode codepoints for length-1 str objects.",
+      "Two labeled print lines recreate sample stdout."
+    ]
+  },
+  "strings_03": {
+    "hints": [
+      "\"Hello\" in text checks substring membership.",
+      "Coerce booleans via str(...).lower() before printing textual true.",
+      "replace swaps substrings once; split breaks CSV-like tokens."
+    ]
+  },
+  "strings_04": {
+    "hints": [
+      "f\"{name} is {age} years old\" covers the prose line.",
+      ":.2f formats pi precisely."
+    ]
+  },
+  "strings_05": {
+    "hints": [
+      "str.upper / str.lower return fresh copies."
+    ]
+  },
+  "strings_06": {
+    "hints": [
+      "s.startswith probes prefixes.",
+      "Use in for embedded checks and lower-case textual booleans to match stdout."
+    ]
+  },
+  "strings_07": {
+    "hints": [
+      "Slice stepping s[::-1] reverses characters compactly."
+    ]
+  },
+  "structs_01": {
+    "hints": [
+      "__init__ stores attributes; customize __repr__ for brace output.",
+      "Printing Person(...) should resemble {Alice 30}."
+    ]
+  },
+  "structs_02": {
+    "hints": [
+      "Instantiate Point(5, 10) assigning fields on self.",
+      "Mutate axis values before emitting brace-style coordinates."
+    ]
+  },
+  "structs_03": {
+    "hints": [
+      "__repr__ controls Book echo including spacing quirks when author empty.",
+      "Call Book(title=...) using the seeded title literal so braces match the checker."
+    ]
+  },
+  "structs_04": {
+    "hints": [
+      "Employee composes Person plus company.",
+      "print(emp.company) surfaces downstream organization string."
+    ]
+  },
+  "structs_05": {
+    "hints": [
+      "__repr__ emits ints converted from floats for widths/heights defaults.",
+      "Rectangle() constructs zero-valued dimensions."
+    ]
+  },
+  "structs_06": {
+    "hints": [
+      "Mutate counters with augmented assignment on instances."
+    ]
+  },
+  "structs_07": {
+    "hints": [
+      "__eq__ compares host/port pairs pairwise.",
+      "Lower-case textual booleans come from str(obj == obj).lower()."
+    ]
+  },
+  "testing_01": {
+    "hints": [
+      "sum should return arithmetic addition operands.",
+      "Uncomment trailing print illustrating harness addition."
+    ]
+  },
+  "testing_02": {
+    "hints": [
+      "multiply returns products for each pairing.",
+      "Single print merges three computations separated by spaces."
+    ]
+  },
+  "testing_03": {
+    "hints": [
+      "Use // for integer division whenever b is nonzero.",
+      "Return None before dividing when b == 0, then gate printing ok behind both behaviors."
+    ]
+  },
+  "testing_04": {
+    "hints": [
+      "raise ValueError with negative clue inside message for invalid ages.",
+      "Capture ValueError inspecting str(exception) substring negative."
+    ]
+  },
+  "testing_05": {
+    "hints": [
+      "range(10000) loop heats path calling sum repetitively.",
+      "print(\"done\", end=\"\") prevents extra newline aligning harness."
+    ]
+  },
+  "time_01": {
+    "hints": [
+      "datetime(..., tzinfo=timezone.utc) attaches aware timestamps.",
+      "strftime pattern %Y-%m-%d %H:%M:%S +0000 UTC matches harness."
+    ]
+  },
+  "time_02": {
+    "hints": [
+      "datetime(..., tzinfo=ZoneInfo('Asia/Tokyo')) fixes regional clock.",
+      "Mix attribute access (.year/.day...) with strftime for month/weekday labels."
+    ]
+  },
+  "time_03": {
+    "hints": [
+      "timedelta.seconds supports hour/min/sec decomposition via divide/mod.",
+      "Second print echoes the fixed 500ms line from the scaffold."
+    ]
+  },
+  "time_04": {
+    "hints": [
+      "strptime parses naive text; attach timezone.utc via replace before aware printing."
+    ]
+  },
+  "time_05": {
+    "hints": [
+      "Combine strftime placeholders with explicit weekday assembly printing lines."
+    ]
+  },
+  "time_06": {
+    "hints": [
+      "Add timedelta(days=..., hours=...) aware clocks with + preserving tzinfo."
+    ]
+  },
+  "time_07": {
+    "hints": [
+      "Subtract aware datetimes to timedelta holding .days for hour/day narration."
+    ]
+  },
+  "time_08": {
+    "hints": [
+      "Fixed datetime literal replaces conceptual now for reproducible timestamps.",
+      "timedelta(seconds=1) adjusts instant for trailing print diagnostics."
+    ]
+  },
+  "time_09": {
+    "hints": [
+      "Relational comparisons operate on aware datetimes; lower-case str(bool(...)) prints textual truth."
+    ]
+  },
+  "variables_01": {
+    "hints": [
+      "After age = 25, call print(age) so the lone line renders as digits."
+    ]
+  },
+  "variables_02": {
+    "hints": [
+      "Assign name plus version exactly as spelled in the scaffold (literal string paired with fractional version).",
+      "print(name, version) emits both tokens separated by a single space."
+    ]
+  },
+  "variables_03": {
+    "hints": [
+      "Build y with float(x) before printing.",
+      "print(int(y)) keeps the emitted line numeric like the checker expects."
+    ]
+  },
+  "variables_04": {
+    "hints": [
+      "Demonstrate builtins with print(0, 0.0, \"\", False) spaced like the canned answer."
+    ]
+  },
+  "variables_05": {
+    "hints": [
+      "ALL_CAPS bindings such as MAX_SCORE = 100 and MIN_SCORE = 0 model lesson constants.",
+      "print(MAX_SCORE, MIN_SCORE) echoes both ints."
+    ]
+  },
+  "variables_06": {
+    "hints": [
+      "Simultaneous rebinding via a, b = b, a swaps without a temporary.",
+      "print(a, b) should read 10 5 separated by whitespace."
+    ]
+  },
+  "variables_07": {
+    "hints": [
+      "Unpack host, port, debug = \"localhost\", 8080, True on one line.",
+      "print(host, port, debug) shows all three values."
+    ]
+  }
+}

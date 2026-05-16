@@ -1,8 +1,8 @@
 {
   "id": "methods",
   "title": "Methods",
-  "description": "Learn how to define methods on types in Go, including pointer and value receivers",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Methods\n\nInstance methods take an implicit `this`; extension methods add sugar for static calls.\n",
+  "description": "Instance methods, self, and special methods",
+  "theory": "### Instance vs static\n\nInstance methods receive a hidden first parameter (`this`). `static` methods belong to the type itself. Extension methods are static methods in a static class whose first parameter uses `this`—they allow instance-call syntax and are heavily used by LINQ.\n\nPartial methods and partial classes split generated and hand-written code—common in UI tooling and source generators.\n\n### Operators and overloading\n\nYou can overload many operators for your types when it improves clarity (`+` on a `Vector2`). Implicit and explicit conversion operators customize bridging between types—avoid surprising conversions that hide expensive work.\n\n### Overloading and parameters\n\nC# resolves overloads by argument types, optional parameters, and `params` arrays. Named arguments disambiguate when many overloads exist; optional parameters must come at the end.\n\n```csharp\nusing System;\n\nstatic class StringExtensions\n{\n    public static bool IsNullOrEmpty(this string? s) =>\n        string.IsNullOrEmpty(s);\n}\n\nrecord Box(int Value);\n\nclass Vector2(double x, double y)\n{\n    public double X { get; } = x;\n    public double Y { get; } = y;\n\n    public static Vector2 operator +(Vector2 a, Vector2 b) =>\n        new(a.X + b.X, a.Y + b.Y);\n}\n```\n",
   "exercises": [
     {
       "id": "methods_01",
@@ -11,8 +11,8 @@
       "starter_code": "record Person(string Name) { public string Greet() => \"Hello, \" + Name; }",
       "expected_output": "Hello, Alice",
       "hints": [
-        "Use func (p Person) Greet() string { return ... } to define the method",
-        "Access the field with p.Name"
+        "Instance methods attach to structs/classes with implicit `this`.",
+        "Return interpolated greetings built from encapsulated state."
       ],
       "solution": "var p = new Person(\"Alice\");\nConsole.WriteLine(p.Greet());\n\nrecord Person(string Name) { public string Greet() => \"Hello, \" + Name; }"
     },
@@ -23,8 +23,8 @@
       "starter_code": "class Person { public string Name = \"Bob\"; public void SetName(string n) => Name = n; }",
       "expected_output": "Charlie",
       "hints": [
-        "Use func (p *Person) SetName(name string) to define a pointer receiver method",
-        "Set p.Name = name inside the method"
+        "Mutators on reference types (`class`) change shared heap state instantly.",
+        "Public instance methods idiomatically use PascalCase identifiers."
       ],
       "solution": "var p = new Person();\np.SetName(\"Charlie\");\nConsole.WriteLine(p.Name);\n\nclass Person { public string Name = \"Bob\"; public void SetName(string n) => Name = n; }"
     },
@@ -35,8 +35,8 @@
       "starter_code": "record Counter(int Value) { public Counter Increment() => this with { Value = Value + 1 }; }",
       "expected_output": "{6}",
       "hints": [
-        "Use func (c Counter) Increment() Counter to define a value receiver method",
-        "Return c with Value + 1"
+        "`record` types support `with` expressions for immutable-friendly updates.",
+        "Value receivers/`readonly` structs communicate non-mutating APIs."
       ],
       "solution": "var c = new Counter(5);\nConsole.WriteLine($\"{{{c.Increment().Value}}}\");\n\nrecord Counter(int Value) { public Counter Increment() => this with { Value = Value + 1 }; }"
     },
@@ -47,8 +47,8 @@
       "starter_code": "record Point(int X, int Y) { public override string ToString() => $\"Point({X}, {Y})\"; }",
       "expected_output": "Point(10, 20)",
       "hints": [
-        "Define interface Stringer with func String() string",
-        "Implement func (p Point) String() string { return ... } on Point"
+        "Override `ToString()` to satisfy customary `.NET` stringification hooks.",
+        "Alternatively implement `IFormattable` if richer formatting emerges later."
       ],
       "solution": "Console.WriteLine(new Point(10, 20));\n\nrecord Point(int X, int Y) { public override string ToString() => $\"Point({X}, {Y})\"; }"
     },
@@ -59,21 +59,20 @@
       "starter_code": "class Builder { public string Result = \"\"; public Builder Add(string s) { Result += s; return this; } public string Build() => Result; }",
       "expected_output": "HelloWorld",
       "hints": [
-        "func (b Builder) Add(s string) Builder { b.result += s; return b }",
-        "func (b Builder) Build() string { return b.result }"
+        "Fluent builders return `this` from mutators enabling chained calls.",
+        "Accumulate into internal buffers before exposing `.Build()`."
       ],
       "solution": "var b = new Builder();\nConsole.WriteLine(b.Add(\"Hello\").Add(\"World\").Build());\n\nclass Builder { public string Result = \"\"; public Builder Add(string s) { Result += s; return this; } public string Build() => Result; }"
     },
     {
       "id": "methods_07",
       "title": "Multiple Methods on Same Type",
-      "description": "Define a Circle type with Radius float64. Add two methods: Area() float64 and Perimeter() float64. Create a circle with radius 5.0, compute both, and print them.",
+      "description": "Define a Circle type with Radius double. Add two methods: Area() double and Perimeter() double. Create a circle with radius 5.0, compute both, and Console.WriteLine them.",
       "starter_code": "record Circle(double Radius) { public double Area() => Math.PI * Radius * Radius; public double Perimeter() => 2 * Math.PI * Radius; }",
       "expected_output": "78.539816339744831\n31.415926535897931",
       "hints": [
-        "Use math.Pi for pi",
-        "func (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }",
-        "func (c Circle) Perimeter() float64 { return 2 * math.Pi * c.Radius }"
+        "Share `Math.PI` between perimeter/area calculations on the same radius.",
+        "High-precision textual output aligns with invariant `G17`/`R` formatter needs."
       ],
       "solution": "using System.Globalization;\n\nvar c = new Circle(5.0);\nConsole.WriteLine(c.Area().ToString(\"G17\", CultureInfo.InvariantCulture));\nConsole.WriteLine(c.Perimeter().ToString(\"G17\", CultureInfo.InvariantCulture));\n\nrecord Circle(double Radius) { public double Area() => Math.PI * Radius * Radius; public double Perimeter() => 2 * Math.PI * Radius; }"
     },
@@ -84,7 +83,8 @@
       "starter_code": "readonly struct MyInt(int Value) { public bool IsEven() => Value % 2 == 0; }",
       "expected_output": "true",
       "hints": [
-        "func (m MyInt) IsEven() bool { return m%2 == 0 }"
+        "Wrap primitives with `struct MyInt` or `readonly struct` for semantic safety.",
+        "Boolean emission may require `.ToLowerInvariant()` for lowercase expectations."
       ],
       "solution": "Console.WriteLine(new MyInt(42).IsEven().ToString().ToLowerInvariant());\n\nstruct MyInt\n{\n    public int Value { get; }\n    public MyInt(int value) => Value = value;\n    public bool IsEven() => Value % 2 == 0;\n}"
     }

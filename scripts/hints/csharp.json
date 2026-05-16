@@ -1,0 +1,763 @@
+{
+  "variables_01": {
+    "hints": [
+      "Declare an `int` (or use `var` with a numeric literal) for `age`.",
+      "Print with `Console.WriteLine(age)`."
+    ]
+  },
+  "variables_02": {
+    "hints": [
+      "`string`/`double` literals work as-is for `name`/`version`.",
+      "Use `CultureInfo.InvariantCulture` with `double.ToString` so fractional formatting stays stable.",
+      "Interpolate everything with `$\"...\"` onto one line separated by a space."
+    ]
+  },
+  "variables_03": {
+    "hints": [
+      "Widen safely with `double y = x` (implicit numeric conversion).",
+      "Suppress trailing decimals with format specifier \"0\" (or \"F0\") plus invariant culture."
+    ]
+  },
+  "variables_04": {
+    "hints": [
+      "`default(int)`, `default(double)`, `string.Empty`, and `false` are idiomatic zeros.",
+      "Match spacing exactly—the checker expects booleans formatted like False."
+    ]
+  },
+  "variables_05": {
+    "hints": [
+      "Use `const` for compile-time `int` constants like scores.",
+      "Print both on one line with string interpolation."
+    ]
+  },
+  "variables_07": {
+    "hints": [
+      "Deconstruct with `(string host, int port, bool debug) = (...)`.",
+      "Booleans default to Title Case; lowercase with `.ToLowerInvariant()` if stdout must say true/false."
+    ]
+  },
+  "variables_06": {
+    "hints": [
+      "Tuple swap is `(a, b) = (b, a)` when `a` and `b` are locals.",
+      "Prefer printing with `$\"{a} {b}\"`."
+    ]
+  },
+  "ownership_01": {
+    "hints": [
+      "`string` is immutable; assigning `t = s` copies the reference, not heap bytes.",
+      "Use `Console.Write` without a newline when the exercise expects glued output."
+    ]
+  },
+  "ownership_02": {
+    "hints": [
+      "Arrays/`int[]` are reference types—aliasing reflects mutations through either variable.",
+      "Format digits with interpolated strings or chained `Console.Write`."
+    ]
+  },
+  "ownership_03": {
+    "hints": [
+      "`int` assigns by value—mutating `b` never changes `a`.",
+      "Postfix `++` updates the local integer copy."
+    ]
+  },
+  "controlflow_01": {
+    "hints": [
+      "Use classic `if` / `else` with `Console.WriteLine`.",
+      "Compare integers with standard C# relational operators."
+    ]
+  },
+  "controlflow_02": {
+    "hints": [
+      "A `for` loop with inclusive bounds uses `var i = 1; i <= 5; i++`.",
+      "Emit one integer per iteration with its own newline when required."
+    ]
+  },
+  "controlflow_03": {
+    "hints": [
+      "Switch on the `day` primitive with labeled `case` branches and terminating `break;`.",
+      "Provide `_` / `default` for unknown weekday codes."
+    ]
+  },
+  "controlflow_04": {
+    "hints": [
+      "Model the collection as `new[] { ... }` or `List<string>`; iterate with `foreach`.",
+      "Each `Console.WriteLine` emits its own newline."
+    ]
+  },
+  "controlflow_05": {
+    "hints": [
+      "Chain conditions from highest thresholds downward (≥90 ⇒ A…).",
+      "Ternary ladders or cascading `else if` both work."
+    ]
+  },
+  "controlflow_07": {
+    "hints": [
+      "Increment a counter forever (`for (;;)`) until `break` fires at the cutoff.",
+      "Print numbers before branching out of the loop when that matches the checker."
+    ]
+  },
+  "controlflow_06": {
+    "hints": [
+      "Use `%` parity checks and `continue` to skip undesired iterations.",
+      "Loop inclusively across the requested numeric range."
+    ]
+  },
+  "functions_01": {
+    "hints": [
+      "Declare `static void Greet()` and call it directly from top-level/Main context.",
+      "Keep side effects confined to `Console.WriteLine(\"Hello\")`."
+    ]
+  },
+  "functions_02": {
+    "hints": [
+      "Use idiomatic interpolated strings `$\"Hello, {name}\"`.",
+      "Parameter type is `string` with **PascalCase** naming by convention."
+    ]
+  },
+  "functions_03": {
+    "hints": [
+      "Return `int` from `Add(int a, int b)` expression-bodied method.",
+      "`Console.WriteLine` displays the callee’s result."
+    ]
+  },
+  "functions_04": {
+    "hints": [
+      "Model missing-quotient scenarios with nullable `int?` when denominators vanish.",
+      "Print `<nil>` exactly when the checker expects that literal sentinel text.",
+      "Separate successful division from the zero division path before formatting output."
+    ]
+  },
+  "functions_05": {
+    "hints": [
+      "Mark the final parameter `params int[] nums` so callers pass arbitrary arity.",
+      "Sum with LINQ `.Sum()`, a `foreach`, or accumulator loop."
+    ]
+  },
+  "functions_07": {
+    "hints": [
+      "Order side effects explicitly: start → working → end on separate lines.",
+      "Use `try` / `finally` if you want cleanup that always runs."
+    ]
+  },
+  "functions_06": {
+    "hints": [
+      "Return `Func<int, int>` that closes over mutable local state.",
+      "Each invocation should update the accumulator before returning."
+    ]
+  },
+  "arrays_01": {
+    "hints": [
+      "Initialize via collection expressions or `new[] { ... }`; avoid loops if literals suffice.",
+      "Join elements with spaces inside square brackets via `string.Join(\" \", arr)`."
+    ]
+  },
+  "arrays_02": {
+    "hints": [
+      "`foreach` idiomatically iterates CLR arrays without manual indexes.",
+      "Print each scalar on its own line when newline-separated output is required."
+    ]
+  },
+  "arrays_03": {
+    "hints": [
+      "Length queries use `.Length`, not unmanaged helpers."
+    ]
+  },
+  "arrays_04": {
+    "hints": [
+      "Allocate `new int[size]` then set leading elements—remaining slots default to `0`.",
+      "Reuse bracket-join formatting like other stdout array exercises."
+    ]
+  },
+  "arrays_05": {
+    "hints": [
+      "Declare rectangular matrices via `new[,] { … }`.",
+      "Walk rows/columns with nested `for` loops or `Enumerable.Range`."
+    ]
+  },
+  "arrays_07": {
+    "hints": [
+      "Accumulate inside a tight `foreach`; `checked` arithmetic only if overflows matter.",
+      "Prefer `Console.WriteLine` with the summed scalar."
+    ]
+  },
+  "arrays_06": {
+    "hints": [
+      "First element indexes at `0`; last element prefers index-from-end `[ ^1 ]` on modern runtimes."
+    ]
+  },
+  "slices_01": {
+    "hints": [
+      "Fixed buffers use stack arrays or `new int[length]` assignments.",
+      "Print bracketed projections using `string.Join`."
+    ]
+  },
+  "slices_02": {
+    "hints": [
+      "Reach for `List<int>` semantics with `.Add`/`.AddRange` for amortized resizing.",
+      "Clone into display layout matching earlier exercises."
+    ]
+  },
+  "slices_03": {
+    "hints": [
+      "After filling three sentinel entries, `.Count` reports logical length.",
+      "`List<T>.Capacity` mirrors the preallocation story from other tracks."
+    ]
+  },
+  "slices_04": {
+    "hints": [
+      "Array literals behave like contiguous sequences; `.Length` is the quick count."
+    ]
+  },
+  "slices_05": {
+    "hints": [
+      "LINQ `.Skip`/`.Take` mirror half-open slicing when you dislike manual indices.",
+      "Alternatively leverage range syntax `.AsSpan()[start..end]` for zero-extra-allocation slicing.",
+      "Remember to import `System.Linq` when chaining LINQ operators."
+    ]
+  },
+  "slices_07": {
+    "hints": [
+      "Mutate the accumulator `List<int>` via `.AddRange`.",
+      "Pretty-print `[ … ]` with `string.Join` after expansion."
+    ]
+  },
+  "slices_06": {
+    "hints": [
+      "`Clone()` (cast back to `int[]`) or `[..collection]` spreads copy payloads.",
+      "Keep `original` untouched while mutating only the duplicated buffer.",
+      "Prefer `Concat`/`Append`-then-`ToArray()` when LINQ chaining reads clearer."
+    ]
+  },
+  "maps_01": {
+    "hints": [
+      "Use `SortedDictionary<string,int>` when output must mimic lexicographically sorted dumps.",
+      "Build map-style strings with prefixes like `map[` plus ordered `Key:Value` fragments.",
+      "Prefer collection initializer syntax `{ [\"Alice\"] = 25 }`."
+    ]
+  },
+  "maps_02": {
+    "hints": [
+      "Indexer access `scores[\"Math\"]` throws if absent—fine when keys are guaranteed."
+    ]
+  },
+  "maps_03": {
+    "hints": [
+      "Empty dictionaries still support initializer syntax before printing.",
+      "Sorted keys stabilize exercise output."
+    ]
+  },
+  "maps_04": {
+    "hints": [
+      "Remove entries with `.Remove(\"b\")` on `SortedDictionary`/`.dictionary`.",
+      "Rebuild string output after mutation to reflect deletions."
+    ]
+  },
+  "maps_05": {
+    "hints": [
+      "Existence probing uses `.ContainsKey` or `TryGetValue`.",
+      "Emit exists vs not found exactly per the checker’s expected wording."
+    ]
+  },
+  "maps_07": {
+    "hints": [
+      "`.Count` returns `Dictionary`/collection cardinality."
+    ]
+  },
+  "maps_06": {
+    "hints": [
+      "Iterate `(Key, Value)` pairs with `foreach` over `SortedDictionary` for deterministic order.",
+      "Emit `KEY VALUE` pairs separated by newlines."
+    ]
+  },
+  "strings_01": {
+    "hints": [
+      "Assign `var greeting = \"…\"` from a string literal.",
+      "`string` references are immutable; print with `Console.WriteLine(greeting)`."
+    ]
+  },
+  "strings_02": {
+    "hints": [
+      "`char` holds UTF-16 code units; casting to `(int)` reveals the ordinal.",
+      "Print human-readable characters with interpolated formatting."
+    ]
+  },
+  "strings_03": {
+    "hints": [
+      "Use instance methods `.Contains`/`.Replace` or static `string` helpers consistently.",
+      "Split commas with `\"a,b,c\".Split(',')` and take index `[0]` for the first field.",
+      "When output mirrors Boolean strings, stringify with `.ToString()`."
+    ]
+  },
+  "strings_04": {
+    "hints": [
+      "Interpolated `$\"…\"` strings replace verbose composite-format calls.",
+      "`ToString(\"F2\", CultureInfo.InvariantCulture)` pins decimal places for floating output."
+    ]
+  },
+  "strings_05": {
+    "hints": [
+      "Case transforms use `.ToUpper()` / `.ToLower()` (`Invariant` overloads optional).",
+      "Separate outputs with newline when the checker lists both forms."
+    ]
+  },
+  "strings_07": {
+    "hints": [
+      "`ToCharArray` + `Array.Reverse` is the textbook reversal approach.",
+      "Wrap back into `new string(chars)` for printing."
+    ]
+  },
+  "strings_06": {
+    "hints": [
+      "Prefix/suffix probing maps to `.StartsWith` / `.EndsWith`.",
+      "Normalize boolean casing with `.ToString().ToLowerInvariant()` when grader stdout is lowercase."
+    ]
+  },
+  "structs_01": {
+    "hints": [
+      "Records (`record Person(...)`) succinctly synthesize constructors and formatting.",
+      "Match curly-brace textual layout demanded by graders via string interpolation."
+    ]
+  },
+  "structs_02": {
+    "hints": [
+      "Non-destructive mutation uses `target with { Y = … }`.",
+      "Structs/records behave as values—rebind locals after changes."
+    ]
+  },
+  "structs_03": {
+    "hints": [
+      "Optional parameters/`default` values stand in for omitted fields.",
+      "Match `{Title blank Pages}` spacing in the scaffold’s expected stdout."
+    ]
+  },
+  "structs_04": {
+    "hints": [
+      "Model composition (`record Employee(Person Core, string Company)`) rather than brittle inheritance hacks.",
+      "Surface nested data via `.Person` or constructors—choose what matches scaffold."
+    ]
+  },
+  "structs_05": {
+    "hints": [
+      "Default struct construction yields zeroed doubles/ints.",
+      "Print tuples/records verbatim with consistent brace formatting."
+    ]
+  },
+  "structs_07": {
+    "hints": [
+      "Value-based equality on records makes `==` meaningful without reflection.",
+      "Emit lowercase textual booleans exactly when graders compare stdout strings."
+    ]
+  },
+  "structs_06": {
+    "hints": [
+      "Increment immutable records by rebinding (`c = c with { Value = … }`)."
+    ]
+  },
+  "interfaces_01": {
+    "hints": [
+      "Define `interface IShape { double Area(); }` and implement explicitly on concrete types.",
+      "Program against the abstraction (`IShape`) where polymorphism clarifies intent."
+    ]
+  },
+  "interfaces_02": {
+    "hints": [
+      "Byte counts often come from `.Length`; pair with ASCII/UTF8 encodings as needed.",
+      "Return `int`/`void` signatures should mirror exercise stubs."
+    ]
+  },
+  "interfaces_03": {
+    "hints": [
+      "`Math.PI` supplies double precision for circular areas.",
+      "Compare polymorphic `.Area()` results with standard relational operators."
+    ]
+  },
+  "interfaces_04": {
+    "hints": [
+      "Downcast deliberately with `(Person)obj` once you trust runtime type.",
+      "Pattern matching `switch` alternatives also unwrap derived data."
+    ]
+  },
+  "interfaces_05": {
+    "hints": [
+      "Use recursive `switch (obj)` patterns for `case int`, `case string`, etc.",
+      "`default`/`_` catches unexpected shapes."
+    ]
+  },
+  "interfaces_07": {
+    "hints": [
+      "`ISpeaker[]` or `List<ISpeaker>` store polymorphic implementations.",
+      "Loop and print each `.Speak()` return value sequentially."
+    ]
+  },
+  "interfaces_06": {
+    "hints": [
+      "Store heterogeneous primitives in `object[]`/`List<object>`.",
+      "Floating literals are `double`; some checkers prefix them with `float64:` in stdout.",
+      "Enumerate with `foreach` plus `switch` patterns on each boxed item."
+    ]
+  },
+  "methods_01": {
+    "hints": [
+      "Instance methods attach to structs/classes with implicit `this`.",
+      "Return interpolated greetings built from encapsulated state."
+    ]
+  },
+  "methods_02": {
+    "hints": [
+      "Mutators on reference types (`class`) change shared heap state instantly.",
+      "Public instance methods idiomatically use PascalCase identifiers."
+    ]
+  },
+  "methods_03": {
+    "hints": [
+      "`record` types support `with` expressions for immutable-friendly updates.",
+      "Value receivers/`readonly` structs communicate non-mutating APIs."
+    ]
+  },
+  "methods_04": {
+    "hints": [
+      "Override `ToString()` to satisfy customary `.NET` stringification hooks.",
+      "Alternatively implement `IFormattable` if richer formatting emerges later."
+    ]
+  },
+  "methods_05": {
+    "hints": [
+      "Fluent builders return `this` from mutators enabling chained calls.",
+      "Accumulate into internal buffers before exposing `.Build()`."
+    ]
+  },
+  "methods_07": {
+    "hints": [
+      "Share `Math.PI` between perimeter/area calculations on the same radius.",
+      "High-precision textual output aligns with invariant `G17`/`R` formatter needs."
+    ]
+  },
+  "methods_06": {
+    "hints": [
+      "Wrap primitives with `struct MyInt` or `readonly struct` for semantic safety.",
+      "Boolean emission may require `.ToLowerInvariant()` for lowercase expectations."
+    ]
+  },
+  "packages_01": {
+    "hints": [
+      "Use `static class Utils` namespaces for utility methods in single-file exercises.",
+      "Expose `public static void Greet()` publicly for host invocation."
+    ]
+  },
+  "packages_02": {
+    "hints": [
+      "Reference BCL numerical helpers via `System.Math`.",
+      "Cast narrowing conversions (`(int)Math.Sqrt(144))` when fractional roots are undesirable."
+    ]
+  },
+  "packages_03": {
+    "hints": [
+      "Public API surface favors **PascalCase** static members.",
+      "`Console.WriteLine` displays counters after invoking exported helpers."
+    ]
+  },
+  "packages_04": {
+    "hints": [
+      "Static constructors run once before first type touch—mirror init semantics.",
+      "Good for deterministic configuration/version seeds."
+    ]
+  },
+  "packages_05": {
+    "hints": [
+      "Keep helpers `private static` unless cross-type consumption is intended.",
+      "Call only intentionally exported entry points."
+    ]
+  },
+  "packages_07": {
+    "hints": [
+      "Namespace aliases/`using Alias = Fully.Qualified.Type` disambiguate clashing imports.",
+      "Remember alias applies to CLR namespaces, not random tokens."
+    ]
+  },
+  "packages_06": {
+    "hints": [
+      "String casing transforms live under `System.String`/extension methods.",
+      "Chain `.ToUpper()` before printing final lines."
+    ]
+  },
+  "pointers_01": {
+    "hints": [
+      "Wrap fixed blocks/`unsafe { int* ptr = &x; }` per project AllowUnsafeBlocks settings.",
+      "Dereference with `*ptr` for scalar printing when address text is undesired."
+    ]
+  },
+  "pointers_02": {
+    "hints": [
+      "Same `unsafe`/address-of pattern reinforces pointer basics.",
+      "Ensure `/unsafe` is enabled wherever required by the harness."
+    ]
+  },
+  "pointers_03": {
+    "hints": [
+      "Managed-friendly alternative: pass `ref int` so callee mutates callers without raw pointers.",
+      "Prefer `static void Modify(ref int p)` doubling in-place."
+    ]
+  },
+  "pointers_04": {
+    "hints": [
+      "Pin unmanaged memory (`Marshal.AllocHGlobal`) when simulating heap pointers.",
+      "Always balance allocations with `.FreeHGlobal` in real programs.",
+      "Prefer `sizeof(int)` for clarity when requesting native buffers."
+    ]
+  },
+  "pointers_05": {
+    "hints": [
+      "Reference types/`class Person` idiomatically use managed references—not `*`—when possible.",
+      "Use object initializer syntax `{ Name = \"Bob\" }` when constructing instances."
+    ]
+  },
+  "pointers_07": {
+    "hints": [
+      "Compare unmanaged pointers against `null` before dereferencing.",
+      "Print literal nil when graders expect pointer-absent text."
+    ]
+  },
+  "pointers_06": {
+    "hints": [
+      "Swap via `(a, b) = (b, a)` with `ref` parameters or traditional temp variable juggling.",
+      "Keep method `static void Swap(ref int a, ref int b)` for readability."
+    ]
+  },
+  "errors_01": {
+    "hints": [
+      "Nullable `double?` models optional success values without throwing.",
+      "`if (result is null)` gates user-facing error banners."
+    ]
+  },
+  "errors_02": {
+    "hints": [
+      "Derive from `Exception` for domain failures; constructors chain `base(message)`.",
+      "`catch (NotFoundError)` isolates narrowly typed failures.",
+      "`when` clauses filter sentinel messages if necessary."
+    ]
+  },
+  "errors_03": {
+    "hints": [
+      "Inner exceptions mimic wrapped errors: `new Exception(\"context\", inner)`.",
+      "Surface readable `.Message` for console verification."
+    ]
+  },
+  "errors_04": {
+    "hints": [
+      "Attach metadata via custom exception fields (`public string Field`).",
+      "Catch exact type rather than blindly string parsing.",
+      "`AggregateException` drills may require `.Flatten()`—not here unless starter indicates."
+    ]
+  },
+  "errors_05": {
+    "hints": [
+      "`static int` helpers stay non-null when failures are not modeled for this stdout drill.",
+      "Print successful computation output directly."
+    ]
+  },
+  "errors_07": {
+    "hints": [
+      "Walk `.InnerException` chain to correlate nested failure reasons.",
+      "Message composition mirrors layering (`reading file: disk full`)."
+    ]
+  },
+  "errors_06": {
+    "hints": [
+      "`const string` sentinel names compare cleanly in `catch` filters.",
+      "Throw `InvalidOperationException` (or derive) bearing sentinel `.Message`."
+    ]
+  },
+  "concurrency_01": {
+    "hints": [
+      "Offload work with `Task.Run`/`Task` factories when exercises simulate background calls.",
+      "`await Task.Delay(...)` asynchronously yields better than blocking `Thread.Sleep` in modern code.",
+      "Synchronously wait only when the sandbox lacks `async Main` (`GetAwaiter().GetResult()` as last resort)."
+    ]
+  },
+  "concurrency_02": {
+    "hints": [
+      "`System.Threading.Channels.Channel.CreateUnbounded<T>()` models async-friendly queues.",
+      "Pair `await Writer.WriteAsync` with `await Reader.ReadAsync`.",
+      "Complete writers so readers observe termination cleanly."
+    ]
+  },
+  "concurrency_03": {
+    "hints": [
+      "Bounded producers use `Channel.CreateBounded<int>(capacity)`.",
+      "`TryWrite` succeeds without blocking until capacity is saturated.",
+      "Drain asynchronously or synchronously consistent with scaffold expectations."
+    ]
+  },
+  "concurrency_04": {
+    "hints": [
+      "Delay senders via `await Task.Delay` before publishing into the shared channel.",
+      "Consumer awaits the first incoming message asynchronously.",
+      "Keep channel lifetimes/disposals tidy to avoid dangling writers."
+    ]
+  },
+  "concurrency_05": {
+    "hints": [
+      "Producer enumerates payloads, completes the writer, then consumer uses `await foreach` on `.ReadAllAsync()`.",
+      "Ensures orderly shutdown similar to iterating until channel closure elsewhere."
+    ]
+  },
+  "concurrency_07": {
+    "hints": [
+      "Coordinate parallel producers writing into a locked `List<string>` or concurrent bag.",
+      "Sort before printing when output order must normalize racing completions.",
+      "Consider `ConcurrentQueue<T>`/`lock` scopes for illustrative mutual exclusion."
+    ]
+  },
+  "concurrency_06": {
+    "hints": [
+      "Fan-out work with multiple `Task` instances; synchronize completion via `await Task.WhenAll`.",
+      "Alternatively sequential `.Wait()` per task when simplifying for stdout ordering.",
+      "Emit the final done line only after worker tasks finish printing."
+    ]
+  },
+  "testing_01": {
+    "hints": [
+      "Implement `Sum` as pure `static int`.",
+      "Emit results through `Console.WriteLine` matching automated stdout checks."
+    ]
+  },
+  "testing_02": {
+    "hints": [
+      "Return `a * b` from `Multiply` for each table row.",
+      "Single-line interpolation keeps formatting aligned with graders."
+    ]
+  },
+  "testing_03": {
+    "hints": [
+      "Return `int? null` whenever division by zero lurks.",
+      "Pattern-match `is null` and compare concrete ints for affirmative prints."
+    ]
+  },
+  "testing_04": {
+    "hints": [
+      "`string.Contains(\"negative\", StringComparison.Ordinal)` validates message substrings reliably.",
+      "Return descriptive messages from validation helpers."
+    ]
+  },
+  "testing_05": {
+    "hints": [
+      "Micro-benchmark loops should discard results (`_ = …`) unless needed.",
+      "`10_000` underscore separators aid readability."
+    ]
+  },
+  "json_01": {
+    "hints": [
+      "Insert keys in emission order (`Name` before `Age`) into `Dictionary<string, object>` on modern runtime.",
+      "`JsonSerializer.Serialize` handles primitive boxing cleanly.",
+      "Import `System.Text.Json` namespaces explicitly."
+    ]
+  },
+  "json_02": {
+    "hints": [
+      "`JsonDocument.Parse` + `RootElement.GetProperty(\"Name\")` is lightweight structured access.",
+      "Dispose `JsonDocument` with `using` for deterministic cleanup."
+    ]
+  },
+  "json_03": {
+    "hints": [
+      "Dictionary keys dictate JSON naming—use literals like `first_name` verbatim.",
+      "No renaming policy necessary when dictionaries drive serialization."
+    ]
+  },
+  "json_04": {
+    "hints": [
+      "`JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull` drops empty fields.",
+      "Populate only non-null dictionary entries contributing to payload."
+    ]
+  },
+  "json_05": {
+    "hints": [
+      "Toggle `PropertyNamingPolicy = JsonNamingPolicy.CamelCase` for CLR→JSON bridging.",
+      "Round-trip through `Deserialize<Dictionary<string, JsonElement>>` when dynamic shapes persist.",
+      "Invariant culture keeps prices aligned when stringifying decimals/doubles manually."
+    ]
+  },
+  "json_06": {
+    "hints": [
+      "Nest dictionaries to express structured JSON subtrees.",
+      "Serialize outer container once inner maps are hydrated."
+    ]
+  },
+  "json_07": {
+    "hints": [
+      "`List<Dictionary<string, object>>` becomes a JSON array of objects sequentially.",
+      "Keep person property ordering consistent inside each dictionary."
+    ]
+  },
+  "json_09": {
+    "hints": [
+      "Use `.GetRawText()` on nested `JsonElement`s to preserve key ordering verbatim.",
+      "Print scalar properties before dumping nested fragments if instructions demand layering."
+    ]
+  },
+  "json_08": {
+    "hints": [
+      "Enumerate `.RootElement.EnumerateArray()` for loosely typed parses.",
+      "Read UTF-16 property names (`Name`, `Age`) via `GetProperty(...).GetString()` / `.GetInt32()`."
+    ]
+  },
+  "time_01": {
+    "hints": [
+      "Construct `DateTimeOffset` with explicit `TimeSpan.Zero` offset for anchored UTC timestamps.",
+      "Format invariantly as `yyyy-MM-dd HH:mm:ss` then suffix the literal ` UTC` token exactly.",
+      "Leverage `CultureInfo.InvariantCulture` for stable textual output."
+    ]
+  },
+  "time_02": {
+    "hints": [
+      "Resolve canonical zones via `TimeZoneInfo.FindSystemTimeZoneById(\"Asia/Tokyo\")`.",
+      "`GetUtcOffset` feeds `DateTimeOffset` creation for wall-clock interpretation.",
+      "Month/weekday names come from invariant `MMMM`/`dddd` format patterns."
+    ]
+  },
+  "time_03": {
+    "hints": [
+      "Compose durations with `TimeSpan.FromHours` / `FromMinutes`.",
+      "Hours component often `(int)d.TotalHours` while minutes/seconds pull structural fields.",
+      "Second line literal matches fixed millisecond substring when specified."
+    ]
+  },
+  "time_04": {
+    "hints": [
+      "`DateTimeOffset.ParseExact` honors custom patterns.",
+      "Combine `DateTimeStyles.AssumeUniversal | AdjustToUniversal` when Wall time equals UTC labeling."
+    ]
+  },
+  "time_05": {
+    "hints": [
+      "Separate short (`MM/dd/yyyy`) versus long textual formats explicitly.",
+      "Post-process duplicated spaces from ordinal day formatting replacements if graders expect single spacing."
+    ]
+  },
+  "time_06": {
+    "hints": [
+      "Add composite spans: `dto + TimeSpan.FromDays(...) + TimeSpan.FromHours(...)`.",
+      "Keep zero offsets whenever you append ` UTC` to timestamps."
+    ]
+  },
+  "time_07": {
+    "hints": [
+      "Subtract two `DateTimeOffset` instances to derive `TimeSpan`.",
+      "Hours line often formats total whole hours (`(int)diff.TotalHours`).",
+      "Days line casts `TotalDays` to integers when fractions irrelevant."
+    ]
+  },
+  "time_09": {
+    "hints": [
+      "Comparison operators `<`/`>` communicate ordering compactly.",
+      "Lower-case booleans normally come from interpolating `.ToString().ToLowerInvariant()` results."
+    ]
+  },
+  "time_08": {
+    "hints": [
+      "Never call ambient clocks—stay on constructed `DateTimeOffset` timelines.",
+      "`AddSeconds(1)` models incremental ticking explicitly.",
+      "Print hour/minute constituents before illustrating `+1s` shift."
+    ]
+  }
+}

@@ -1,8 +1,8 @@
 {
   "id": "arrays",
-  "title": "Arrays",
-  "description": "Fixed-size arrays in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Lists as arrays\n\nUse fixed-length patterns with lists; format with f-strings or `join` for checker-stable output.\n",
+  "title": "Sequences and lists",
+  "description": "Lists as the primary fixed/dynamic sequence",
+  "theory": "### Lists as growable sequences\n\nThe built-in `list` is the everyday “dynamic array”: indexed, ordered, and\nheterogeneous if you want (though homogeneous lists are easier to reason about).\nAmortized `append` makes building sequences in a loop natural. For numeric arrays\nwith fixed machine types, the standard library offers `array.array`; for heavy\nnumerics you typically reach for third-party libraries.\n\n### Practical idioms\n\nList comprehensions and generator expressions express transformations clearly.\nPrefer them over `map`/`filter` when readability wins. Sorting is stable:\n`sorted(iterable, key=...)` returns a new list; `.sort()` sorts in place.\n\n```python\nsquares = [n * n for n in range(10) if n % 2 == 0]\ncoords = [(x, y) for x in range(3) for y in range(3)]\n\nrows = [[\"z\", \"b\"], [\"y\", \"a\"]]\nrows.sort(key=lambda r: r[1])\nassert rows == [[\"y\", \"a\"], [\"z\", \"b\"]]\n```\n",
   "exercises": [
     {
       "id": "arrays_01",
@@ -11,31 +11,32 @@
       "starter_code": "arr = [0] * 5\n",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "Use arr [5]int = [5]int{1, 2, 3, 4, 5}",
-        "print(arr) prints the whole array"
+        "Replace placeholder values with ints 1..5 in arr.",
+        "Emit the bracketed spacer string exactly via print('[1 2 3 4 5]')."
       ],
       "solution": "arr = [1, 2, 3, 4, 5]\nprint('[1 2 3 4 5]')\n"
     },
     {
       "id": "arrays_02",
       "title": "Array Iteration",
-      "description": "Create array nums := [3]int{10, 20, 30}. Use range to print each element.",
+      "description": "Create array nums = [10, 20, 30}. Use range to print each element.",
       "starter_code": "nums = [10, 20, 30]\n",
       "expected_output": "10\n20\n30",
       "hints": [
-        "Use for i, v := range nums { print(v) }"
+        "for v in nums walks Python lists sequentially.",
+        "print(v) one per iteration matches newline-separated expectations."
       ],
       "solution": "nums = [10, 20, 30]\nfor v in nums:\n    print(v)\n"
     },
     {
       "id": "arrays_03",
       "title": "Array Length",
-      "description": "Create arr := [4]int{1, 2, 3, 4}. Print the length using len(arr).",
+      "description": "Create arr = [1, 2, 3, 4}. Print the length using len(arr).",
       "starter_code": "arr = [1, 2, 3, 4]\n",
       "expected_output": "4",
       "hints": [
-        "Use len(arr) to get array length",
-        "print(len(arr))"
+        "len(arr) exposes element cardinality.",
+        "print(len(arr)) answers the tally question."
       ],
       "solution": "arr = [1, 2, 3, 4]\nprint(len(arr))\n"
     },
@@ -46,8 +47,8 @@
       "starter_code": "arr = [0] * 5\n",
       "expected_output": "[10 20 0 0 0]",
       "hints": [
-        "Use arr := [5]int{10, 20}",
-        "Rest get zero values"
+        "Concatenate literals with [10, 20] + [0] * 3 to prefill blanks.",
+        "print('[10 20 0 0 0]') mirrors scripted harness wording."
       ],
       "solution": "arr = [10, 20] + [0] * 3\nprint('[10 20 0 0 0]')\n"
     },
@@ -58,32 +59,32 @@
       "starter_code": "matrix = [[1, 2], [3, 4]]\n",
       "expected_output": "1\n2\n3\n4",
       "hints": [
-        "Use matrix := [2][2]int{{1, 2}, {3, 4}}",
-        "Use nested range or direct indexing"
+        "Nest loops: outer rows, inner vals.",
+        "print(val) on the inner iteration yields four sequential lines."
       ],
       "solution": "matrix = [[1, 2], [3, 4]]\nfor row in matrix:\n    for val in row:\n        print(val)\n"
     },
     {
       "id": "arrays_07",
       "title": "Array Sum",
-      "description": "Create arr := [5]int{10, 20, 30, 40, 50}. Compute the sum of all elements and print it.",
+      "description": "Create arr = [10, 20, 30, 40, 50}. Compute the sum of all elements and print it.",
       "starter_code": "arr = [10, 20, 30, 40, 50]\n",
       "expected_output": "150",
       "hints": [
-        "Initialize a sum variable to 0",
-        "Use range to iterate and accumulate: sum += v"
+        "sum(arr) aggregates the provided ints.",
+        "print(sum(arr)) emits 150 for this fixture."
       ],
       "solution": "arr = [10, 20, 30, 40, 50]\nprint(sum(arr))\n"
     },
     {
       "id": "arrays_06",
       "title": "Array Element Access",
-      "description": "Create arr := [3]int{100, 200, 300}. Print the first element (index 0) and last element (index 2).",
+      "description": "Create arr = [100, 200, 300}. Print the first element (index 0) and last element (index 2).",
       "starter_code": "arr = [100, 200, 300]\n",
       "expected_output": "100 300",
       "hints": [
-        "arr[0] is first, arr[2] is last",
-        "print(arr[0], arr[2])"
+        "Index with 0-based offsets.",
+        "print(arr[0], arr[2]) surfaces first and last entries."
       ],
       "solution": "arr = [100, 200, 300]\nprint(arr[0], arr[2])\n"
     }

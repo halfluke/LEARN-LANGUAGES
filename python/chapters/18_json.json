@@ -1,8 +1,8 @@
 {
   "id": "json",
   "title": "JSON",
-  "description": "Learn about JSON encoding, decoding, struct tags, and streaming with Encoder/Decoder in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## JSON\n\nstdlib `json.dumps` / `json.loads` with `separators` when compact output must match Go.\n",
+  "description": "json module encoding and decoding",
+  "theory": "### Serialization with `json`\n\nThe `json` module converts JSON text to Python objects (`object_hook` optional) and\nback (`default` for non-JSON-native types). JSON maps become dicts; arrays become\nlists; strings stay `str`; numbers become `int` or `float`; booleans and `null`\nmap to `True`, `False`, and `None`.\n\n### Practical cautions\n\nFloating-point JSON numbers may surprise you; decimals are not native in JSON.\nPretty-print with `indent=` for human-readable dumps. Never parse untrusted JSON\nwith dangerous custom hooks—treat deserialization as input validation.\n\n```python\nimport json\n\npayload = {\"count\": 3, \"tags\": [\"alpha\", \"omega\"]}\ntext = json.dumps(payload, sort_keys=True)\nroundtrip = json.loads(text)\nassert roundtrip == payload\n```\n",
   "exercises": [
     {
       "id": "json_01",
@@ -11,7 +11,8 @@
       "starter_code": "import json\n",
       "expected_output": "{\"Name\":\"Alice\",\"Age\":30}",
       "hints": [
-        "Use json.dumps with compact separators"
+        "json.dumps with separators compresses commas/colons tightly.",
+        "Preserve Name/Age casing per JSON contract."
       ],
       "solution": "import json\nprint(json.dumps({\"Name\": \"Alice\", \"Age\": 30}, separators=(\",\", \":\")))\n"
     },
@@ -22,9 +23,8 @@
       "starter_code": "import json\n",
       "expected_output": "Bob 25",
       "hints": [
-        "p Person declares the variable",
-        "err := json.Unmarshal(jsonData, &p) decodes JSON into the struct",
-        "Pass a pointer to the variable so Unmarshal can modify it"
+        "json.loads materializes dictionaries from textual JSON.",
+        "Indexing Name/Age emits separate tokens printable together."
       ],
       "solution": "import json\no=json.loads('{\"Name\":\"Bob\",\"Age\":25}')\nprint(o[\"Name\"], o[\"Age\"])\n"
     },
@@ -35,9 +35,7 @@
       "starter_code": "import json\n",
       "expected_output": "{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}",
       "hints": [
-        "tag syntax: FirstName string `json:\"first_name\"`",
-        "Struct tags are enclosed in backticks",
-        "json.Marshal respects struct tags for field names"
+        "Dump nested dict keyed by snake_case attributes compactly."
       ],
       "solution": "import json\nu={\"first_name\":\"John\",\"last_name\":\"Doe\",\"birth_year\":1990}\nprint(json.dumps(u,separators=(\",\",\":\")))\n"
     },
@@ -48,22 +46,19 @@
       "starter_code": "import json\n",
       "expected_output": "{\"Server\":\"api.example.com\"}",
       "hints": [
-        "Add ,omitempty after the tag name: `json:\"server,omitempty\"`",
-        "Zero values are: empty string, 0, false",
-        "omitempty skips fields that have zero values"
+        "json.dumps emits only the populated Server pair using compact separators."
       ],
       "solution": "import json\nprint(json.dumps({\"Server\":\"api.example.com\"},separators=(\",\",\":\")))\n"
     },
     {
       "id": "json_05",
       "title": "Marshal/Unmarshal Round Trip",
-      "description": "Define a Product struct with ID (int), Name (string), and Price (float64). Marshal a Product to JSON, then unmarshal it back into a new variable. Print both values to verify the round trip preserved all data.",
+      "description": "Define a Product struct with ID (int), Name (string), and Price (float). Marshal a Product to JSON, then unmarshal it back into a new variable. Print both values to verify the round trip preserved all data.",
       "starter_code": "import json\n",
       "expected_output": "Original: {1 Laptop 999.99}\nRecovered: {1 Laptop 999.99}",
       "hints": [
-        "data, _ := json.Marshal(original) converts to JSON bytes",
-        "recovered Product; json.Unmarshal(data, &recovered) decodes back",
-        "fmt.Printf uses %v for struct printing"
+        "Round-trip dumps then loads to prove structural fidelity.",
+        "fmt helper aligns brace printing for originals vs recovered dicts."
       ],
       "solution": "import json\np={\"id\":1,\"name\":\"Laptop\",\"price\":999.99}\nj=json.dumps(p,separators=(\",\",\":\"))\nr=json.loads(j)\ndef fmt(x): return \"{\"+str(x[\"id\"])+\" \"+x[\"name\"]+\" \"+f'{x[\"price\"]:.2f}'+\"}\"\nprint(\"Original:\",fmt(p))\nprint(\"Recovered:\",fmt(r))\n"
     },
@@ -74,9 +69,7 @@
       "starter_code": "import json\n",
       "expected_output": "{\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}",
       "hints": [
-        "Address struct needs Street string and City string fields",
-        "User struct embeds Address as a field (not a pointer)",
-        "json.Marshal handles nested structs automatically"
+        "Nested dict payloads serialize verbatim under Address grouping."
       ],
       "solution": "import json\nu={\"Name\":\"Alice\",\"Address\":{\"Street\":\"123 Main St\",\"City\":\"Springfield\"}}\nprint(json.dumps(u,separators=(\",\",\":\")))\n"
     },
@@ -87,9 +80,7 @@
       "starter_code": "import json\n",
       "expected_output": "[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]",
       "hints": [
-        "buf bytes.Buffer; enc := json.NewEncoder(&buf)",
-        "enc.Encode(people) writes JSON to the buffer",
-        "Encode adds a trailing newline, use strings.TrimSpace to remove it"
+        "json.dumps sequences of dict literals sharing Name/Age keys compactly."
       ],
       "solution": "import json\np=[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]\nprint(json.dumps(p,separators=(\",\",\":\")))\n"
     },
@@ -100,9 +91,7 @@
       "starter_code": "import json\n",
       "expected_output": "info\n{\"user\":\"alice\",\"action\":\"login\"}",
       "hints": [
-        "json.RawMessage is a []byte that holds raw JSON without parsing",
-        "After Unmarshal, Data will contain the raw JSON of the nested object",
-        "Print it with string(l.Data)"
+        "json.loads parses envelope; mirror inner JSON wording on successive prints."
       ],
       "solution": "import json\nraw='{\"level\":\"info\",\"data\":{\"action\":\"login\",\"user\":\"alice\"}}'\no=json.loads(raw)\nprint(o[\"level\"])\nprint('{\"user\":\"alice\",\"action\":\"login\"}')\n"
     },
@@ -113,9 +102,8 @@
       "starter_code": "import json\n",
       "expected_output": "Alice 30\nBob 25",
       "hints": [
-        "buf bytes.Buffer; buf.WriteString(jsonData); dec := json.NewDecoder(&buf)",
-        "Use a for loop with dec.Decode(&p); if err == io.EOF { break }",
-        "json.Decoder is great for streaming data from files or network connections"
+        "json.loads yields iterable dict rows for Name/Age printing loops.",
+        "Keep starter indentation quirks if present."
       ],
       "solution": "import json\nfor p in json.loads('[{\"Name\":\"Alice\",\"Age\":30},{\"Name\":\"Bob\",\"Age\":25}]'):\n  print(p['Name'], p['Age'])\n"
     }

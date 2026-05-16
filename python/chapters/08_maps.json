@@ -1,8 +1,8 @@
 {
   "id": "maps",
-  "title": "Maps",
-  "description": "Hash maps (dictionaries) in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Dicts\n\n`dict` literals, `in`, `del`, and iteration with `.items()`.\n",
+  "title": "Dictionaries",
+  "description": "dict keys, values, and common mapping patterns",
+  "theory": "### Dictionaries as the core mapping\n\n`dict` stores key→value pairs with fast lookup. Keys must be hashable (immutable\nand comparable predictably). Insertion order is preserved (Python 3.7+ language\nguarantee). Use dict comprehensions and unpacking merges (`{**a, **b}` or `a | b`\non 3.9+) for concise joins.\n\n### Patterns that scale\n\n`collections.Counter`, `defaultdict`, and `ChainMap` extend mapping workflows.\nPrefer `.get` or membership tests instead of catching `KeyError` when absence is\nnormal control flow—reserve exceptions for truly exceptional cases.\n\n```python\ncounts = {c: \"aeiou\".count(c) for c in \"sequoia\"}\nmerged = {\"x\": 1} | {\"y\": 2}\n\nfrom collections import defaultdict\n\ndd = defaultdict(list)\ndd[\"k\"].append(1)\n```\n",
   "exercises": [
     {
       "id": "maps_01",
@@ -11,75 +11,75 @@
       "starter_code": "ages = {}\n# ages[\"Alice\"] = 25\n# ages[\"Bob\"] = 30\n# print(ages)\n",
       "expected_output": "{'Alice': 25, 'Bob': 30}",
       "hints": [
-        "Use ages := map[string]int{\"Alice\": 25, \"Bob\": 30}"
+        "Use dict literals like {\"Alice\": 25, \"Bob\": 30} then print."
       ],
       "solution": "ages = {\"Alice\": 25, \"Bob\": 30}\nprint(ages)\n"
     },
     {
       "id": "maps_02",
       "title": "Map Lookup",
-      "description": "Create map scores := map[string]int{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
+      "description": "Create map scores = dict{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
       "starter_code": "scores = {\"Math\": 95, \"Physics\": 88}\n",
       "expected_output": "95",
       "hints": [
-        "Use scores[\"Math\"] to get value",
-        "print(scores[\"Math\"])"
+        "scores[\"Math\"] reads the keyed value directly."
       ],
       "solution": "scores = {\"Math\": 95, \"Physics\": 88}\nprint(scores[\"Math\"])\n"
     },
     {
       "id": "maps_03",
       "title": "Add to Map",
-      "description": "Create empty map names := make(map[string]string). Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
+      "description": "Create empty map names = empty dict. Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
       "starter_code": "names = {}\n",
       "expected_output": "{'1': 'One', '2': 'Two'}",
       "hints": [
-        "names[\"1\"] = \"One\""
+        "Assign bracket keys names[\"1\"] / names[\"2\"] before printing the dict snapshot."
       ],
       "solution": "names = {}\nnames[\"1\"] = \"One\"\nnames[\"2\"] = \"Two\"\nprint(names)\n"
     },
     {
       "id": "maps_04",
       "title": "Delete from Map",
-      "description": "Create map data := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
+      "description": "Create map data = dict{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
       "starter_code": "data = {\"a\": 1, \"b\": 2, \"c\": 3}\n",
       "expected_output": "{'a': 1, 'c': 3}",
       "hints": [
-        "Use delete(data, \"b\")"
+        "Remove entries with del data[\"b\"] before displaying what remains."
       ],
       "solution": "data = {\"a\": 1, \"b\": 2, \"c\": 3}\ndel data[\"b\"]\nprint(data)\n"
     },
     {
       "id": "maps_05",
       "title": "Check Key Existence",
-      "description": "Create map inventory := map[string]int{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
+      "description": "Create map inventory = dict{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
       "starter_code": "inventory = {\"apples\": 5, \"oranges\": 3}\n",
       "expected_output": "not found",
       "hints": [
-        "Use value, exists := inventory[\"bananas\"]",
-        "Check the exists variable"
+        "\"key in inventory\" distinguishes presence from absence.",
+        "Choose between exists and not found strings accordingly."
       ],
       "solution": "inventory = {\"apples\": 5, \"oranges\": 3}\nprint(\"exists\" if \"bananas\" in inventory else \"not found\")\n"
     },
     {
       "id": "maps_07",
       "title": "Map Length",
-      "description": "Create map counts := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
+      "description": "Create map counts = dict{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
       "starter_code": "counts = {\"one\": 1, \"two\": 2, \"three\": 3}\n",
       "expected_output": "3",
       "hints": [
-        "Use len(counts) to get the number of key-value pairs"
+        "len(counts) returns how many key/value pairs remain."
       ],
       "solution": "counts = {\"one\": 1, \"two\": 2, \"three\": 3}\nprint(len(counts))\n"
     },
     {
       "id": "maps_06",
       "title": "Iterate Map",
-      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "description": "Create map grades = dict{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
       "starter_code": "grades = {\"A\": 90, \"B\": 80, \"C\": 70}\n",
       "expected_output": "A 90\nB 80\nC 70",
       "hints": [
-        "Use for key, value := range grades"
+        "for key, value in grades.items(): pairs labels with scores.",
+        "print(key, value) emits space-separated tuples per line."
       ],
       "solution": "grades = {\"A\": 90, \"B\": 80, \"C\": 70}\nfor key, value in grades.items():\n    print(key, value)\n"
     }

@@ -1,42 +1,42 @@
 {
   "id": "ownership",
-  "title": "Values, copies, and references (Go)",
-  "description": "Go has garbage collection and no Rust-style ownership, but values vs pointers still shape how data is shared.",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## References vs values\n\nLists and dicts are mutable references; integers and strings behave like copied values for assignment. This chapter maps Go ownership ideas to Python’s object model.\n",
+  "title": "Values, copies, and references",
+  "description": "How assignment, mutability, and shared objects work in Python",
+  "theory": "### Objects, references, and lifetime\n\nPython manages memory with reference counting plus a cycle-breaking collector.\nThere is no manual free/dispose step and no compile-time ownership checker: an\nobject lives while something still references it. Thinking in terms of **who\nreferences what** helps you predict aliasing bugs and when large graphs stay alive.\n\n### Copies versus views\n\nAssignment shares references. For independent containers, prefer explicit copying\nstrategies (`list(...)`, `dict.copy()`, `copy.copy` / `copy.deepcopy`) instead of\nassuming independence. Immutable objects (`int`, `str`, `tuple` of immutables)\nare safely shared and cheap to pass around.\n\n```python\nimport copy\n\noriginal = {\"nums\": [1, 2]}\nshallow = original.copy()\nshallow[\"nums\"].append(3)\nassert original[\"nums\"] == [1, 2, 3]\n\ndeep = copy.deepcopy(original)\ndeep[\"nums\"].append(99)\nassert original[\"nums\"] == [1, 2, 3]\n```\n",
   "exercises": [
     {
       "id": "ownership_01",
       "title": "String reassignment",
-      "description": "Assign `s := \"hi\"`, assign `t := s`, print `t` with `print` (no newline).",
+      "description": "Assign `s = \"hi\"`, assign `t = s`, print `t` with `print` (no newline).",
       "starter_code": "s = \"hi\"\n",
       "expected_output": "hi",
       "hints": [
-        "`t := s` copies the string header, both refer to same bytes",
-        "`fmt.Print(t)`"
+        "Assignment t = s shares the underlying str.",
+        "Use print(t, end=\"\") to drop the trailing newline."
       ],
       "solution": "s = \"hi\"\nt = s\nprint(t, end=\"\")\n"
     },
     {
       "id": "ownership_02",
       "title": "Slice header copy",
-      "description": "Create `s := []int{1, 2}`, assign `t := s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `print` (no space, no newline) → `92`.",
+      "description": "Create `s = list[1, 2}`, assign `t = s`, set `t[0] = 9`, print `s[0]` and `s[1]` concatenated as digits with `print` (no space, no newline) → `92`.",
       "starter_code": "s = [1, 2]\n",
       "expected_output": "92",
       "hints": [
-        "`t := s` shares backing array",
-        "`t[0] = 9` affects `s[0]`"
+        "t = s aliases the same list instance, so edits through t reshape s.",
+        "After rewriting index 0, stitch s[0] and s[1] into digits with print(..., end=\"\")."
       ],
       "solution": "s = [1, 2]\nt = s\nt[0] = 9\nprint(f'{s[0]}{s[1]}', end='')\n"
     },
     {
       "id": "ownership_03",
       "title": "Int copy",
-      "description": "`a := 3`, `b := a`, increment `b` with `b++`, print `a` and `b` space-separated with `print` (no trailing newline).",
+      "description": "`a = 3`, `b = a`, increment `b` with `b += 1`, print `a` and `b` space-separated with `print` (no trailing newline).",
       "starter_code": "a = 3\n",
       "expected_output": "3 4",
       "hints": [
-        "`b := a` copies the `int`",
-        "`b++`"
+        "Ints are immutable numbers; b += 1 rebound b while a stays put.",
+        "An f-string such as print(f'{a} {b}') keeps spacing identical to stdout."
       ],
       "solution": "a = 3\nb = a\nb += 1\nprint(f'{a} {b}')\n"
     }

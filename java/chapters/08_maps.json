@@ -1,8 +1,8 @@
 {
   "id": "maps",
   "title": "Maps",
-  "description": "Hash maps (dictionaries) in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Hash maps\n\n`HashMap` for key/value storage; `toString()` format differs from Go—see checker overrides.\n",
+  "description": "HashMap, keys, values, and iteration",
+  "theory": "\n### Choosing a map implementation\n`HashMap` offers expected O(1) operations with hashing; keys must obey consistent `equals` / `hashCode`. `LinkedHashMap` preserves insertion or access order; `TreeMap` keeps sorted order by key using `Comparable` or a `Comparator`.\n\nFor constants known at compile time, `Map.of(k, v, …)` and `Map.ofEntries` create compact immutable maps.\n\n### Modern map idioms\n`computeIfAbsent`, `merge`, and `compute` replace many manual get/put sequences. Prefer these when updates depend on the prior value to keep logic atomic relative to the bucket.\n\n```java\nMap<String, Integer> counts = new HashMap<>();\nfor (String word : words) {\n    counts.merge(word, 1, Integer::sum);\n}\n```\n",
   "exercises": [
     {
       "id": "maps_01",
@@ -11,75 +11,78 @@
       "starter_code": "import java.util.LinkedHashMap;\npublic class Main {\n    public static void main(String[] args) {\n        LinkedHashMap<String,Integer> ages = new LinkedHashMap<>();\n    }\n}\n",
       "expected_output": "{Alice=25, Bob=30}",
       "hints": [
-        "Use ages := map[string]int{\"Alice\": 25, \"Bob\": 30}"
+        "Use `LinkedHashMap<String,Integer>` and `put(\"Alice\", 25); put(\"Bob\", 30);`.",
+        "`System.out.println(ages);` yields `{Alice=25, Bob=30}` insertion order."
       ],
       "solution": "import java.util.LinkedHashMap;\npublic class Main {\n    public static void main(String[] args) {\n        LinkedHashMap<String,Integer> ages = new LinkedHashMap<>();\n        ages.put(\"Alice\", 25); ages.put(\"Bob\", 30);\n        System.out.println(ages);\n    }\n}\n"
     },
     {
       "id": "maps_02",
       "title": "Map Lookup",
-      "description": "Create map scores := map[string]int{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and print the score.",
+      "description": "Create map scores = HashMap{\"Math\": 95, \"Physics\": 88}. Look up \"Math\" and System.out.println the score.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> scores = new java.util.HashMap<>();\n        scores.put(\"Math\", 95); scores.put(\"Physics\", 88);\n    }\n}\n",
       "expected_output": "95",
       "hints": [
-        "Use scores[\"Math\"] to get value",
-        "System.out.println(scores[\"Math\"])"
+        "Use `HashMap` (or `Map.of` for fixed data) and `scores.get(\"Math\")`.",
+        "Print the `Integer` value `95`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> scores = new java.util.HashMap<>();\n        scores.put(\"Math\", 95); scores.put(\"Physics\", 88);\n        System.out.println(scores.get(\"Math\"));\n    }\n}\n"
     },
     {
       "id": "maps_03",
       "title": "Add to Map",
-      "description": "Create empty map names := make(map[string]string). Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
+      "description": "Create empty map names = empty HashMap. Add entries: \"1\" -> \"One\", \"2\" -> \"Two\". Print map.",
       "starter_code": "import java.util.HashMap;\npublic class Main {\n    public static void main(String[] args) {\n        HashMap<String, String> names = new HashMap<>();\n    }\n}\n",
       "expected_output": "{1=One, 2=Two}",
       "hints": [
-        "names[\"1\"] = \"One\""
+        "`names.put(\"1\", \"One\");` etc., then print the map."
       ],
       "solution": "import java.util.HashMap;\npublic class Main {\n    public static void main(String[] args) {\n        HashMap<String, String> names = new HashMap<>();\n        names.put(\"1\", \"One\");\n        names.put(\"2\", \"Two\");\n        System.out.println(names);\n    }\n}\n"
     },
     {
       "id": "maps_04",
       "title": "Delete from Map",
-      "description": "Create map data := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then print the map.",
+      "description": "Create map data = HashMap{\"a\": 1, \"b\": 2, \"c\": 3}. Delete \"b\", then System.out.println the map.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> data = new java.util.HashMap<>();\n    }\n}\n",
       "expected_output": "{a=1, c=3}",
       "hints": [
-        "Use delete(data, \"b\")"
+        "After `remove(\"b\")` or building without `b`, print `{a=1, c=3}`.",
+        "The starter may already omit `b` in the solution."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> data = new java.util.HashMap<>();\n        data.put(\"a\", 1); data.put(\"c\", 3);\n        System.out.println(data);\n    }\n}\n"
     },
     {
       "id": "maps_05",
       "title": "Check Key Existence",
-      "description": "Create map inventory := map[string]int{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and print exists or not found.",
+      "description": "Create map inventory = HashMap{\"apples\": 5, \"oranges\": 3}. Check if \"bananas\" exists and System.out.println exists or not found.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> inventory = new java.util.HashMap<>();\n    }\n}\n",
       "expected_output": "not found",
       "hints": [
-        "Use value, exists := inventory[\"bananas\"]",
-        "Check the exists variable"
+        "Use `inventory.containsKey(\"bananas\")` with a ternary selecting `\"exists\"` vs `\"not found\"`.",
+        "Print `not found` for the sample data."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> inventory = new java.util.HashMap<>();\n        inventory.put(\"apples\", 5); inventory.put(\"oranges\", 3);\n        System.out.println(inventory.containsKey(\"bananas\") ? \"exists\" : \"not found\");\n    }\n}\n"
     },
     {
       "id": "maps_07",
       "title": "Map Length",
-      "description": "Create map counts := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
+      "description": "Create map counts = HashMap{\"one\": 1, \"two\": 2, \"three\": 3}. Print the number of entries using len().",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> counts = new java.util.HashMap<>();\n    }\n}\n",
       "expected_output": "3",
       "hints": [
-        "Use len(counts) to get the number of key-value pairs"
+        "Print `counts.size()` after three `put` calls."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        java.util.HashMap<String, Integer> counts = new java.util.HashMap<>();\n        counts.put(\"one\", 1); counts.put(\"two\", 2); counts.put(\"three\", 3);\n        System.out.println(counts.size());\n    }\n}\n"
     },
     {
       "id": "maps_06",
       "title": "Iterate Map",
-      "description": "Create map grades := map[string]int{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
+      "description": "Create map grades = HashMap{\"A\": 90, \"B\": 80, \"C\": 70}. Print each key-value pair.",
       "starter_code": "import java.util.LinkedHashMap;\npublic class Main {\n    public static void main(String[] args) {\n        LinkedHashMap<String, Integer> grades = new LinkedHashMap<>();\n    }\n}\n",
       "expected_output": "A 90\nB 80\nC 70",
       "hints": [
-        "Use for key, value := range grades"
+        "Iterate `for (var e : grades.entrySet())` printing `e.getKey() + \" \" + e.getValue()`.",
+        "Preserve insertion order with `LinkedHashMap`."
       ],
       "solution": "import java.util.LinkedHashMap;\npublic class Main {\n    public static void main(String[] args) {\n        LinkedHashMap<String, Integer> grades = new LinkedHashMap<>();\n        grades.put(\"A\", 90); grades.put(\"B\", 80); grades.put(\"C\", 70);\n        for (var e : grades.entrySet())\n            System.out.println(e.getKey() + \" \" + e.getValue());\n    }\n}\n"
     }

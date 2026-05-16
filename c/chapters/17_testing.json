@@ -1,8 +1,8 @@
 {
   "id": "testing",
   "title": "Testing",
-  "description": "Unit-test ideas expressed as small stdout-checked programs (adapted for this platform).",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Testing\n\nStdout exercises stand in for a real unit harness.\n",
+  "description": "Assertions and test harness patterns in C",
+  "theory": "### Assertions and harnesses\n\nLightweight testing starts with `assert` macro (`NDEBUG` disables it in release). For systematic checks, structure suites that run many small tests, report failures with file and line, and return nonzero exit status to CI. Popular minimal frameworks exist as single headers; alternatively, integrate CTest/autotools or Meson test targets to run binaries under sanitizers.\n\n### Isolation and determinism\n\nPure functions over explicit inputs are easiest to test. For code touching `time`, files, or randomness, inject dependencies via function pointers or small wrapper modules so tests can swap deterministic fakes. Golden-file tests help for parsers; property-based fuzzing (libFuzzer, AFL) complements unit tests for parsers and decoders.\n\n### Coverage and CI\n\nCombine unit tests with AddressSanitizer/UndefinedBehaviorSanitizer in CI builds. Coverage tools (`gcov`, `llvm-cov`) highlight untested branches—aim for meaningful coverage, not percentages alone.\n\n```c\n#include <assert.h>\n\nstatic int square(int x) { return x * x; }\n\nint main(void) {\n    assert(square(3) == 9);\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "testing_01",
@@ -11,7 +11,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return 0; }\n\nint main(void) {\n    printf(\"%d\", sum(2, 3));\n    return 0;\n}\n",
       "expected_output": "5",
       "hints": [
-        "Return `a + b`."
+        "`static int sum(int a, int b) { return a + b; }`",
+        "`printf(\"%d\", sum(2, 3));` — note: no newline in expected output."
       ],
       "solution": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return a + b; }\n\nint main(void) {\n    printf(\"%d\", sum(2, 3));\n    return 0;\n}\n"
     },
@@ -22,7 +23,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic int multiply(int a, int b) { return 0; }\n\nint main(void) {\n    return 0;\n}\n",
       "expected_output": "6 0 -4",
       "hints": [
-        "Use `printf(\"%d %d %d\", ...);` with no trailing newline if expected has none."
+        "`multiply` returns `a * b`.",
+        "`printf(\"%d %d %d\", multiply(2,3), multiply(0,5), multiply(-1,4));`"
       ],
       "solution": "#include <stdio.h>\n\nstatic int multiply(int a, int b) { return a * b; }\n\nint main(void) {\n    printf(\"%d %d %d\", multiply(2, 3), multiply(0, 5), multiply(-1, 4));\n    return 0;\n}\n"
     },
@@ -33,7 +35,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic int divide(int a, int b) { return 0; }\n\nint main(void) {\n    return 0;\n}\n",
       "expected_output": "ok",
       "hints": [
-        "Return `-1` when `b == 0`."
+        "Return `-1` when `b == 0`.",
+        "Print `ok` only if `divide(10,2) == 5 && divide(10,0) == -1`."
       ],
       "solution": "#include <stdio.h>\n\nstatic int divide(int a, int b) {\n    if (b == 0) return -1;\n    return a / b;\n}\n\nint main(void) {\n    if (divide(10, 2) == 5 && divide(10, 0) == -1)\n        printf(\"ok\");\n    return 0;\n}\n"
     },
@@ -44,7 +47,8 @@
       "starter_code": "#include <stdio.h>\n#include <string.h>\n\nconst char *validate(int age) { return \"\"; }\n\nint main(void) { return 0; }\n",
       "expected_output": "yes",
       "hints": [
-        "Use `strstr` on the returned message."
+        "`validate(-5)` should return text containing `negative`.",
+        "`printf(strstr(validate(-5), \"negative\") ? \"yes\" : \"no\");`"
       ],
       "solution": "#include <stdio.h>\n#include <string.h>\n\nconst char *validate(int age) {\n    if (age < 0) return \"age cannot be negative\";\n    return \"ok\";\n}\n\nint main(void) {\n    const char *msg = validate(-5);\n    printf(strstr(msg, \"negative\") ? \"yes\" : \"no\");\n    return 0;\n}\n"
     },
@@ -55,7 +59,8 @@
       "starter_code": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return a + b; }\n\nint main(void) {\n    return 0;\n}\n",
       "expected_output": "done",
       "hints": [
-        "Use a `for` loop with a large bound."
+        "`for (int i = 0; i < 10000; i++) (void)sum(2, 3);`",
+        "`printf(\"done\");` with no newline."
       ],
       "solution": "#include <stdio.h>\n\nstatic int sum(int a, int b) { return a + b; }\n\nint main(void) {\n    for (int i = 0; i < 10000; i++) (void)sum(2, 3);\n    printf(\"done\");\n    return 0;\n}\n"
     }

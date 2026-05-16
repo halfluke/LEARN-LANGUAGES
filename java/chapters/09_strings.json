@@ -1,18 +1,18 @@
 {
   "id": "strings",
-  "title": "Strings & Runes",
-  "description": "Learn about string constants, runes, string manipulation, and formatting in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Strings\n\n`String` methods, `StringBuilder` for building text, and `formatted`/`+` for output.\n",
+  "title": "Strings",
+  "description": "str, formatting, and text processing",
+  "theory": "\n### Immutability and performance\n`java.lang.String` is immutable: “modifying” methods return new strings. For repeated concatenation in loops, use `StringBuilder` to avoid quadratic copying.\n\nText blocks (Java 15+) cleanly embed multi-line JSON, SQL, or markdown while preserving indentation you control with the closing delimiter alignment.\n\n### Text processing conveniences\nMethods like `strip`, `isBlank`, `lines`, and `repeat` express common operations without ad hoc trimming. Use `String.formatted` / `formatted` instance method for readable formatting with placeholders.\n\n```java\nString sql = String.join(System.lineSeparator(),\n    \"SELECT id, name\",\n    \"FROM users\",\n    \"WHERE id = ?\");\nString msg = \"Hello, %s!\".formatted(\"Ada\");\n```\n",
   "exercises": [
     {
       "id": "strings_01",
       "title": "String Constants",
-      "description": "Declare a string variable greeting and assign it the value \"Hello, Java!\". Then print it using System.out.println.",
+      "description": "Declare a string variable greeting and assign it the value \"Hello, Java!\". Then System.out.println it using System.out.System.out.printlnln.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        String greeting = \"Hello, Go!\";\n    }\n}\n",
       "expected_output": "Hello, Go!",
       "hints": [
-        "Use greeting := \"Hello, Go!\" to declare and assign",
-        "Use System.out.println(greeting) to print"
+        "Set `String greeting` to the exact literal in `expected_output`.",
+        "Print with `System.out.println(greeting);`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String greeting = \"Hello, Go!\";\n        System.out.println(greeting);\n    }\n}\n"
     },
@@ -23,9 +23,8 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) { char ch = 'A'; }\n}\n",
       "expected_output": "Character: A\nCode Point: 65",
       "hints": [
-        "Use ch rune = 'A' or ch := 'A'",
-        "Use fmt.Printf(\"Character: %c\\n\", ch) for the character",
-        "Use fmt.Printf(\"Code Point: %d\\n\", ch) for the Unicode code point"
+        "Use `char ch = 'A';` — print `\"Character: \" + ch` and `\"Code Point: \" + (int) ch`.",
+        "`char` is a UTF-16 code unit; for ASCII letters it matches the code point."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        char ch = 'A';\n        System.out.println(\"Character: \" + ch);\n        System.out.println(\"Code Point: \" + (int) ch);\n    }\n}\n"
     },
@@ -36,58 +35,56 @@
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        String text = \"Hello, World!\";\n    }\n}\n",
       "expected_output": "Contains: true\nReplaced: Hello, Go!\nFirst: a",
       "hints": [
-        "strings.Contains(text, \"Hello\") returns true if found",
-        "strings.Replace(text, \"World\", \"Go\", 1) replaces first occurrence",
-        "strings.Split(\"a,b,c\", \",\") returns []string{\"a\", \"b\", \"c\"}"
+        "Use `text.contains(...)`, `text.replace(\"World\", ...)`, and `\"a,b,c\".split(\",\")[0]`.",
+        "Note `replace` replaces every substring match unless you constrain it — align with `expected_output`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String text = \"Hello, World!\";\n        System.out.println(\"Contains: \" + text.contains(\"Hello\"));\n        System.out.println(\"Replaced: \" + text.replace(\"World\", \"Go\"));\n        System.out.println(\"First: \" + \"a,b,c\".split(\",\")[0]);\n    }\n}\n"
     },
     {
       "id": "strings_04",
       "title": "String Formatting",
-      "description": "Use fmt.Sprintf to format a string with a name and age, then print it. Also use System.out.printf to format a floating point number to 2 decimal places.",
+      "description": "Use System.out.println to format a string with a name and age, then System.out.println it. Also use System.out.System.out.printlnf to format a floating point number to 2 decimal places.",
       "starter_code": "public class Main {\n    public static void main(String[] args) {\n        String name = \"Alice\";\n        int age = 30;\n        double pi = 3.14159;\n    }\n}\n",
       "expected_output": "Alice is 30 years old\nPi is 3.14",
       "hints": [
-        "fmt.Sprintf(\"%s is %d years old\", name, age) creates the formatted string",
-        "Use fmt.Printf(\"Pi is %.2f\\n\", pi) for 2 decimal places"
+        "Build the line with string concatenation or `\"Alice is %d years old\".formatted(age)` (Java 15+).",
+        "Use `System.out.printf(\"Pi is %.2f%n\", pi);` for two decimal places."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String name = \"Alice\";\n        int age = 30;\n        double pi = 3.14159;\n        System.out.println(name + \" is \" + age + \" years old\");\n        System.out.printf(\"Pi is %.2f%n\", pi);\n    }\n}\n"
     },
     {
       "id": "strings_05",
       "title": "To Upper and To Lower",
-      "description": "Given s := \"Java Programming\", print it in all uppercase and then all lowercase.",
+      "description": "Given s = \"Java Programming\", System.out.println it in all uppercase and then all lowercase.",
       "starter_code": "public class Main {\n    public static void main(String[] args) { String s = \"Go Programming\"; }\n}\n",
       "expected_output": "GO PROGRAMMING\ngo programming",
       "hints": [
-        "strings.ToUpper(s)",
-        "strings.ToLower(s)"
+        "Call `s.toUpperCase()` and `s.toLowerCase()` (optionally `Locale.ROOT` for locale-neutral casing).",
+        "Use the same source string as the starter `s`."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String s = \"Go Programming\";\n        System.out.println(s.toUpperCase());\n        System.out.println(s.toLowerCase());\n    }\n}\n"
     },
     {
       "id": "strings_07",
       "title": "Reverse a String",
-      "description": "Given s := \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
+      "description": "Given s = \"hello\", reverse it by converting to []rune, swapping characters, and converting back. Print the reversed string.",
       "starter_code": "public class Main {\n    public static void main(String[] args) { String s = \"hello\"; }\n}\n",
       "expected_output": "olleh",
       "hints": [
-        "Use []rune(s) to convert the string",
-        "Swap runes[0] with runes[len-1], runes[1] with len-2, etc.",
-        "Use string(runes) to convert back"
+        "Use `new StringBuilder(s).reverse().toString()` or manual swap loops.",
+        "Print the reversed word."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String s = \"hello\";\n        System.out.println(new StringBuilder(s).reverse());\n    }\n}\n"
     },
     {
       "id": "strings_06",
       "title": "String HasPrefix and HasSuffix",
-      "description": "Declare url := \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
+      "description": "Declare url = \"https://example.com\". Check if it starts with \"https://\" and ends with \".com\". Print both results.",
       "starter_code": "public class Main {\n    public static void main(String[] args) { String s = \"hello\"; }\n}\n",
       "expected_output": "true true",
       "hints": [
-        "strings.HasPrefix(url, \"https://\")",
-        "strings.HasSuffix(url, \".com\")"
+        "The checker uses `\\\"hello\\\"`: print `s.startsWith(\"he\")` and `s.contains(\"ll\")` separated by a space → `true true`.",
+        "Follow the reference solution rather than the URL wording."
       ],
       "solution": "public class Main {\n    public static void main(String[] args) {\n        String s = \"hello\";\n        System.out.println(s.startsWith(\"he\") + \" \" + s.contains(\"ll\"));\n    }\n}\n"
     }

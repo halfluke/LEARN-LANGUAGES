@@ -2,7 +2,7 @@
   "id": "interfaces",
   "title": "Traits",
   "description": "Traits and polymorphism in Rust",
-  "theory": "## Traits in Rust\n\nTraits describe shared behavior, similar in role to Go interfaces. Implement with `impl Trait for Type`.\n\nTrait objects `dyn Trait` use dynamic dispatch; generics use static dispatch (monomorphization).\n",
+  "theory": "### Traits: shared behavior, not inheritance\n\nTraits describe **what you can do** with a type: methods, associated types, and optional\ndefault bodies. They are closer to **Java interfaces** than to subclassing: you implement\nthem explicitly (`impl Trait for Type`) or blanketingly (`impl Trait for T where ...`).\n\nDynamic dispatch (`dyn Trait`) carries a vtable pointer (`dyn Trait` behind `&`/`Box`).\nStatic dispatch (`impl Trait` in argument position, generics) monomorphizes—faster, bigger\nbinary. Choose `dyn` when you genuinely need heterogeneous collections of behaviors.\n\n```rust\ntrait Area {\n    fn area(&self) -> f64;\n}\n\nstruct Circle { r: f64 }\nimpl Area for Circle {\n    fn area(&self) -> f64 { std::f64::consts::PI * self.r * self.r }\n}\n\nfn print_area(s: &dyn Area) {\n    println!(\"{}\", s.area());\n}\n```\n\n### Coherence and orphan rules\n\nYou may not implement foreign traits for foreign types—Rust’s **orphan rule** keeps trait\nresolution predictable. Newtypes (`struct Meters(f64);`) unlock useful impls locally while\npreserving type safety.\n\n### Common standard traits\n\n`Clone`, `Copy`, `Debug`, `PartialEq`, `Eq`, `Hash`, `Default`, and `Iterator` appear daily.\nUnderstanding which ones imply bounds on generic parameters (`T: Clone`) prevents sprawling\n`where` clauses when composing structs.\n",
   "exercises": [
     {
       "id": "interfaces_01",

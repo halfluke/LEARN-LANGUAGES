@@ -1,8 +1,8 @@
 {
   "id": "packages",
-  "title": "Packages",
-  "description": "Learn about package declaration, importing, exporting, and init functions in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Namespaces & assemblies\n\nNamespaces organize types; assemblies ship as `.dll`. `using` imports types into scope.\n",
+  "title": "Namespaces and projects",
+  "description": "Namespaces, assemblies, and project layout",
+  "theory": "### Namespaces and assemblies\n\nC# source organizes into **namespaces** (logical hierarchy) and **assemblies** (.dll outputs—the unit of deployment). The `global::` prefix escapes out of local aliases when names collide across libraries.\n\n`using` imports namespaces; `using static` imports static members; **file-scoped namespaces** (`namespace Foo;`) reduce indentation in large files.\n\n### NuGet and the SDK\n\nThe .NET SDK uses **MSBuild** and **PackageReference** items to pull NuGet packages at restore time. Transitive dependencies resolve automatically; `Directory.Build.props` centralizes versions in multi-project solutions.\n\nInternals visible to friends (`InternalsVisibleTo`) lets test assemblies access `internal` API without widening public surface.\n\n```csharp\nusing System;\nusing System.IO;\n\nnamespace Demo.App;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(Path.Combine(\"data\", \"log.txt\"));\n    }\n}\n```\n",
   "exercises": [
     {
       "id": "packages_01",
@@ -11,8 +11,8 @@
       "starter_code": "// Utils.Greet();\n\nstatic class Utils { public static void Greet() => Console.WriteLine(\"Hello from utils\"); }",
       "expected_output": "Hello from utils",
       "hints": [
-        "Use package utils at the top of utils.go",
-        "Define func Greet() that prints a message"
+        "Use `static class Utils` namespaces for utility methods in single-file exercises.",
+        "Expose `public static void Greet()` publicly for host invocation."
       ],
       "solution": "Utils.Greet();\n\nstatic class Utils { public static void Greet() => Console.WriteLine(\"Hello from utils\"); }"
     },
@@ -23,9 +23,8 @@
       "starter_code": "// Math.Sqrt(144)",
       "expected_output": "12",
       "hints": [
-        "Use import \"math\" to import the math package",
-        "Call math.Sqrt(144)",
-        "Use Console.WriteLine to print the result"
+        "Reference BCL numerical helpers via `System.Math`.",
+        "Cast narrowing conversions (`(int)Math.Sqrt(144))` when fractional roots are undesirable."
       ],
       "solution": "Console.WriteLine((int)Math.Sqrt(144));"
     },
@@ -36,8 +35,8 @@
       "starter_code": "// print Count\n\nstatic class Counter { public static int Count; public static void Increment() => Count++; }",
       "expected_output": "Count: 0\nIncremented: 1",
       "hints": [
-        "Export by capitalizing: Count, Increment (Go exports anything starting with uppercase)",
-        "In main, use counter.Count and counter.Increment()"
+        "Public API surface favors **PascalCase** static members.",
+        "`Console.WriteLine` displays counters after invoking exported helpers."
       ],
       "solution": "Console.WriteLine($\"Count: {Counter.Count}\");\nCounter.Increment();\nConsole.WriteLine($\"Incremented: {Counter.Count}\");\n\nstatic class Counter { public static int Count; public static void Increment() => Count++; }"
     },
@@ -48,9 +47,8 @@
       "starter_code": "static class Config { public static string Version = \"\"; static Config() => Version = \"1.0.0\"; }",
       "expected_output": "Version: 1.0.0",
       "hints": [
-        "Declare var Version string in config package",
-        "Define func init() that assigns \"1.0.0\" to Version",
-        "init() runs automatically before main() when the package is imported"
+        "Static constructors run once before first type touch—mirror init semantics.",
+        "Good for deterministic configuration/version seeds."
       ],
       "solution": "Console.WriteLine($\"Version: {Config.Version}\");\n\nstatic class Config { public static string Version = \"\"; static Config() => Version = \"1.0.0\"; }"
     },
@@ -61,32 +59,32 @@
       "starter_code": "static class Formatter { public static void Format() => Console.WriteLine(\"Formatted\"); }",
       "expected_output": "Formatted",
       "hints": [
-        "Define func Format() and func format() in formatter package",
-        "Only Format is accessible from main"
+        "Keep helpers `private static` unless cross-type consumption is intended.",
+        "Call only intentionally exported entry points."
       ],
       "solution": "Formatter.Format();\n\nstatic class Formatter { public static void Format() => Console.WriteLine(\"Formatted\"); }"
     },
     {
       "id": "packages_07",
       "title": "Import Alias",
-      "description": "Import the fmt package with the alias io, then use io.Println to print \"Hello\".",
+      "description": "Import the fmt package with the alias io, then use io.Println to Console.WriteLine \"Hello\".",
       "starter_code": "using IO = System.Console;\n// IO.WriteLine(\"Hello\");",
       "expected_output": "Hello",
       "hints": [
-        "Use import io \"fmt\" to create an alias",
-        "Use io.Println(\"Hello\") instead of Console.WriteLine"
+        "Namespace aliases/`using Alias = Fully.Qualified.Type` disambiguate clashing imports.",
+        "Remember alias applies to CLR namespaces, not random tokens."
       ],
       "solution": "using IO = System.Console;\nIO.Write(\"Hello\");"
     },
     {
       "id": "packages_06",
       "title": "Multiple Imports",
-      "description": "Import both fmt and strings packages. Use Console.WriteLine with strings.ToUpper to print \"hello\" in uppercase.",
+      "description": "Import both fmt and strings packages. Use Console.WriteLine with strings.ToUpper to Console.WriteLine \"hello\" in uppercase.",
       "starter_code": "var s = \"hello\";\n// ToUpper",
       "expected_output": "HELLO",
       "hints": [
-        "strings.ToUpper(\"hello\") returns \"HELLO\"",
-        "Console.WriteLine(strings.ToUpper(\"hello\"))"
+        "String casing transforms live under `System.String`/extension methods.",
+        "Chain `.ToUpper()` before printing final lines."
       ],
       "solution": "Console.WriteLine(\"hello\".ToUpper());"
     }

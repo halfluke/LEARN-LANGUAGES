@@ -1,8 +1,8 @@
 {
   "id": "packages",
-  "title": "Packages",
-  "description": "Learn about package declaration, importing, exporting, and init functions in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Modules (concept)\n\nReal code splits across files with `import`. These exercises keep helpers in one script and note where a module boundary would go.\n",
+  "title": "Modules and packages",
+  "description": "Imports, packages, and module-level code in Python",
+  "theory": "### Modules and import paths\n\nEach `.py` file is typically a **module**; directories become **packages** when\nthey include `__package__` metadata—often via `__init__.py` (still recommended for\nnamespace clarity). Imports bind names to modules or symbols (`from pkg import util`\nvs `import pkg.util`). Prefer absolute imports inside packages; relative imports\n(`.sub`) work within package hierarchies.\n\n### Public surfaces\n\nLeading underscore (`_helper`) signals “internal by convention.” `__all__` in\n`__init__.py` documents exports when `from pkg import *` matters—avoid star-imports\nin application code.\n\n```python\n# example/layout.py — illustrative only\nCONFIG = {\"debug\": True}\n\n\ndef load():\n    return CONFIG.copy()\n```\n",
   "exercises": [
     {
       "id": "packages_01",
@@ -11,8 +11,7 @@
       "starter_code": "def greet():\n    pass\n\n",
       "expected_output": "Hello from utils",
       "hints": [
-        "Use package utils at the top of utils.go",
-        "Define func Greet() that prints a message"
+        "Print module greeting inside greet then invoke greet()."
       ],
       "solution": "def greet():\n    print(\"Hello from utils\")\n\ngreet()\n"
     },
@@ -23,9 +22,7 @@
       "starter_code": "import math\n",
       "expected_output": "12",
       "hints": [
-        "Use import \"math\" to import the math package",
-        "Call math.Sqrt(144)",
-        "Use print to print the result"
+        "math.sqrt resolves roots; optionally cast with int for integer stdout."
       ],
       "solution": "import math\nprint(int(math.sqrt(144)))\n"
     },
@@ -36,8 +33,8 @@
       "starter_code": "count = 0\n",
       "expected_output": "Count: 0\nIncremented: 1",
       "hints": [
-        "Export by capitalizing: Count, Increment (Go exports anything starting with uppercase)",
-        "In main, use counter.Count and counter.Increment()"
+        "Declare global count inside increment before modifying module state.",
+        "Print count before then after invoking increment."
       ],
       "solution": "count = 0\ndef increment():\n    global count\n    count += 1\nprint(\"Count:\", count)\nincrement()\nprint(\"Incremented:\", count)\n"
     },
@@ -48,9 +45,7 @@
       "starter_code": "version = ''\n",
       "expected_output": "Version: 1.0.0",
       "hints": [
-        "Declare Version string in config package",
-        "Define func init() that assigns \"1.0.0\" to Version",
-        "init() runs automatically before main() when the package is imported"
+        "Populate version literal then print descriptive label/value pair."
       ],
       "solution": "version = \"1.0.0\"\nprint(\"Version:\", version)\n"
     },
@@ -61,8 +56,7 @@
       "starter_code": "def format_msg():\n    pass\n\n",
       "expected_output": "Formatted",
       "hints": [
-        "Define func Format() and func format() in formatter package",
-        "Only Format is accessible from main"
+        "Call format_msg to exercise public helper while internals stay optionally unused."
       ],
       "solution": "def format_msg():\n    print(\"Formatted\")\n\ndef format_internal():\n    print(\"internal\")\n\nformat_msg()\n"
     },
@@ -73,8 +67,7 @@
       "starter_code": "# import fmt as io\n",
       "expected_output": "Hello",
       "hints": [
-        "Use import io \"fmt\" to create an alias",
-        "Use io.Println(\"Hello\") instead of print"
+        "Lesson harness accepts print(\"Hello\")—ignore dormant commented scaffolding."
       ],
       "solution": "print(\"Hello\")\n"
     },
@@ -85,8 +78,7 @@
       "starter_code": "s = \"hello\"\n# print uppercase via strings-style API\n",
       "expected_output": "HELLO",
       "hints": [
-        "strings.ToUpper(\"hello\") returns \"HELLO\"",
-        "print(strings.ToUpper(\"hello\"))"
+        "str.upper derives uppercase HELLO sans extra imports."
       ],
       "solution": "s = \"hello\"\nprint(s.upper())\n"
     }

@@ -1,8 +1,8 @@
 {
   "id": "variables",
-  "title": "Variables & Types",
-  "description": "Declarations, types, literals, and constants in C",
-  "theory": "## Variables in C\n\nLocals are stack objects or pointers; strings are **`const char *`** literals. `printf` formatting must match the exercise’s expected stdout exactly.\n",
+  "title": "Variables and types",
+  "description": "Declarations, types, literals, and printf output",
+  "theory": "### Declarations and types\n\nIn C, every variable has a static type known at compile time. You declare a name, give it a type, and optionally initialize it. The language provides integer types of different widths (`char`, `short`, `int`, `long`, `long long`, each with signed and unsigned variants), floating types (`float`, `double`, `long double`), enumeration types, and derived types such as pointers, arrays, structures, and unions. Local variables typically live in automatic storage on the stack; file-scope and `static` locals have static storage duration and are zero-initialized if you omit an initializer.\n\nInitialization rules reward clarity: scalars can be set with `= value`, while compound literals and designated initializers (C99) let you build structs and arrays readably. Understand integer promotions and the usual arithmetic conversions—mixing narrow types with `int` can surprise you when values widen silently in expressions. Use explicit casts when you intentionally narrow a value or reinterpret bits.\n\n### Storage, scope, and linkage\n\nScope determines where an identifier is visible: block scope inside `{}`, file scope for globals, and prototype scope for parameters in declarations. Linkage (`static` at file scope, `extern`, or none) controls whether multiple translation units share one object or each gets a private copy. Automatic variables are created on block entry and destroyed on exit; `static` locals persist but remain private to their function.\n\n### Practical habits\n\nPrefer `const` for data that must not change after initialization. Use fixed-width types from `<stdint.h>` when you need exact sizes for protocols or binary formats. For string-like data held in buffers, track both capacity and length—C does not bundle them for you.\n\n```c\n#include <stdint.h>\n\nint main(void) {\n    const uint32_t magic = 0xdeadbeef;\n    unsigned char buf[256] = {0};\n    (void)buf;\n    (void)magic;\n    return 0;\n}\n```\n",
   "exercises": [
     {
       "id": "variables_01",
@@ -11,8 +11,8 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* int age = ...; printf(...); */\n    return 0;\n}\n",
       "expected_output": "25",
       "hints": [
-        "`int age = 25;`",
-        "`printf(\"%d\", age);` without `\\n` if the expected output has no newline"
+        "Declare `int age = 25;` in `main`.",
+        "Print with `printf(\"%d\", age);` — omit `\\n` when the expected output has no newline."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int age = 25;\n    printf(\"%d\", age);\n    return 0;\n}\n"
     },
@@ -23,8 +23,8 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* const char *name = ...; print name then \" 1.85\" */\n    return 0;\n}\n",
       "expected_output": "Rust 1.85",
       "hints": [
-        "`const char *name = \"Rust\";`",
-        "`printf(\"%s 1.85\", name);` keeps the decimal point stable across locales"
+        "Use `const char *name = \"Rust\";` (matches the checked solution; string literal has static storage).",
+        "`printf(\"%s 1.85\", name);` avoids `%f` locale quirks by printing the fractional part literally."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *name = \"Rust\";\n    printf(\"%s 1.85\", name);\n    return 0;\n}\n"
     },
@@ -35,8 +35,8 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int x = 100;\n    /* double y = x; printf ... */\n    return 0;\n}\n",
       "expected_output": "100",
       "hints": [
-        "`double y = (double)x;`",
-        "`printf(\"%.0f\", y);`"
+        "Promote with `double y = (double)x;` (or assign the `int` to `double` implicitly).",
+        "`printf(\"%.0f\", y);` prints `100` without a fractional part."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int x = 100;\n    double y = (double)x;\n    printf(\"%.0f\", y);\n    return 0;\n}\n"
     },
@@ -47,7 +47,7 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* printf with 0, 0.0, and the string false with two spaces before \"false\" */\n    return 0;\n}\n",
       "expected_output": "0 0  false",
       "hints": [
-        "`printf(\"%d %.0f  %s\", 0, 0.0, \"false\");`"
+        "`printf(\"%d %.0f  %s\", 0, 0.0, \"false\");` — note the two spaces before `false` for `0 0  false`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    printf(\"%d %.0f  %s\", 0, 0.0, \"false\");\n    return 0;\n}\n"
     },
@@ -58,8 +58,7 @@
       "starter_code": "#include <stdio.h>\n\n/* #define MAX_SCORE ... */\n\nint main(void) {\n    return 0;\n}\n",
       "expected_output": "100 0",
       "hints": [
-        "`#define MAX_SCORE 100`",
-        "`#define MIN_SCORE 0` before `main`",
+        "Before `main`, add `#define MAX_SCORE 100` and `#define MIN_SCORE 0`.",
         "`printf(\"%d %d\", MAX_SCORE, MIN_SCORE);`"
       ],
       "solution": "#include <stdio.h>\n\n#define MAX_SCORE 100\n#define MIN_SCORE 0\n\nint main(void) {\n    printf(\"%d %d\", MAX_SCORE, MIN_SCORE);\n    return 0;\n}\n"
@@ -71,9 +70,8 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    /* const char *host = ...; int port = ...; int debug = 1; */\n    return 0;\n}\n",
       "expected_output": "localhost 8080 true",
       "hints": [
-        "`const char *host = \"localhost\";`",
-        "`int port = 8080;`",
-        "`printf(\"%s %d %s\", host, port, \"true\");` when debug is on"
+        "`const char *host = \"localhost\";`, `int port = 8080;`, and `int debug = 1;`.",
+        "`printf(\"%s %d %s\", host, port, debug ? \"true\" : \"false\");` prints the lowercase words `true`/`false`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    const char *host = \"localhost\";\n    int port = 8080;\n    int debug = 1;\n    printf(\"%s %d %s\", host, port, debug ? \"true\" : \"false\");\n    return 0;\n}\n"
     },
@@ -84,8 +82,8 @@
       "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int a = 5;\n    int b = 10;\n    /* swap */\n    return 0;\n}\n",
       "expected_output": "10 5",
       "hints": [
-        "`int t = a; a = b; b = t;`",
-        "`printf(\"%d %d\", a, b);`"
+        "Swap with a temporary: `int t = a; a = b; b = t;`.",
+        "`printf(\"%d %d\", a, b);` should print `10 5`."
       ],
       "solution": "#include <stdio.h>\n\nint main(void) {\n    int a = 5;\n    int b = 10;\n    int t = a;\n    a = b;\n    b = t;\n    printf(\"%d %d\", a, b);\n    return 0;\n}\n"
     }

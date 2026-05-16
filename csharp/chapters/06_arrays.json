@@ -1,8 +1,8 @@
 {
   "id": "arrays",
-  "title": "Arrays",
-  "description": "Fixed-size arrays in Go",
-  "theory": "> **Curriculum:** This chapter follows [LEARN-LANGUAGES/CURRICULUM.md](../../CURRICULUM.md). Exercise ids are shared across LEARN-* repos for cross-reference.\n\n## Arrays in C#\n\nUse **`int[]`**, **`Span<T>`**, and LINQ (`string.Join`) when you need stable, human-readable formatting for automated stdout checks.\n",
+  "title": "Sequences and lists",
+  "description": "Lists as the primary fixed/dynamic sequence",
+  "theory": "### Array types in CLR\n\nArrays are reference types with a fixed length after allocation. One-dimensional arrays use `T[]` syntax; rectangular (`[,]`) and jagged (`[][]`) arrays model different layout and indexing trade-offs. Bounds checks happen on each access unless the JIT can prove them redundant.\n\n`Array` static helpers (`Sort`, `BinarySearch`, `Fill`, `Copy`) operate on various shapes. For performance-critical low-allocation code, `stackalloc` produces a span-backed buffer on the stack (size must be known and reasonable).\n\n### Initialization\n\nArray initializers infer length (`new[] { 1, 2, 3 }`) and can target implicitly typed locals with `var xs = new[] { 1, 2 };`. When you expose arrays from APIs, consider whether callers might mutate internal state—a `ReadOnlyCollection<T>` wrapper or returning `IReadOnlyList<T>` clarifies intent.\n\n```csharp\nusing System;\n\nvar nums = new int[] { 5, 2, 8 };\n\nArray.Sort(nums);\n\nSpan<int> view = nums;\n\nConsole.WriteLine(nums[nums.Length - 1]);\n```\n",
   "exercises": [
     {
       "id": "arrays_01",
@@ -11,30 +11,31 @@
       "starter_code": "var arr = new int[5];\n// assign 1..5 and print Go-style [1 2 3 4 5]",
       "expected_output": "[1 2 3 4 5]",
       "hints": [
-        "`string.Join(\" \", arr)` matches Go slice formatting."
+        "Initialize via collection expressions or `new[] { ... }`; avoid loops if literals suffice.",
+        "Join elements with spaces inside square brackets via `string.Join(\" \", arr)`."
       ],
       "solution": "var arr = new[] { 1, 2, 3, 4, 5 };\nConsole.WriteLine($\"[{string.Join(\" \", arr)}]\");"
     },
     {
       "id": "arrays_02",
       "title": "Array Iteration",
-      "description": "Create array nums := [3]int{10, 20, 30}. Use range to print each element.",
+      "description": "Create array nums = [10, 20, 30}. Use range to Console.WriteLine each element.",
       "starter_code": "var nums = new[] { 10, 20, 30 };\n// foreach ...",
       "expected_output": "10\n20\n30",
       "hints": [
-        "Use for i, v := range nums { Console.WriteLine(v) }"
+        "`foreach` idiomatically iterates CLR arrays without manual indexes.",
+        "Print each scalar on its own line when newline-separated output is required."
       ],
       "solution": "var nums = new[] { 10, 20, 30 };\nforeach (var v in nums) Console.WriteLine(v);"
     },
     {
       "id": "arrays_03",
       "title": "Array Length",
-      "description": "Create arr := [4]int{1, 2, 3, 4}. Print the length using len(arr).",
+      "description": "Create arr = [1, 2, 3, 4}. Print the length using len(arr).",
       "starter_code": "var arr = new[] { 1, 2, 3, 4 };\n// Console.WriteLine(arr.Length);",
       "expected_output": "4",
       "hints": [
-        "Use len(arr) to get array length",
-        "Console.WriteLine(len(arr))"
+        "Length queries use `.Length`, not unmanaged helpers."
       ],
       "solution": "var arr = new[] { 1, 2, 3, 4 };\nConsole.WriteLine(arr.Length);"
     },
@@ -45,8 +46,8 @@
       "starter_code": "var arr = new int[5];\narr[0] = 10; arr[1] = 20;\n// print",
       "expected_output": "[10 20 0 0 0]",
       "hints": [
-        "Use arr := [5]int{10, 20}",
-        "Rest get zero values"
+        "Allocate `new int[size]` then set leading elements—remaining slots default to `0`.",
+        "Reuse bracket-join formatting like other stdout array exercises."
       ],
       "solution": "var arr = new int[5];\narr[0] = 10; arr[1] = 20;\nConsole.WriteLine($\"[{string.Join(\" \", arr)}]\");"
     },
@@ -57,32 +58,31 @@
       "starter_code": "var matrix = new[,] { { 1, 2 }, { 3, 4 } };\n// nested loops",
       "expected_output": "1\n2\n3\n4",
       "hints": [
-        "Use matrix := [2][2]int{{1, 2}, {3, 4}}",
-        "Use nested range or direct indexing"
+        "Declare rectangular matrices via `new[,] { … }`.",
+        "Walk rows/columns with nested `for` loops or `Enumerable.Range`."
       ],
       "solution": "var matrix = new[,] { { 1, 2 }, { 3, 4 } };\nfor (var r = 0; r < 2; r++)\n    for (var c = 0; c < 2; c++)\n        Console.WriteLine(matrix[r, c]);"
     },
     {
       "id": "arrays_07",
       "title": "Array Sum",
-      "description": "Create arr := [5]int{10, 20, 30, 40, 50}. Compute the sum of all elements and print it.",
+      "description": "Create arr = [10, 20, 30, 40, 50}. Compute the sum of all elements and Console.WriteLine it.",
       "starter_code": "var arr = new[] { 10, 20, 30, 40, 50 };\n// sum",
       "expected_output": "150",
       "hints": [
-        "Initialize a sum variable to 0",
-        "Use range to iterate and accumulate: sum += v"
+        "Accumulate inside a tight `foreach`; `checked` arithmetic only if overflows matter.",
+        "Prefer `Console.WriteLine` with the summed scalar."
       ],
       "solution": "var arr = new[] { 10, 20, 30, 40, 50 };\nvar sum = 0;\nforeach (var v in arr) sum += v;\nConsole.WriteLine(sum);"
     },
     {
       "id": "arrays_06",
       "title": "Array Element Access",
-      "description": "Create arr := [3]int{100, 200, 300}. Print the first element (index 0) and last element (index 2).",
+      "description": "Create arr = [100, 200, 300}. Print the first element (index 0) and last element (index 2).",
       "starter_code": "var arr = new[] { 100, 200, 300 };\n// first and last",
       "expected_output": "100 300",
       "hints": [
-        "arr[0] is first, arr[2] is last",
-        "Console.WriteLine(arr[0], arr[2])"
+        "First element indexes at `0`; last element prefers index-from-end `[ ^1 ]` on modern runtimes."
       ],
       "solution": "var arr = new[] { 100, 200, 300 };\nConsole.WriteLine($\"{arr[0]} {arr[^1]}\");"
     }

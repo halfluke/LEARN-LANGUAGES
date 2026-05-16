@@ -2,7 +2,7 @@
   "id": "packages",
   "title": "Packages",
   "description": "Modules, visibility, and std patterns in Rust",
-  "theory": "## Modules in Rust\n\nRust uses `mod` to declare modules, `use` for paths, and `pub` for visibility.\n\nUnlike Go files in a folder, a single `main.rs` can contain nested `mod` blocks for small exercises.\n",
+  "theory": "### Crates, editions, and modules\n\nA **crate** is the unit the compiler builds: binary (`main`) or library (`lib`). **Editions**\n(`2018`, `2021`, …) gate syntax and prelude tweaks without breaking old code. Within a\ncrate, **`mod`** declares modules; filesystem modules mirror directory trees when you use\n`mod child;` with `src/child.rs` or `src/child/mod.rs`.\n\nVisibility flows with `pub`, `pub(crate)`, `pub(super)`, and `pub(in path)`. Default is\nprivate to the parent module—leak only what should form your API surface.\n\n### Paths and `use`\n\nAbsolute paths start at the crate root (`crate::foo`) or extern crates (`::serde` historically,\nnow mostly subsumed by `use`). The **`use`** tree rebinds names for call sites; **`pub use`**\nre-exports for ergonomic facades (`pub use inner::Thing` from a `prelude` module).\n\n```rust\n// src/lib.rs\nmod parser;\npub use parser::parse;\n\nmod parser {\n    pub fn parse(input: &str) -> Vec<&str> {\n        input.split_whitespace().collect()\n    }\n}\n```\n\n### `Cargo.toml` matters\n\nDependencies, features, and workspace membership live in **`Cargo.toml`**. Features let\nyou toggle optional integrations (`serde`, `async`) without forking the crate. Lockfiles\n`Cargo.lock` pin versions for binaries; libraries leave resolution to dependents—know which\nside of that line your project sits on.\n",
   "exercises": [
     {
       "id": "packages_01",

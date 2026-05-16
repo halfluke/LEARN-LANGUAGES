@@ -10,20 +10,31 @@ Clone once; each track lives in its own subdirectory with its own TUI/toolchain.
 
 ## Main menu (recommended)
 
-From the **repository root**, install the hub (Textual only) and launch the language picker:
+### First-time setup (one root `.venv`)
+
+From the **repository root**, run **one** of:
+
+| Script | Who | What it installs |
+|--------|-----|------------------|
+| **`./scripts/setup-learn.sh`** | Learners | Hub + **C / C# / Python / Java** with `pip install -e .` (runtime only: Textual, etc.) |
+| **`./scripts/setup-dev.sh`** | Contributors | Same, but `pip install -e ".[dev]"` — adds **pytest** for each Python track’s tests |
+
+**Why two modes?**  
+- **`pip install -e .`** installs only **`[project] dependencies`** — what you need to **run** the TUIs.  
+- **`pip install -e ".[dev]"`** also installs **`[dev]` optional extras** (e.g. **pytest**) — for **`python -m pytest`** / `check_solutions` workflows, **not** required to study the courses.
+
+Both scripts create or reuse **`.venv`** at the repo root and register the **`learn-languages`** command there. They do **not** install **Rust**, **Go**, or **asm** toolchains.
 
 ```bash
 cd path/to/LEARN-LANGUAGES
-python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e .
+./scripts/setup-learn.sh          # or: python3 scripts/bootstrap.py --learn
+source .venv/bin/activate         # Windows: .venv\Scripts\activate
 learn-languages
-# or: python -m learn_languages
 ```
 
 **Enter** opens the selected course; **q** quits the hub. When you quit a course, you return to this menu.
 
-Python-based tracks (**C**, **C#**, **Python**, **Java**) should have their track dependencies installed (`pip install -e .` inside each track directory) before launching from the menu. **Rust**, **Go**, and **asmx64** need their toolchains on `PATH` (see per-track READMEs).
+**Rust**, **Go**, and **asmx64** still need their compilers on `PATH` (see per-track READMEs). Manual alternative: `pip install -e .` at root plus `pip install -e .` in each Python track directory.
 
 | Track | Directory | Direct run (without hub) |
 |-------|-----------|---------------------------|

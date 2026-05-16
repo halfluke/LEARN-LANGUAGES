@@ -17,6 +17,8 @@ Optional: **`EDITOR`** (`vim`, `nano`, `code --wait`, …).
 
 **Grading:** write **`solution.c`**, **`cc -std=c11 -Wall -Wextra`** (plus **`-lm`** when needed), run under a timeout, compare trimmed stdout to **`expected_output`**.
 
+**Maintainers:** **`python3 scripts/check_solutions.py`** (same **`cc`/`gcc`** toolchain as the TUI).
+
 ## Install (editable)
 
 From the **`c/`** directory:

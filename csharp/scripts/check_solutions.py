@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Verify every exercise *solution* in chapters/*.json builds with `dotnet` and matches expected_output.
 
-Mirrors learn_cs_tui.executor: temp (or shared) SDK console project, overwrite Program.cs,
-`dotnet run`, compare trimmed stdout.
+Reuses one SDK console project under LEARN_CSHARP_CHECK_WORK: each solution overwrites Program.cs,
+then ``dotnet build`` + ``dotnet run --no-build`` (see learn_cs_tui.executor).
 
 Usage:
   python3 scripts/check_solutions.py
@@ -25,24 +25,23 @@ ROOT = Path(__file__).resolve().parent.parent
 CHAPTERS = ROOT / "chapters"
 DEFAULT_CHECK_WORK = ROOT / ".check-csharp-work"
 
-# Import after sys.path — run from repo root
 sys.path.insert(0, str(ROOT))
 
-from learn_cs_tui.executor import execute_code  # noqa: E402
+from learn_cs_tui.executor import check_dotnet_available, execute_code_in_dir  # noqa: E402
 
 
-def check_one(solution: str, expected: str, work: Path, chapter_id: str, exercise_id: str) -> tuple[bool, str]:
+def check_one(
+    solution: str,
+    expected: str,
+    work: Path,
+) -> tuple[bool, str]:
     exp = (expected or "").strip()
-    ex_work = work / chapter_id / exercise_id
-    if ex_work.exists():
-        import shutil
-
-        shutil.rmtree(ex_work, ignore_errors=True)
-    res = execute_code(solution.strip(), work_dir=ex_work)
+    res = execute_code_in_dir(solution.strip(), work)
     if res.timed_out:
         return False, "timed out"
     if res.exit_code != 0:
-        return False, f"dotnet rc={res.exit_code}\nstderr:\n{res.stderr[:4000]}"
+        detail = (res.stderr or res.stdout or "(no output)")[:4000]
+        return False, f"dotnet rc={res.exit_code}\n{detail}"
     got = res.stdout.strip()
     if got == exp:
         return True, ""
@@ -58,6 +57,12 @@ def main() -> int:
         help="print only failing chapter/exercise lines",
     )
     args = ap.parse_args()
+
+    try:
+        check_dotnet_available()
+    except RuntimeError as e:
+        print(e, file=sys.stderr)
+        return 1
 
     work_env = os.environ.get("LEARN_CSHARP_CHECK_WORK", "").strip()
     work = Path(work_env) if work_env else DEFAULT_CHECK_WORK
@@ -85,7 +90,7 @@ def main() -> int:
                 skipped += 1
                 continue
             checked += 1
-            ok, detail = check_one(sol, ex.get("expected_output") or "", work, cid, eid)
+            ok, detail = check_one(sol, ex.get("expected_output") or "", work)
             if not ok:
                 failures.append((cid, eid, detail))
                 if not args.list_failures_only:

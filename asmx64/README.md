@@ -4,11 +4,19 @@ Interactive **Linux x86-64** assembly course in the terminal: **NASM**, **Intel 
 
 ## Prerequisites (Linux)
 
-Install a toolchain that can build ELF64 user programs:
+### Run the TUI (host app)
+
+- **Rust toolchain** — **`cargo`** and **`rustc`** on **`PATH`** ([rustup](https://rustup.rs/) recommended). The course UI is a Rust binary (`cargo run --release`).
+
+### Assemble and run learner programs
 
 - **nasm** — assembler (`apt install nasm` / `dnf install nasm`)
 - **binutils** — GNU **ld** (`apt install binutils` / `dnf install binutils`)
 - **gcc** — used when an exercise uses **`extern`** libc symbols; also handy for reading compiler output (`apt install build-essential` or `gcc`)
+
+### Optional (maintainers)
+
+- **Python 3** — **`python3 scripts/check_solutions.py`** (same **nasm** / **ld** / **gcc** toolchain as the TUI)
 
 Smoke-check versions:
 

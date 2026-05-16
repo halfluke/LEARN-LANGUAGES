@@ -42,6 +42,8 @@ export LEARN_PYTHON_CHAPTERS=/absolute/path/to/chapters
 
 **How grading works:** the app writes **`solution.py`**, runs **`python3 solution.py`** with a timeout, and compares trimmed **stdout** to **`expected_output`**.
 
+**Maintainers:** **`python3 scripts/check_solutions.py`** uses the same interpreter (no extra compiler).
+
 ## Keys (short)
 
 | Screen | Actions |

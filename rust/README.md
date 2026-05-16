@@ -43,7 +43,7 @@ export EDITOR="code --wait"
 
 ### Optional: Python (only for maintainers)
 
-Regenerating or bulk-checking bundled chapter JSON uses **`python3`**. Learners using the shipped **`chapters/*.json`** do **not** need Python.
+Bulk-checking bundled solutions uses **`python3 scripts/check_solutions.py`**. Learners using the shipped **`chapters/*.json`** do **not** need Python.
 
 ---
 

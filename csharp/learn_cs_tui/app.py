@@ -337,7 +337,7 @@ Result: [yellow]h[/yellow] next hint on failure · [yellow]r[/yellow] re-run · 
         proj = self._dotnet_project
 
         def run() -> None:
-            res = execute_code(code, work_dir=proj)
+            res = execute_code(code, work_dir=proj, incremental=True)
             self.call_from_thread(self._on_run_done, res)
 
         threading.Thread(target=run, daemon=True).start()

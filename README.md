@@ -14,6 +14,22 @@ Clone once; each track lives in its own subdirectory with its own TUI/toolchain.
 | Java | [`java/`](java/) | `python -m learn_java_tui` |
 | x86-64 asm (NASM / ELF64) | [`asmx64/`](asmx64/) | `cargo run` |
 
+## Runtime requirements (summary)
+
+Each track’s **`README`** is authoritative. At a glance:
+
+| Track | Run the TUI | Grade / execute learner code | Optional |
+|-------|-------------|------------------------------|----------|
+| **Rust** | `rustc`, `cargo` (on `PATH`) | same + temp `rustc` / `cargo` per exercise rules | `EDITOR`; **`python3`** only for `scripts/check_solutions.py` |
+| **Go** | **Go 1.20+** (`go version` at startup) | `go run` on a temp `main.go` | `EDITOR` |
+| **C** | **Python 3.10+**, Textual (`pip install -e …`) | **`cc`** or **`gcc`** (C11) | `EDITOR` |
+| **C#** | **Python 3.10+**, Textual | **.NET SDK** (`dotnet`) | `EDITOR`; **`python3`** for `scripts/check_solutions.py` |
+| **Python** | **Python 3.10+** (also runs learner code) | same interpreter | `EDITOR` |
+| **Java** | **Python 3.10+**, Textual | **JDK 17+** (`javac`, `java`) | `EDITOR` |
+| **asmx64** | **Rust** (`cargo` to build the TUI) | **nasm**, **ld**, **gcc** (Linux / WSL2) | **`python3`** for `scripts/check_solutions.py` |
+
+Startup probes, timeouts, and platform limits (e.g. asm is Linux-only v1) are documented per track.
+
 ## Shared docs
 
 | Doc | Contents |

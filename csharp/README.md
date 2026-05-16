@@ -15,7 +15,9 @@ Optional: **`EDITOR`** for **`e`** in the exercise editor.
 
 **Startup:** **`dotnet --version`**; failures print to stderr and exit **1**.
 
-**Grading:** your snippet becomes **`Program.cs`** in an SDK-style console project; **`dotnet run`**, trimmed stdout matches **`expected_output`**.
+**Grading:** your snippet becomes **`Program.cs`** in an SDK-style console project; the TUI uses **`dotnet build`** then **`dotnet run --no-build`** on that project (first run may restore NuGet packages). Trimmed stdout must match **`expected_output`**.
+
+**Maintainers:** **`python3 scripts/check_solutions.py`** needs **Python 3.10+** and the same **.NET SDK**; it reuses one project under **`.check-csharp-work`** (override with **`LEARN_CSHARP_CHECK_WORK`**).
 
 ## Install (editable)
 
@@ -56,7 +58,7 @@ export LEARN_CSHARP_CHAPTERS=/absolute/path/to/chapters
 python3 scripts/check_solutions.py
 ```
 
-Default **`./.check-csharp-work`**. Override: **`LEARN_CSHARP_CHECK_WORK`**.
+Default **`./.check-csharp-work`** (one reused SDK project: **`dotnet build`** then **`dotnet run --no-build`** per solution). Override: **`LEARN_CSHARP_CHECK_WORK`**.
 
 Edit chapter JSON under **`chapters/`** in place. Shared outline: **[../CURRICULUM.md](../CURRICULUM.md)** · schema: **[../TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**
 

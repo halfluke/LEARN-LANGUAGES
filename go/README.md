@@ -15,6 +15,8 @@ An interactive terminal-based Go learning platform with chapters, exercises, cod
 
 **How exercises are checked:** The TUI does **not** only lint your source. It writes your code to a temporary **`main.go`** and runs **`go run`** on that file (with a timeout), then compares trimmed **stdout** to the exercise’s **`expected_output`**.
 
+There is **no** bundled `check_solutions.py` in this track—only the Go toolchain and an editor are required to learn.
+
 ## Install
 
 From the **`go/`** directory (repository root layout):

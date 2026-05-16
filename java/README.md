@@ -1,6 +1,6 @@
 # LEARN-Java
 
-Interactive **Java 17** course in the terminal: **`chapters/*.json`** shared with other LEARN-* tracks (**[TUTORIAL_PLATFORM.md](../../TUTORIAL_PLATFORM.md)**), **`javac` + java** execution, **trimmed stdout** checks.
+Interactive **Java 17** course in the terminal: **`chapters/*.json`** shared with other LEARN-* tracks (**[TUTORIAL_PLATFORM.md](../TUTORIAL_PLATFORM.md)**), **`javac` + java** execution, **trimmed stdout** checks.
 
 The UI is Python + **Textual**; the learner code is plain Java (`public class Main` …).
 
@@ -43,6 +43,8 @@ export LEARN_JAVA_CHAPTERS=/absolute/path/to/chapters
 **Startup:** validates **`java -version`** (or equivalent) before the UI loads.
 
 **How grading works:** writes your snippet as **`*.java`** (named after the **`public class`**); runs **`javac`** then **`java`** with that class name; trimmed stdout must match **`expected_output`**.
+
+**Maintainers:** **`python3 scripts/check_solutions.py`** needs **Python 3.10+** plus **JDK 17+** on **`PATH`**.
 
 ## Keys (short)
 

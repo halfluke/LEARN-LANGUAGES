@@ -15,7 +15,7 @@ Optional: **`EDITOR`** for **`e`** in the exercise editor.
 
 **Startup:** **`dotnet --version`**; failures print to stderr and exit **1**.
 
-**Grading:** your snippet becomes **`Program.cs`** in an SDK-style console project; the TUI uses **`dotnet build`** then **`dotnet run --no-build`** on that project (first run may restore NuGet packages). Trimmed stdout must match **`expected_output`**.
+**Grading:** your snippet becomes **`Program.cs`** in an SDK-style console project; the TUI uses **`dotnet build`** then **`dotnet run --no-build`** (first run may restore NuGet packages). Maintainer **`check_solutions.py`** uses the same build step but runs via **`dotnet exec`** for speed. Trimmed stdout must match **`expected_output`**.
 
 **Maintainers:** **`python3 scripts/check_solutions.py`** needs **Python 3.10+** and the same **.NET SDK**; it reuses one project under **`.check-csharp-work`** (override with **`LEARN_CSHARP_CHECK_WORK`**).
 

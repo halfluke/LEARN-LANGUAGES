@@ -142,10 +142,33 @@ def build_project(project_dir: Path, *, csproj: Path | None = None) -> Execution
     return res
 
 
-def run_built_project(project_dir: Path, *, csproj: Path | None = None) -> ExecutionResult:
-    """Run a built console app via ``dotnet exec`` on the output DLL."""
+def run_built_project(
+    project_dir: Path,
+    *,
+    csproj: Path | None = None,
+    prefer_exec: bool = False,
+) -> ExecutionResult:
+    """Run a project that was already built.
+
+    TUI (default): ``dotnet run --no-build`` — same host path as a normal ``dotnet run``.
+    Checker (``prefer_exec=True``): ``dotnet exec`` on the output DLL — faster for bulk runs.
+    """
     proj = project_dir.resolve()
     csproj = (csproj or next(proj.glob("*.csproj"))).resolve()
+    if not prefer_exec:
+        return _run_subprocess(
+            [
+                "dotnet",
+                "run",
+                "--project",
+                str(csproj),
+                "--no-build",
+                "--verbosity",
+                "quiet",
+            ],
+            cwd=proj,
+            timeout=RUN_TIMEOUT,
+        )
     try:
         dll = _main_dll(proj, csproj)
     except FileNotFoundError as e:
@@ -162,11 +185,13 @@ def execute_code(
     *,
     work_dir: Path | None = None,
     incremental: bool = False,
+    prefer_exec: bool = False,
 ) -> ExecutionResult:
     """Run *code* in a console project.
 
     When *incremental* is true and *work_dir* is set, reuse the project: write Program.cs,
-    ``dotnet build`` (``--no-restore`` after the first successful build), then ``dotnet exec``.
+    ``dotnet build`` (``--no-restore`` after the first successful build), then run the binary
+  (``dotnet run --no-build`` by default; ``dotnet exec`` when *prefer_exec* is true).
     """
     cleanup = work_dir is None
     if work_dir is None:
@@ -189,7 +214,7 @@ def execute_code(
                 return built
             if built.exit_code != 0:
                 return built
-            return run_built_project(proj, csproj=csproj)
+            return run_built_project(proj, csproj=csproj, prefer_exec=prefer_exec)
 
         return _run_subprocess(
             [
@@ -210,4 +235,4 @@ def execute_code(
 
 def execute_code_in_dir(code: str, project_dir: Path) -> ExecutionResult:
     """For check_solutions: reuse one project directory with incremental build+exec."""
-    return execute_code(code, work_dir=project_dir, incremental=True)
+    return execute_code(code, work_dir=project_dir, incremental=True, prefer_exec=True)
